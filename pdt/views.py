@@ -9,7 +9,6 @@ def index(req):
 </head>
 <body>
 <div><h1>Hello World</h1></div><div><h2>This is the Project Data Tracker.</h2></div>
-<a href = "/guestbook">GuestBook</a>
 </body>
 </html>
 """)
