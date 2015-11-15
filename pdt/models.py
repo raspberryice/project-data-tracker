@@ -1,15 +1,26 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+class UserProfile(models.Model):
+    ROLE_NAMES = (
+        (1, 'Developer'),
+        (2, 'Manager')
+    )
+    user = models.OneToOneField(User)
+    role = models.IntegerField(choices = ROLE_NAMES, default = 1)
 
 
 class Project(models.Model):
+    creator = models.ForeignKey(User)
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
+    owner = models.ForeignKey(User)
     status = models.IntegerField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField
-    totalDefects =models.IntegerField
+    totalDefects = models.IntegerField
 
-    def __str__ (self):
+    def __str__(self):
         return self.name
 
 
@@ -32,7 +43,7 @@ class Phase(models.Model):
 
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
-    no= models.IntegerField
+    no = models.IntegerField
     status = models.IntegerField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField
@@ -42,8 +53,9 @@ class Iteration(models.Model):
 
 
 class Session(models.Model):
+    creator = models.ForeignKey(User)
     iteration = models.ForeignKey(Iteration)
-
+    totalTime = models.DurationField
 
 
 class DevelopmentSession(Session):
@@ -53,26 +65,17 @@ class DevelopmentSession(Session):
 
 
 class ManagementSession(Session):
-    {
-
-    }
+    pass
 
 
 class DefectRemovalSession(Session):
-    defectno = models.IntegerField
+    removed = models.IntegerField
 
 
 class Defect(models.Model):
-    session=models.ForeignKey(DefectRemovalSession)
+    session = models.ForeignKey(DefectRemovalSession)
     type = models.IntegerField
-    iterationInjected= models.ForeignKey(Iteration,related_name='injected')
+    iterationInjected = models.ForeignKey(Iteration,related_name='injected')
     iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
     desc = models.CharField(max_length=300)
     status = models.IntegerField
-
-
-class Timer(models.Model):
-    totalTime = models.DurationField
-    session = models.OneToOneField(Session)
-
-
