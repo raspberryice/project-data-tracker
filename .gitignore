@@ -1,3 +1,3 @@
 # Django Settings (to test with SQLite locally)
-settings.py
-settings.pyc
+/django_project/settings.py
+/django_project/settings.pyc
