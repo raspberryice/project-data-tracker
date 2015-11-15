@@ -41,9 +41,11 @@
           </div>
 
           <div class="inner cover">
-            <form class="form-signin" method="POST" action="/login">
+            {% if failed %} <h2 class="form-signin-heading">Invalid Username/Password</h2> {% endif %}
+            {% if logged_out %} <h2 class="form-signin-heading">You have successfully logged out.</h2> {% endif %}
+            <form class="form-signin" method="POST">
                 <label for="inputUsername" class="sr-only">Username</label>
-                <input type="email" name="username" class="form-control" placeholder="Username" required autofocus >
+                <input type="username" name="username" class="form-control" placeholder="Username" required autofocus >
                 <label for="inputPassword" class="sr-only">Password</label>
                 <input type="password" name="password" class="form-control" placeholder="Password" required >
                 <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block" >

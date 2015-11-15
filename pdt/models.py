@@ -1,7 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
-class UserProfile(models.Model):
+class Profile(models.Model):
     ROLE_NAMES = (
         (1, 'Developer'),
         (2, 'Manager')
@@ -9,12 +10,16 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User)
     role = models.IntegerField(choices = ROLE_NAMES, default = 1)
 
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+       profile, created = Profile.objects.get_or_create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
 
 class Project(models.Model):
     creator = models.ForeignKey(User)
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
-    owner = models.ForeignKey(User)
     status = models.IntegerField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField

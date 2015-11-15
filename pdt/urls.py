@@ -1,7 +1,10 @@
 from django.conf.urls import url
-from . import views
+from views import *
 
 urlpatterns = [
-	url(r'^$', views.index, name='index'),
+	url(r'^$', index, name = 'index'),
+	url(r'auth/login/', login, name = 'login'),
+	url(r'auth/logout/', logout, name = 'logout'),
+	url(r'developer/dashboard/', devdashboard, name = 'devdashboard'),
+	url(r'manager/dashboard/', mandashboard, name = 'mandashboard'),
 ]
-

@@ -1,0 +1,9 @@
+<p>
+{{ user.username }} <a href="/auth/logout/">Sign Out</a>
+</p>
+{% for prj in prjlist %}
+<p>
+  <h2>{{ prj.name }}</h2>Phase {{ prj.curphase }}
+  <br>Iteration {{ prj.curitr }}
+</p>
+{% endfor %}
