@@ -1,3 +1,79 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static "favicon.ico" %}">
+
+    <title>Login - Project Data Tracker</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "css/cover.css" %}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h1 class="cover-heading">Project Data Tracker</h1>
+            </div>
+          </div>
+
+          <div class="inner cover">
+            <form class="form-signin" method="POST" action="/login">
+                <label for="inputUsername" class="sr-only">Username</label>
+                <input type="email" name="username" class="form-control" placeholder="Username" required autofocus >
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" required >
+                <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block" >
+            </form>
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+              <p><a href="http://107.170.193.85">Your Company ™</a> 2015 | Powered By <a href="https://github.com/septjew/project-data-tracker">SE-One</a>.</p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static "js/ie10-viewport-bug-workaround.js" %}"></script>
+  </body>
+</html>
+
+
+<!--
 <html>
 <head>
 <meta charset="UTF-8" />
@@ -5,18 +81,18 @@
 </head>
 <body>
 <div id="header" style="height: 20%; text-align: center">
-	<span id="title" style="font-size: 60pt;">Project Data Tracker</span>
+  <span id="title" style="font-size: 60pt;">Project Data Tracker</span>
 </div>
 <hr />
 <div id="loginframe" style="height: 60%; text-align: center">
 <div id="container" style="height: 40%"></div>
 <form method="POST" action="/login">
-	<div style="font-size: 20pt">
-		<label>Username:</label><input type="text" name="username" maxlength="100" />
-	</div>
-	<div style="font-size: 20pt">
-		<label>Password:</label><input type="password" name="password" />
-	</div>
+  <div style="font-size: 20pt">
+    <label>Username:</label><input type="text" name="username" maxlength="100" />
+  </div>
+  <div style="font-size: 20pt">
+    <label>Password:</label><input type="password" name="password" />
+  </div>
 </form>
 </div>
 <hr />
@@ -27,3 +103,4 @@ Project Data Tracker <br />
 </div>
 </body>
 </html>
+-->
