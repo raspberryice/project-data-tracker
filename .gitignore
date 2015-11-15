@@ -1,3 +1,6 @@
-# Django Settings (to test with SQLite locally)
-/django_project/settings.py
-/django_project/settings.pyc
+# Django settings
+settings.py
+settings.pyc
+
+# Mac OS X files
+.DS_Store
