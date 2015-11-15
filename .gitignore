@@ -1,6 +1,11 @@
 # Django settings
 settings.py
-settings.pyc
+
+# Python files
+*.pyc
+
+# Database
+db.sqlite3
 
 # Mac OS X files
 .DS_Store
