@@ -29,7 +29,6 @@ class Phase(models.Model):
     def __str__(self):
        return self.no
 
-
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
     no= models.IntegerField
@@ -43,6 +42,8 @@ class Iteration(models.Model):
 
 class Session(models.Model):
     iteration = models.ForeignKey(Iteration)
+    developer = models.ForeignKey(Developer)
+    start_date = models.DateTimeField(auto_now_add=True)
 
 
 
