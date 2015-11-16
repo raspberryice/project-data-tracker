@@ -12,6 +12,10 @@ class Project(models.Model):
     def __str__ (self):
         return self.name
 
+class User(models.Model):
+    userid = models.CharField(max_length=30)
+    password = models.CharField(max_length=30)
+    email = models.EmailField(max_length=254)
 
 class Phase(models.Model):
     PHASE_NAMES = (
@@ -38,42 +42,38 @@ class Iteration(models.Model):
     totalDefects = models.IntegerField
     def __str__(self):
         return self.no
-
+class Developer(models.Model):
+    name = models.CharField(max_length = 30)
+    user = models.ForeignKey(User)
 
 class Session(models.Model):
     iteration = models.ForeignKey(Iteration)
     developer = models.ForeignKey(Developer)
     start_date = models.DateTimeField(auto_now_add=True)
-
-
-
-class DevelopmentSession(Session):
-    SLOC = models.IntegerField
-    def getSLOC (self,newSLOC):
-        self.SLOC = newSLOC
-
-
-class ManagementSession(Session):
-    {
-
-    }
-
-
-class DefectRemovalSession(Session):
+    sessionlast = models.IntegerField
+    
+class DefectSession(Session):
     defectno = models.IntegerField
 
-
+class SLOCSession(Session):
+    SLOC = models.IntegerField
+class ManageSession(Session):
+    pass
 class Defect(models.Model):
-    session=models.ForeignKey(DefectRemovalSession)
+    session=models.ForeignKey(DefectSession)
     type = models.IntegerField
-    iterationInjected= models.ForeignKey(Iteration,related_name='injected')
+    iterationInjected = models.ForeignKey(Iteration,related_name='injected')
     iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
     desc = models.CharField(max_length=300)
     status = models.IntegerField
 
+class Participate(models.Model):
+    developer = models.ForeignKey(Developer)
+    project = models.ForeignKey(Project)
 
-class Timer(models.Model):
-    totalTime = models.DurationField
-    session = models.OneToOneField(Session)
+
+
+class Manager(Developer):
+    pass
 
 
