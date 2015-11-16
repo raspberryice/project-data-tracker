@@ -5,7 +5,7 @@ from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
-from models import Profile
+from .models import Profile
 # Create your views here.
 
 def index(req):

@@ -8,13 +8,16 @@ class Profile(models.Model):
         (2, 'Manager')
     )
     user = models.OneToOneField(User)
-    role = models.IntegerField(choices = ROLE_NAMES, default = 1)
+    role = models.IntegerField(choices = ROLE_NAMES)
 
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-       profile, created = Profile.objects.get_or_create(user=instance)
+    def __str__(self):
+        return self.user.username + ": " + str(self.role)
 
-post_save.connect(create_user_profile, sender=User)
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#        profile, created = Profile.objects.get_or_create(user=instance) # cannot get??
+#
+# post_save.connect(create_user_profile, sender=User)
 
 class Project(models.Model):
     creator = models.ForeignKey(User)
