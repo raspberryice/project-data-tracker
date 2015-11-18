@@ -8,7 +8,8 @@ def index(request):
 	return render_to_response("login.html")
 def beginDevelopeSession(request):
 	s = SLOCSesson(start_data=timezone.now(),SLOC = 0, sessionlast = 0)
-	# left the iteration and the developer
+	s.interation = int(request.session['iteration'])
+	s.developer = int(request.session['user'])
 	s.save()
 	return render_to_response("sloc.html")
 
@@ -21,7 +22,8 @@ def endDevelopeSession(request):
 
 def beginDefectSession(request):
 	s = DefectSession(start_data = timezone.now(),defectno = 0,sessionlast = 0)
-	#left the iteration and the developer
+	s.interation = int(request.session['iteration'])
+	s.developer = int(request.session['user'])
 	s.save()
 	return render_to_response("defectsession.html")
 
@@ -43,7 +45,8 @@ def endDefectSession(request):
 
 def beginManageSession(request):
 	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
-	#still left developer and the iteration
+	s.interation = int(request.session['iteration'])
+	s.developer = int(request.session['user'])
 	s.save()
 	return render_to_response("manage.html")
 
@@ -52,6 +55,27 @@ def endManageSession(request):
 	s.time = int(request.POST['time'])
 	s.save()
 	return render_to_response("index.html")
+
+def getAllSessionOfAIterationOnSLOC(request):
+	iid = int(request.POST['iteration'])
+	session_set = SLOCSesson.objects.get(iteration = iid)
+	return render_to_response("slocmanageiter.html")
+
+def getAllSessionOfAIterationOnDefect(request):
+	iid = int(request.POST['iteration'])
+	session_set = DefectSession.objects.get(iteration = iid)
+	return render_to_response("defectmanageiter.html")
+
+def getAllSessionOfAUserOnSLOC(request):
+	 uid = int(request.POST['developer'])
+	 session_set = SLOCSession.objects.get(developer = uid)
+	 return render_to_response("slocmanagedev.html")
+
+def getAllSessionOfAUserOnDefect(request):
+	 uid = int(request.POST['developer'])
+	 session_set = DefectSession.objects.get(developer = uid)
+	 return render_to_response("defectmanagedev.html")
+
 
 
 
