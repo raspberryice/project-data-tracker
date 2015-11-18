@@ -29,7 +29,7 @@ def login(req):
 		else:
 			return render_to_response("login.html", Context({'failed': True}))
 	else:
-		return render_to_response("login.html", Context({'logged_out': (req.REQUEST.get('prev', '') == '/auth/logout/')}))
+		return render_to_response("login.html", Context({'logged_out': (req.GET.get('prev', '') == '/auth/logout/')}))
 
 def logout(req):
 	log_out(req)
@@ -42,18 +42,45 @@ def devdashboard(req):
 		prjlist = [
 			{
 				'name': 'Project 1',
+				'id': 1001,
 				'curphase': 2,
 				'curitr': 3,
 			},
 			{
 				'name': 'Project 2',
+				'id': 1002,
 				'curphase': 1,
 				'curitr': 2
-			}
+			},
+			{
+				'name': 'Project 3',
+				'id': 1003,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 4',
+				'id': 1004,
+				'curphase': 1,
+				'curitr': 2
+			},
+			{
+				'name': 'Project 5',
+				'id': 1005,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 6',
+				'id': 1006,
+				'curphase': 1,
+				'curitr': 2
+			},
 		]
 		c = Context({
 			'user': req.user,
 			'prjlist': prjlist,
+			'totprjcnt': 10, # total number of projects the developer attended
 		})
 		return render_to_response("devdashboard.html", c)
 	else:

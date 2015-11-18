@@ -36,7 +36,7 @@
 
           <div class="masthead clearfix">
             <div class="inner">
-              <h1 class="cover-heading">Project Data Tracker</h1>
+              <h1 class="cover-heading"><a href="/">Project Data Tracker</a></h1>
             </div>
           </div>
 
@@ -45,17 +45,17 @@
             {% if logged_out %} <h2 class="form-signin-heading">You have successfully logged out.</h2> {% endif %}
             <form class="form-signin" method="POST">
                 <label for="inputUsername" class="sr-only">Username</label>
-                <input type="username" name="username" class="form-control" placeholder="Username" required autofocus >
+                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus >
                 <label for="inputPassword" class="sr-only">Password</label>
                 <input type="password" name="password" class="form-control" placeholder="Password" required >
-                <input type="submit" value="Login" class="btn btn-lg btn-primary btn-block" >
+                <button type="submit" class="btn btn-lg btn-primary btn-block" >Login</button>
             </form>
           </div>
 
           <div class="mastfoot">
             <div class="inner">
-              <p><a href="http://107.170.193.85">Your Company ™</a> 2015</p>
-              <p>Powered By <a href="https://github.com/septjew/project-data-tracker">SE-One</a> ©</p>
+              <p><a href="/">Your Company ™</a> 2015</p>
+              <p>Powered By <a href="https://github.com/septjew/project-data-tracker">SE-One</a> &copy; </p>
             </div>
           </div>
 
