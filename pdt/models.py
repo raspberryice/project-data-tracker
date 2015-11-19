@@ -18,14 +18,16 @@ class Profile(models.Model):
 # post_save.connect(create_user_profile, sender=User)
 
 class Project(models.Model):
-    creator = models.ForeignKey(User)
+    creator = models.ForeignKey(User, related_name='creator')
+    developers = models.ManyToManyField(User, related_name='developer')
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
-    status = models.IntegerField
+    status = models.BooleanField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField
     totalDefects = models.IntegerField
-
+    start_date = models.DateTimeField
+    close_date = models.DateTimeField
     def __str__(self):
         return self.name
 
@@ -39,10 +41,12 @@ class Phase(models.Model):
     )
     project = models.ForeignKey(Project)
     no = models.IntegerField(choices=PHASE_NAMES,default=1)
-    status = models.IntegerField
+    status = models.BooleanField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField
     totalDefects = models.IntegerField
+    start_date = models.DateTimeField
+    close_date = models.DateTimeField
     def __str__(self):
        return self.no
 
@@ -50,24 +54,25 @@ class Phase(models.Model):
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
     no = models.IntegerField
-    status = models.IntegerField
+    status = models.BooleanField
     totalTime = models.IntegerField
     totalSLOC = models.IntegerField
     totalDefects = models.IntegerField
+    start_date = models.DateTimeField
+    close_date = models.DateTimeField
     def __str__(self):
         return self.no
 
 
 class Session(models.Model):
+    start_date = models.DateTimeField
     creator = models.ForeignKey(User)
     iteration = models.ForeignKey(Iteration)
     totalTime = models.DurationField
 
 
 class DevelopmentSession(Session):
-    start_date = models.DateTimeField
     SLOC = models.IntegerField
-    sessionlast = models.DurationField
     def getSLOC (self,newSLOC):
         self.SLOC = newSLOC
 
@@ -86,4 +91,4 @@ class Defect(models.Model):
     iterationInjected = models.ForeignKey(Iteration,related_name='injected')
     iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
     desc = models.CharField(max_length=300)
-    status = models.IntegerField
+    status = models.BooleanField

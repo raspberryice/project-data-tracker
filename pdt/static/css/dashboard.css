@@ -87,6 +87,7 @@ body {
 /*button style */
 .btn-info.gradient {
   margin: 1pc;
+  width: 20%;
 }
 
 .btn-primary.firstrow {
