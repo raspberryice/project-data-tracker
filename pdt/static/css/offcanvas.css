@@ -78,6 +78,11 @@ footer {
   border-top-right-radius: 0;
 }
 
+/* modal */
+.modal-body {
+  text-align: center;
+}
+
 /* jumbotron timer */
 .jumbotron {
   width: 50%;
