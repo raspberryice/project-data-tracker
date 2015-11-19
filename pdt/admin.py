@@ -16,6 +16,7 @@ class UserAdmin(UserAdmin):
     inlines = (ProfileInline, )
 
 # Re-register UserAdmin
+admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Project)
 admin.site.register(Phase)
