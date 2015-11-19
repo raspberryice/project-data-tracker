@@ -16,12 +16,12 @@ class UserAdmin(UserAdmin):
     inlines = (ProfileInline, )
 
 # Re-register UserAdmin
-admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
-# Register your models here.
 admin.site.register(Project)
 admin.site.register(Phase)
 admin.site.register(Iteration)
 admin.site.register(Session)
 admin.site.register(Defect)
-admin.site.register(Profile)
+admin.site.register(DevelopmentSession)
+admin.site.register(DefectRemovalSession)
+admin.site.register(ManagementSession)
