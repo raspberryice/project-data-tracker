@@ -138,13 +138,15 @@ def mandashboard(req):
 	else:
 		return HttpResponseRedirect("/")
 
-##view report 
+##view report
 @login_required
-def manReport(req):
+def manReport(req, pid):
 	if req.user.profile.role == 2:
+		# get data of project(id = pid)
+
 		c=Context ({
 			'user':req.user,
-
+			'prjname': "Project 3",
 			})
 		return render_to_response("manreport.html",c)
 	else:
