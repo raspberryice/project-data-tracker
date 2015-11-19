@@ -10,11 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="{% static "favicon.ico" %}">
 
-    <title>Manager Dashboard - Project Data Tracker</title>
+    <title>View Report - Project Data Tracker</title>
 
     <!-- Bootstrap core CSS -->
     <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
 
@@ -67,51 +66,71 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
+            <li><a href="#">Overview </a></li>
+            <li class="active"><a href="#">Reports</a></li>
             <li><a href="#">Analytics</a></li>
             <li><a href="#">Export</a></li>
           </ul>
-          
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
-          <div class="row">
-          {% for prj in prjlist %}
-          <!-- Modal -->
-            <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">{{ prj.name }}</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>
-                      Project "{{ prj.name }}" is under Phase {{ prj.curphase }}, Iteration {{ prj.curitr }}. <br>
-                      Choose an action to perform, or click elsewhere to cancel.
-                    </p>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="btn-group btn-group-justified">
-                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow">Manage Project</button></div> <!-- post id={{prj.id}} to: /developer/createmng/ -->
-                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow">View Statistics</button></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          <h1 class="page-header">Report</h1>
+          
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/time-sm.png' %}" class="img-responsive" alt="time">
+              <h4>XXX h</h4>
+              <span class="text-muted">Total time spent</span>
             </div>
-            <!-- Card -->
-            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
-              <h3>{{ prj.name }}</h3>
-              <p>Phase {{ prj.curphase }}<br>Iteration {{ prj.curitr }} </p>
-            </button>
-          {% endfor %}
-          
-          </div><!--/row-->
-         
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/code-sm.png'%}" class="img-responsive" alt="code">
+              <h4>XXXX lines</h4>
+              <span class="text-muted">Total SLOC</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src= "{% static 'img/bug-sm.png'%}" class="img-responsive" alt="defect">
+              <h4>XX</h4>
+              <span class="text-muted">Total number of defects </span>
+            </div>
+          </div>
 
-          
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Total SLOC</td>
+                  <td>2,343</td>
+                  <td>5.7%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
         </div>
       </div>
     </div>

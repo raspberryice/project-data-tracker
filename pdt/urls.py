@@ -8,5 +8,6 @@ urlpatterns = [
 	url(r'developer/dashboard/$', devdashboard, name = 'devdashboard'),
 	url(r'developer/createdev/', beginDevelopSession, name = 'createdev'),
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
+	url(r'manager/report/$',manReport,name="manreport"),
 
 ]

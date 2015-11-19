@@ -91,13 +91,65 @@ def devdashboard(req):
 @login_required
 def mandashboard(req):
 	if req.user.profile.role == 2:
+		prjlist = [
+			{
+				'name': 'Project 1',
+				'id': 1001,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 2',
+				'id': 1002,
+				'curphase': 1,
+				'curitr': 2
+			},
+			{
+				'name': 'Project 3',
+				'id': 1003,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 4',
+				'id': 1004,
+				'curphase': 1,
+				'curitr': 2
+			},
+			{
+				'name': 'Project 5',
+				'id': 1005,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 6',
+				'id': 1006,
+				'curphase': 1,
+				'curitr': 2
+			},
+		]
 		c = Context({
 			'user': req.user,
-			'prjcount': 3,
+			'prjlist': prjlist,
+			'prjcount': 6,
 		})
 		return render_to_response("mandashboard.html", c)
 	else:
 		return HttpResponseRedirect("/")
+
+##view report 
+@login_required
+def manReport(req):
+	if req.user.profile.role == 2:
+		c=Context ({
+			'user':req.user,
+
+			})
+		return render_to_response("manreport.html",c)
+	else:
+	    return HttpResponseRedirect("/")
+
 
 @login_required
 def beginDevelopSession(request):
