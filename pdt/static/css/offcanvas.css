@@ -77,3 +77,19 @@ footer {
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
+
+/* jumbotron timer */
+.jumbotron {
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
+  border-bottom: 1px solid #e5e5e5;
+}
+.jumbotron .control {
+  margin-top: 1pc;
+}
+.jumbotron .btn {
+  padding: 14px 24px;
+  font-size: 21px;
+  margin: 1pc;
+}

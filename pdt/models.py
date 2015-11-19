@@ -67,7 +67,9 @@ class Session(models.Model):
 
 
 class DevelopmentSession(Session):
+    start_date = models.DateTimeField
     SLOC = models.IntegerField
+    sessionlast = models.DurationField
     def getSLOC (self,newSLOC):
         self.SLOC = newSLOC
 

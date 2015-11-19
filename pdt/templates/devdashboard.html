@@ -49,7 +49,7 @@
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
               <ul class="dropdown-menu">
-                <li class="dropdown-header">Signed in as <b>{{ user.username }}</b></li>
+                <li class="dropdown-header">Signed in as <strong>{{ user.username }}</strong></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="#">Edit Profile</a></li>
                 <li><a href="#">Change Password</a></li>
@@ -71,14 +71,20 @@
             <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
           </p>
           <div class="page-header">
+            {% if justcompleted %}
+            <div class="alert alert-success fade in">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>Success!</strong> You have completed a development session.
+            </div>
+            {% endif %}
             <h1 id="welcomemsg"><!--This welcome message may be replaced by work-related information.--></h1>
             <script type="text/javascript">
                 var d = new Date();
                 var n = d.getHours();
                 var msg;
-                if (n >= 0 && n <= 5) msg = "Have A Good Night!";
+                if (n >= 0 && n <= 5) msg = "Have a Good Night!";
                 else if (n < 12) msg = "An Energetic Morning!";
-                else if (n < 14) msg = "Maybe A Rest?";
+                else if (n < 14) msg = "Maybe a Rest?";
                 else if (n < 19) msg = "Good Afternoon!";
                 else msg = "Good Evening.";
                 document.getElementById("welcomemsg").innerHTML = msg;
@@ -170,6 +176,7 @@
     <!-- Placed at the end of the document so the pages load faster -->
     <!-- <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script> -->
     <!-- <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+    <!-- but the above cdn seems slow in HKU -->
     <script src="{% static "js/jquery.min.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
 

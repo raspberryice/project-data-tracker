@@ -5,7 +5,8 @@ from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
-from .models import Profile
+from .models import *
+from django.utils import timezone
 # Create your views here.
 
 def index(req):
@@ -81,6 +82,7 @@ def devdashboard(req):
 			'user': req.user,
 			'prjlist': prjlist,
 			'totprjcnt': 10, # total number of projects the developer attended
+			'justcompleted': (req.GET.get('prev', '') == '/developer/createdev/'),
 		})
 		return render_to_response("devdashboard.html", c)
 	else:
@@ -96,3 +98,24 @@ def mandashboard(req):
 		return render_to_response("mandashboard.html", c)
 	else:
 		return HttpResponseRedirect("/")
+
+@login_required
+def beginDevelopSession(request):
+	prjid = request.POST.get("prjid", -1)
+	if prjid != -1:
+		# create a development session
+		# ...
+		# pass the sessionid
+		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sessionid': 1023})
+		return render_to_response("devaction.html", c)
+	return HttpResponseRedirect("/")
+
+@login_required
+def endDevelopSession(request):
+	# do the saving
+	# s = SLOCSesson.objects.get(id = request.id)
+	# s.sessionlast = request.POST['time']
+	# s.SLOC = request.POST['SLOC']
+	# s.save()
+
+	return render_to_response('/developer/dashboard/?prev=/developer/createdev/')
