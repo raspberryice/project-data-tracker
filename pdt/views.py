@@ -5,7 +5,8 @@ from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
-from models import Profile
+from .models import *
+from django.utils import timezone
 # Create your views here.
 
 def index(req):
@@ -29,7 +30,7 @@ def login(req):
 		else:
 			return render_to_response("login.html", Context({'failed': True}))
 	else:
-		return render_to_response("login.html", Context({'logged_out': (req.REQUEST.get('prev', '') == '/auth/logout/')}))
+		return render_to_response("login.html", Context({'logged_out': (req.GET.get('prev', '') == '/auth/logout/')}))
 
 def logout(req):
 	log_out(req)
@@ -42,18 +43,46 @@ def devdashboard(req):
 		prjlist = [
 			{
 				'name': 'Project 1',
+				'id': 1001,
 				'curphase': 2,
 				'curitr': 3,
 			},
 			{
 				'name': 'Project 2',
+				'id': 1002,
 				'curphase': 1,
 				'curitr': 2
-			}
+			},
+			{
+				'name': 'Project 3',
+				'id': 1003,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 4',
+				'id': 1004,
+				'curphase': 1,
+				'curitr': 2
+			},
+			{
+				'name': 'Project 5',
+				'id': 1005,
+				'curphase': 2,
+				'curitr': 3,
+			},
+			{
+				'name': 'Project 6',
+				'id': 1006,
+				'curphase': 1,
+				'curitr': 2
+			},
 		]
 		c = Context({
 			'user': req.user,
 			'prjlist': prjlist,
+			'totprjcnt': 10, # total number of projects the developer attended
+			'justcompleted': (req.GET.get('prev', '') == '/developer/enddev/'),
 		})
 		return render_to_response("devdashboard.html", c)
 	else:
@@ -69,3 +98,26 @@ def mandashboard(req):
 		return render_to_response("mandashboard.html", c)
 	else:
 		return HttpResponseRedirect("/")
+
+@login_required
+def beginDevelopSession(request):
+	prjid = request.POST.get("prjid", -1)
+	if prjid != -1:
+		# create a development session
+		# ...
+		# pass the sessionid
+		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
+		return render_to_response("devaction.html", c)
+	return HttpResponseRedirect("/")
+
+@login_required
+def endDevelopSession(request):
+	# do the saving
+	# s = SLOCSesson.objects.get(id = request.id)
+	# s.sessionlast = request.POST['time']
+	# s.SLOC = request.POST['SLOC']
+	# s.save()
+	print("sid: " + request.POST['sid']) # development session id
+	print("sloc: " + request.POST['sloc'])
+	print("time: " + request.POST['time'])
+	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')

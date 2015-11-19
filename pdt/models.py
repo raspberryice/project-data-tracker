@@ -13,10 +13,10 @@ class Profile(models.Model):
     def __str__(self):
         return self.user.username + ": " + str(self.role)
 
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-       profile, created = Profile.objects.get_or_create(user=instance)
-
+# def create_user_profile(sender, instance, created, **kwargs):
+#     if created:
+#        profile, created = Profile.objects.get_or_create(user=instance) # cannot get??
+#
 # post_save.connect(create_user_profile, sender=User)
 
 class Project(models.Model):
@@ -67,7 +67,9 @@ class Session(models.Model):
 
 
 class DevelopmentSession(Session):
+    start_date = models.DateTimeField
     SLOC = models.IntegerField
+    sessionlast = models.DurationField
     def getSLOC (self,newSLOC):
         self.SLOC = newSLOC
 
