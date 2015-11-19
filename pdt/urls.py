@@ -7,6 +7,7 @@ urlpatterns = [
 	url(r'auth/logout/$', logout, name = 'logout'),
 	url(r'developer/dashboard/$', devdashboard, name = 'devdashboard'),
 	url(r'developer/createdev/', beginDevelopSession, name = 'createdev'),
+	url(r'developer/enddev/', endDevelopSession, name = 'enddev'),
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
 
 ]

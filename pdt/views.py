@@ -82,7 +82,7 @@ def devdashboard(req):
 			'user': req.user,
 			'prjlist': prjlist,
 			'totprjcnt': 10, # total number of projects the developer attended
-			'justcompleted': (req.GET.get('prev', '') == '/developer/createdev/'),
+			'justcompleted': (req.GET.get('prev', '') == '/developer/enddev/'),
 		})
 		return render_to_response("devdashboard.html", c)
 	else:
@@ -106,7 +106,7 @@ def beginDevelopSession(request):
 		# create a development session
 		# ...
 		# pass the sessionid
-		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sessionid': 1023})
+		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
 		return render_to_response("devaction.html", c)
 	return HttpResponseRedirect("/")
 
@@ -117,5 +117,7 @@ def endDevelopSession(request):
 	# s.sessionlast = request.POST['time']
 	# s.SLOC = request.POST['SLOC']
 	# s.save()
-
-	return render_to_response('/developer/dashboard/?prev=/developer/createdev/')
+	print("sid: " + request.POST['sid']) # development session id
+	print("sloc: " + request.POST['sloc'])
+	print("time: " + request.POST['time'])
+	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
