@@ -88,6 +88,30 @@ def devdashboard(req):
 	else:
 		return HttpResponseRedirect("/")
 
+
+@login_required
+def beginDevelopSession(request):
+	prjid = request.POST.get("prjid", -1)
+	if prjid != -1:
+		# create a development session
+		# ...
+		# pass the sessionid
+		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
+		return render_to_response("devaction.html", c)
+	return HttpResponseRedirect("/")
+
+@login_required
+def endDevelopSession(request):
+	# do the saving
+	# s = SLOCSesson.objects.get(id = request.id)
+	# s.sessionlast = request.POST['time']
+	# s.SLOC = request.POST['SLOC']
+	# s.save()
+	print("sid: " + request.POST['sid']) # development session id
+	print("sloc: " + request.POST['sloc'])
+	print("time: " + request.POST['time'])
+	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
+
 @login_required
 def mandashboard(req):
 	if req.user.profile.role == 2:
@@ -142,36 +166,44 @@ def mandashboard(req):
 @login_required
 def manReport(req, pid):
 	if req.user.profile.role == 2:
-		# get data of project(id = pid)
-
+		# projectid == pid
+		queryphase = req.GET.get('phase', 'Overall')
+		queryitr = req.GET.get('iteration', 'Overall')
 		c=Context ({
 			'user':req.user,
 			'prjname': "Project 3",
+			'curphase': queryphase,
+			'curitr': queryitr,
+			'totphase': 2,
+			'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
+			'totsloc': 2345,
+			'totslocesti': 35, # stands for 35%
+			'personmonths': 20,
+			'pmesti': 30,
+			'avesloc': 117,
 			})
 		return render_to_response("manreport.html",c)
 	else:
 	    return HttpResponseRedirect("/")
 
-
 @login_required
-def beginDevelopSession(request):
-	prjid = request.POST.get("prjid", -1)
-	if prjid != -1:
-		# create a development session
-		# ...
-		# pass the sessionid
-		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
-		return render_to_response("devaction.html", c)
-	return HttpResponseRedirect("/")
+def manProject(req, pid):
+	if req.user.profile.role == 2:
+		# get data of project(id = pid)
 
-@login_required
-def endDevelopSession(request):
-	# do the saving
-	# s = SLOCSesson.objects.get(id = request.id)
-	# s.sessionlast = request.POST['time']
-	# s.SLOC = request.POST['SLOC']
-	# s.save()
-	print("sid: " + request.POST['sid']) # development session id
-	print("sloc: " + request.POST['sloc'])
-	print("time: " + request.POST['time'])
-	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
+		c=Context ({
+			'user':req.user,
+			'prjname': "Project 3",
+			'curphase': 2,
+			'curitr': 3,
+			'tottime': 30, # days from project creation to today
+			'totsloc': 2345,
+			'totslocesti': 35, # stands for 35%
+			'personmonths': 20,
+			'pmesti': 30,
+			'avesloc': 117,
+
+			})
+		return render_to_response("manproject.html",c)
+	else:
+	    return HttpResponseRedirect("/")

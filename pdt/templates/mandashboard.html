@@ -36,14 +36,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project Data Tracker</a>
+          <a class="navbar-brand" href="/">Project Data Tracker</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -56,9 +52,6 @@
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
         </div>
       </div>
     </nav>
@@ -69,48 +62,55 @@
           <ul class="nav nav-sidebar">
             <li class="active"><a href="#">Ongoing Projects<span class="sr-only">(current)</span></a></li>
             <li><a href="#">All Projects</a></li>
-            <li><a href="#">New Project</a></li>
-            
+            <li><a href="#" data-toggle="modal" data-target="#createproject">New Project</a></li>
           </ul>
 
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">Dashboard</h1>
           <div class="row">
-          {% for prj in prjlist %}
-          <!-- Modal -->
-            <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
+            {% for prj in prjlist %}
+            <a type="button" class="btn btn-info btn-lg gradient" href="/manager/project/{{ prj.id }}/">
+              <h3>{{ prj.name }}</h3>
+              <p>Phase {{ prj.curphase }}<br>Iteration {{ prj.curitr }} </p>
+            </a>
+            {% endfor %}
+            <!-- Modal -->
+            <div id="createproject" class="modal fade" role="dialog">
               <div class="modal-dialog">
+
+                <!-- Modal content-->
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">{{ prj.name }}</h4>
+                    <h4 class="modal-title">Create New Project</h4>
                   </div>
-                  <div class="modal-body">
-                    <p>
-                      Project "{{ prj.name }}" is under Phase {{ prj.curphase }}, Iteration {{ prj.curitr }}. <br>
-                      Choose an action to perform, or click elsewhere to cancel.
-                    </p>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="btn-group btn-group-justified">
-                      <a href="#" class="btn btn-primary">Manage Project</a>
-                      <a href="/manager/report/{{ prj.id }}/" class="btn btn-primary">View Statistics</a>
+
+                  <form class="form-horizontal" role="form" method="post" action="/manager/newproject/">
+                    <div class="modal-body"> To be implemented...
+                      <!--
+                      <div class="form-group">
+                        <label class="control-label col-sm-4" for="sloc">SLOC:</label>
+                        <div class="col-sm-6">
+                          <input type="number" min="0" class="form-control" id="sloc" name="sloc" placeholder="Enter Source Line of Code" required autofocus>
+                        </div>
+                      </div> -->
                     </div>
-                  </div>
+                    <div class="modal-footer">
+                      <input type="hidden" id="sid" name="sid" value="{{ sid }}">
+                      <button type="submit" class="btn btn-success">Submit</button>
+                    </div>
+                  </form>
+
+
                 </div>
+
               </div>
             </div>
-            <!-- Card -->
-            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
-              <h3>{{ prj.name }}</h3>
-              <p>Phase {{ prj.curphase }}<br>Iteration {{ prj.curitr }} </p>
+            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#createproject">
+              <h1>+</h1>
+              <p>New Project</p>
             </button>
-          {% endfor %}
-          <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
-            <h1>+</h1>
-            <p>New Project</p>
-          </button>
           </div><!--/row-->
 
 

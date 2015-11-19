@@ -4,20 +4,20 @@ from django.contrib.auth.models import User
 
 from .models import *
 
-# Define an inline admin descriptor for Profile model
-# which acts a bit like a singleton
+# To Be Changed! Use User Groups.
 class ProfileInline(admin.StackedInline):
     model = Profile
     can_delete = False
     verbose_name_plural = 'profile'
 
 # Define a new User admin
+# To Be Changed! Use User Groups.
 class UserAdmin(UserAdmin):
     inlines = (ProfileInline, )
 
 # Re-register UserAdmin
 admin.site.unregister(User)
-admin.site.register(User, UserAdmin)
+admin.site.register(User, UserAdmin) # To Be Changed! Use User Groups.
 admin.site.register(Project)
 admin.site.register(Phase)
 admin.site.register(Iteration)

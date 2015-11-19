@@ -9,6 +9,7 @@ urlpatterns = [
 	url(r'developer/createdev/', beginDevelopSession, name = 'createdev'),
 	url(r'developer/enddev/', endDevelopSession, name = 'enddev'),
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
-	url(r'manager/report/(?P<pid>\d+)/$',manReport,name="manreport"),
+	url(r'manager/project/(?P<pid>\d+)/$',manProject,name="manproject"),
+	url(r'manager/project/(?P<pid>\d+)/report/$',manReport,name="manreport"),
 
 ]

@@ -84,10 +84,29 @@ body {
   margin-top: 0;
 }
 
+
+/*
+ * Placeholder dashboard ideas
+ */
+
+.placeholders {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.placeholders h4 {
+  margin-bottom: 0;
+}
+.placeholder {
+  margin-bottom: 20px;
+}
+.placeholder img {
+  display: inline-block;
+  border-radius: 50%;
+}
+
 /*button style */
 .btn-info.gradient {
   margin: 1pc;
-  width: 20%;
 }
 
 .btn-primary.firstrow {
@@ -100,4 +119,18 @@ body {
   margin-top: -1px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.page-header .text-small {
+  font-size: small;
+  font-style: italic;
+}
+
+/* for newiteration */
+.hoverlight:hover {
+  color: red;
+}
+
+#latestActivity {
+  height: 250px;
 }
