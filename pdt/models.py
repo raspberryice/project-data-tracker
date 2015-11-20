@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User,AbstractBaseUser
 
 class Project(models.Model):
+    #creator = models.ForeignKey(User, related_name='creator')
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
     status = models.IntegerField
@@ -11,6 +12,7 @@ class Project(models.Model):
 
     def __str__ (self):
         return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(User)
     ROLE_NAMES = (
@@ -20,7 +22,7 @@ class Profile(models.Model):
     role = models.IntegerField(choices = ROLE_NAMES)
     def __str__(self):
         return self.user.username + ": " + str(self.role)
-        
+
 class Phase(models.Model):
     PHASE_NAMES = (
         (1,'Inception'),
@@ -34,18 +36,22 @@ class Phase(models.Model):
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
+    # start_date = models.DateTimeField()
+    # close_date = models.DateTimeField()
     def __str__(self):
-       return self.no
+       return self.project.name + ', ' + self.PHASE_NAMES[self.no-1][1]
 
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
-    no= models.IntegerField()
+    no = models.IntegerField()
     status = models.IntegerField()
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
+    # start_date = models.DateTimeField()
+    # close_date = models.DateTimeField()
     def __str__(self):
-        return self.no
+        return self.phase.project.name + ', Phase ' + str(self.phase.no) + ', Iteration ' + str(self.no)
 
 class SLOCSession(models.Model):
     iteration = models.ForeignKey(Iteration)
@@ -66,7 +72,7 @@ class ManageSession(models.Model):
     iteration = models.ForeignKey(Iteration)
     manager = models.ForeignKey(User)
     start_date = models.DateTimeField(auto_now_add=True)
-    sessionlast = models.IntegerField
+    sessionlast = models.IntegerField()
 
 # class Defects(models.Model):
 #     session=models.ForeignKey(DefectSession)
@@ -79,5 +85,3 @@ class ManageSession(models.Model):
 class Participate(models.Model):
     developer = models.ForeignKey(User)
     project = models.ForeignKey(Project)
-
-

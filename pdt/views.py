@@ -12,9 +12,7 @@ USER_MANAGER = 2
 
 def index(request):
 	if request.user.is_authenticated():
-		return HttpResponse("uid %d" % request.user.id)
-		if request.user.Profile.role == USER_DEVELOPER:
-			return HttpResponse("Haha")
+		if request.user.profile.role == USER_DEVELOPER:
 			return HttpResponseRedirect("/developer/dashboard/")
 		elif request.user.profile.role == USER_MANAGER:
 			return HttpResponseRedirect("/manager/dashboard/")
@@ -39,7 +37,7 @@ def verify(request):
 			else:
 				raise Http404("Not a valid user.")
 		else:
-			return render_to_response("login.html",{'failed':True})
+			return render_to_response("login.html",{'failed':1})
 	else:
 		pass
 
@@ -67,20 +65,20 @@ def devdashboard(request):
 			'user':request.user,
 			'prjlist':itera,
 			'totprjcnt':len(project),
-			'justcompleted':(request.GET.get('prev','')=='/developer/enddev')
+			'justcompleted':(request.GET.get('prev','')=='/developer/enddev/')
 			})
 		return render_to_response("devdashboard.html",c)
 	else:
-		raise Http404("User is not a developer.")
+		return HttpResponseRedirect('/')
 
 @login_required
 def mandashboard(request):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.all()
 		itera = list()
 		for item in p:
-			ph = Phase.objects.get(project_id = item.id)
-			itera.append(Iteration.objects.get(phase_id = ph.id))
+			ph = Phase.objects.get(project_id = item.id, status = 1)
+			itera += Iteration.objects.filter(phase_id = ph.id, status = 1)
 		c = Context({
 			'user':request.user,
 			'prjlist':itera,
@@ -103,8 +101,14 @@ def beginDevelopeSession(request):
 	s.SLOC = 0
 	s.sessionlast = 0
 	s.save()
+	NAMES = (
+        (1,'Inception'),
+        (2,'Elaboration'),
+        (3,'Construction'),
+        (4,'Migration'),
+    )
 	#return HttpResponse("%d   %d"%(s.id,int(request.session['Session'])))
-	c = Context({'prj':project,'phase':phase,'itrno':iteration.id,'user':request.user,'sid':s.id})
+	c = Context({'prjname':project.name,'phasename':NAMES[phase.no-1][1],'itrno':iteration.id,'user':request.user,'sid':s.id})
 	return render_to_response("devaction.html",c)
 
 @login_required
@@ -175,7 +179,7 @@ def getAllSessionOfAUserOnSLOC(request):
 
 @login_required
 def manReport(request,pid):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.get(id = int(pid))
 		iters = []
 		sloc = 0
@@ -190,7 +194,7 @@ def manReport(request,pid):
 		if qphase == 'Overall':
 			phases = Phase.objects.filter(project_id = p.id).all()
 		else:
-			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
+			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)).all()
 		for p1 in phases:
 			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
 			if qphase=='Overall':
@@ -198,7 +202,7 @@ def manReport(request,pid):
 			if qiter=='Overall':
 				iteration = Iteration.objects.filter(phase_id = p1.id).all()
 			else:
-				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)-1).all()
+				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)).all()
 			for i in iteration:
 				sloc = 0
 				time = 0
@@ -212,14 +216,14 @@ def manReport(request,pid):
 				i.save()
 				totsloc = totsloc+sloc
 				tottime = tottime+time
-		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		c = Context({'project':p,  'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manreport.html',c)
 	else:
 		return HttpResponseRedirect('/')
 
 @login_required
 def manProject(request,pid):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.get(id = int(pid))
 		iters = []
 		sloc = 0
@@ -228,13 +232,15 @@ def manProject(request,pid):
 		qphase = request.GET.get('phase','Overall')
 		totph = len(Phase.objects.filter(project_id = p.id).all())
 		qiter = request.GET.get('iteration','Overall')
+		pha = Phase.objects.get(project_id = p.id, status = 1)
+		it = Iteration.objects.get(phase = pha, status = 1)
 		totsloc = 0
 		tottime = 0
 		totit = 0
 		if qphase == 'Overall':
 			phases = Phase.objects.filter(project_id = p.id).all()
 		else:
-			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
+			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)).all()
 
 		for p1 in phases:
 			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
@@ -243,7 +249,7 @@ def manProject(request,pid):
 			if qiter=='Overall':
 				iteration = Iteration.objects.filter(phase_id = p1.id).all()
 			else:
-				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)-1).all()
+				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)).all()
 			for i in iteration:
 				sloc = 0
 				time = 0
@@ -258,7 +264,7 @@ def manProject(request,pid):
 				totsloc = totsloc+sloc
 				tottime = tottime+time
 
-		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		c = Context({'prjname':p.name, 'tottime':30,'totph':totph ,'curphase':pha.no,'curitr':it.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manproject.html',c)
 	else:
 		return HttpResponseRedirect('/')
