@@ -109,7 +109,8 @@ def endDevelopSession(request):
 	# s.save()
 	print("sid: " + request.POST['sid']) # development session id
 	print("sloc: " + request.POST['sloc'])
-	print("time: " + request.POST['time'])
+	print("time: " + request.POST['time'] + ", type: ")
+	print(type(request.POST['time']))
 	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
 
 @login_required
