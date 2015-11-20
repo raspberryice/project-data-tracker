@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
-from models import SLOCSession,ManageSession,Participate,Phase,Iteration,Project
+from .models import SLOCSession,ManageSession,Participate,Phase,Iteration,Project
 # Create your views here.
 USER_DEVELOPER = 1
 USER_MANAGER = 2
@@ -55,14 +55,14 @@ def devdashboard(request):
 		itera = list()
 		phase = list()
 		for item in p:
-			pid = item.project.id 
+			pid = item.project.id
 			project.append(item.project)
 			ph = Phase.objects.get(project_id = pid)
 			i = Iteration.objects.get(phase = ph)
 			itera.append(i)
 			phase.append(ph)
 		#return HttpResponse("uid %d" % request.user.id)
-      
+
 		c = Context({
 			'user':request.user,
 			'prjlist':itera,
@@ -112,7 +112,6 @@ def endDevelopeSession(request):
 	s = SLOCSession.objects.get(id = int(request.POST['sid']))
 	t = str(request.POST['time'])
 	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
-	print t, t[6:8]
 	s.sessionlast = ts
 	s.SLOC = int(request.POST['sloc'])
 	s.save()
@@ -192,7 +191,6 @@ def manReport(request,pid):
 			phases = Phase.objects.filter(project_id = p.id).all()
 		else:
 			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
-		print totph
 		for p1 in phases:
 			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
 			if qphase=='Overall':
@@ -214,7 +212,6 @@ def manReport(request,pid):
 				i.save()
 				totsloc = totsloc+sloc
 				tottime = tottime+time
-		print totit
 		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manreport.html',c)
 	else:
@@ -238,7 +235,7 @@ def manProject(request,pid):
 			phases = Phase.objects.filter(project_id = p.id).all()
 		else:
 			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
-		print totph
+
 		for p1 in phases:
 			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
 			if qphase=='Overall':
@@ -260,16 +257,8 @@ def manProject(request,pid):
 				i.save()
 				totsloc = totsloc+sloc
 				tottime = tottime+time
-		print totit
+
 		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manproject.html',c)
 	else:
 		return HttpResponseRedirect('/')
-
-
-
-
-
-
-
-
