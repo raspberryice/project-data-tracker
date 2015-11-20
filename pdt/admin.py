@@ -1,11 +1,21 @@
 from django.contrib import admin
-from .models import Project,Phase,Iteration,Session,Defect,DevelopmentSession,DefectRemovalSession,ManagementSession
+from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.models import User
+
+from .models import *
+
+# Define an inline admin descriptor for Profile model
+# which acts a bit like a singleton
+class ProfileInline(admin.StackedInline):
+    model = Profile
+    can_delete = False
+    verbose_name_plural = 'profile'
+
+# Define a new User admin
+class UserAdmin(UserAdmin):
+    inlines = (ProfileInline, )
 
 admin.site.register(Project)
 admin.site.register(Phase)
 admin.site.register(Iteration)
-admin.site.register(Session)
-admin.site.register(Defect)
-admin.site.register(DevelopmentSession)
-admin.site.register(DefectRemovalSession)
-admin.site.register(ManagementSession)
+
