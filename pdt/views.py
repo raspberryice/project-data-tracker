@@ -84,7 +84,7 @@ def devdashboard(req):
 			'totprjcnt': 10, # total number of projects the developer attended
 			'justcompleted': (req.GET.get('prev', '') == '/developer/enddev/'),
 		})
-		return render_to_response("devdashboard.html", c)
+		return render_to_response("dev-dashboard.html", c)
 	else:
 		return HttpResponseRedirect("/")
 
@@ -97,7 +97,7 @@ def beginDevelopSession(request):
 		# ...
 		# pass the sessionid
 		c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
-		return render_to_response("devaction.html", c)
+		return render_to_response("dev-action.html", c)
 	return HttpResponseRedirect("/")
 
 @login_required
