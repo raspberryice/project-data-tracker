@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{# This is a template with a nav bar and a left sidebar #}
+
+{% block css %}
+<!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+{% endblock css %}
+{% block content %}
+{%block nav %}
+<nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Project Data Tracker</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Signed in as <strong>{{ user.username }}</strong></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Edit Profile</a></li>
+                <li><a href="#">Change Password</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/auth/logout/">Sign Out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+{% endblock nav %}
+
+{% block modal %}
+{% endblock modal %}
+
+<div class="container-fluid" >
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+              {% block sidebar %}
+              {# list the contents of the sidebar here #}
+              {% endblock sidebar %}
+          </ul>
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        {% block main %}
+        {% endblock main %}
+        </div>
+    </div>
+
+</div>
+{% endblock content %}
+
+{%block js %}
+{% endblock js %}
+

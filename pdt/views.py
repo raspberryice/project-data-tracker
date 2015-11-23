@@ -159,7 +159,7 @@ def mandashboard(req):
 			'prjlist': prjlist,
 			'prjcount': 6,
 		})
-		return render_to_response("mandashboard.html", c)
+		return render_to_response("man-dashboard.html", c)
 	else:
 		return HttpResponseRedirect("/")
 
@@ -205,6 +205,6 @@ def manProject(req, pid):
 			'avesloc': 117,
 
 			})
-		return render_to_response("manproject.html",c)
+		return render_to_response("man-project.html",c)
 	else:
 	    return HttpResponseRedirect("/")
