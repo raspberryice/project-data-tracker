@@ -1,0 +1,93 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+ <title>View Report - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+  <li><a href="../">Overview</a></li>
+  <li class="active"><a href="#">Reports</a></li>
+  <li><a href="#">Defects</a></li>
+  <li><a href="#">Settings</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <!-- An Ugly Implementation To Be Improved In Next Iteration -->
+          <div class="row">
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Phase: {{ curphase }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase=Overall">Overall</a></li>
+                {% with ''|center:totphase as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
+              </ul>
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Iteration: {{ curitr }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
+                {% with ''|center:totitr as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
+
+              </ul>
+            </div>
+          </div><!-- /.row -->
+
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivered SLOC</td>
+                  <td>{{ totsloc }}</td>
+                  <td>{{ totslocesti }}</td>
+                </tr>
+                <tr>
+                  <td>Effort(person-months)</td>
+                  <td>{{ personmonths }}</td>
+                  <td>{{ pmesti }}</td>
+                </tr>
+                <tr>
+                  <td>Delivered SLOC per person-month</td>
+                  <td>{{ avesloc }}</td>
+                  <td>Not Applicable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+{% endblock main %}

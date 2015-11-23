@@ -183,7 +183,7 @@ def manReport(req, pid):
 			'pmesti': 30,
 			'avesloc': 117,
 			})
-		return render_to_response("manreport.html",c)
+		return render_to_response("man-report.html",c)
 	else:
 	    return HttpResponseRedirect("/")
 
