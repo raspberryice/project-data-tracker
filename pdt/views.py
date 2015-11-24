@@ -139,6 +139,27 @@ def endDefectSession(request):
     # save session
     return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddef/')
 
+
+@login_required
+def beginManageSession(request):
+    pid = request.POST['prjid']
+    # project = get_object_or_404(Project, pk=pid)
+    # create session
+    # add session to project's current iteration
+    # pass the session id
+    c = {
+        'prjname': "Project 1",
+        'phasename': "Elaboration",
+        'itrno': 3,
+        'sid': 1011,
+    }
+    return render(request, "dev-manage.html", c)
+
+@login_required
+def endManageSession(request):
+     # save session
+    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/endman/')
+
 @login_required
 def mandashboard(req):
     if req.user.profile.role == 2:

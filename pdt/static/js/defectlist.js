@@ -9,3 +9,9 @@ function markAsRemoved(e){
     removedList.appendChild(listItem);
 
 }
+function addDefect(){
+//create defect
+//save in local storage
+}
+
+
