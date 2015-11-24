@@ -86,7 +86,7 @@
                 <h4 class="modal-title">Defect Removal Summary</h4>
               </div>
 
-              <form class="form-horizontal" role="form" method="post" action="/developer/enddev/">
+              <form class="form-horizontal" role="form" method="post" action="/developer/endrem/">
                 <div class="modal-body">
                   <div class="form-group">
                     <label class="control-label col-sm-4" for="time">Time:</label>
@@ -138,11 +138,11 @@
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
-        <ul class="list-group">
+        <ul class="list-group"  >
           <li class="list-group-item">
               <span>Requirements Change</span>
               <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">Report</button>
-              <button class="btn btn-success">Removed</button>
+              <button class="btn btn-success" onclick="markAsRemoved(event)">Removed</button>
           </li>
           <li class="list-group-item">Defect 2</li>
           <li class="list-group-item">Defect 3</li>
@@ -153,7 +153,7 @@
     <br>
         <div class="panel-group" role="tablist">
     <div class="panel panel-default">
-      <div class="panel-heading" role="tab" id="collapseListGroupHeading2">
+      <div class="panel-heading" role="tab" id="removedListHeading">
         <h4 class="panel-title">
           <a class="" role="button" data-toggle="collapse" href="#removedList" aria-expanded="false" aria-controls="removedList">
            Removed Defects
@@ -161,10 +161,10 @@
         </h4>
       </div>
       <div id="removedList" class="panel-collapse collapse" role="tabpanel" aria-labelledby="removedListHeading" aria-expanded="false">
-        <ul class="list-group">
-          <li class="list-group-item">Defect 1</li>
-          <li class="list-group-item">Defect 2</li>
-          <li class="list-group-item">Defect 3</li>
+        <ul class="list-group" >
+            <li class="list-group-item">
+                Defect 1
+            </li>
         </ul>
       </div>
     </div>
@@ -178,5 +178,6 @@
 
 {%block js %}
     <script src="{% static 'js/timer.js' %}"></script>
+    <script src="{% static 'js/defectlist.js' %}"></script>
 {% endblock js %}
 
