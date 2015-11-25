@@ -12,9 +12,7 @@ USER_MANAGER = 2
 
 def index(request):
 	if request.user.is_authenticated():
-		return HttpResponse("uid %d" % request.user.id)
-		if request.user.Profile.role == USER_DEVELOPER:
-			return HttpResponse("Haha")
+		if request.user.profile.role == USER_DEVELOPER:
 			return HttpResponseRedirect("/developer/dashboard/")
 		elif request.user.profile.role == USER_MANAGER:
 			return HttpResponseRedirect("/manager/dashboard/")
@@ -55,14 +53,15 @@ def devdashboard(request):
 		itera = list()
 		phase = list()
 		for item in p:
+			if not item.project.status:
+				continue;
 			pid = item.project.id 
 			project.append(item.project)
-			ph = Phase.objects.get(project_id = pid)
-			i = Iteration.objects.get(phase = ph)
+			ph = Phase.objects.get(project_id = pid,status = True)
+			i = Iteration.objects.get(phase = ph,status = True)
 			itera.append(i)
 			phase.append(ph)
 		#return HttpResponse("uid %d" % request.user.id)
-      
 		c = Context({
 			'user':request.user,
 			'prjlist':itera,
@@ -75,12 +74,14 @@ def devdashboard(request):
 
 @login_required
 def mandashboard(request):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.all()
 		itera = list()
 		for item in p:
-			ph = Phase.objects.get(project_id = item.id)
-			itera.append(Iteration.objects.get(phase_id = ph.id))
+			if not item.status: #ongoing project
+				continue
+			ph = Phase.objects.get(project_id = item.id,status = True)
+			itera.append(Iteration.objects.get(phase_id = ph.id,status = True))
 		c = Context({
 			'user':request.user,
 			'prjlist':itera,
@@ -95,8 +96,8 @@ def beginDevelopeSession(request):
 	#return HttpResponse("hahh")
 	s = SLOCSession(start_date=timezone.now())
 	project = Project.objects.get(id = int(request.POST['prjid']))
-	phase = Phase.objects.get(project_id = project.id)
-	iteration = Iteration.objects.get(phase_id = phase.id)
+	phase = Phase.objects.get(project_id = project.id,status = True)
+	iteration = Iteration.objects.get(phase_id = phase.id,status = True)
 	#return HttpResponse(iteration.id)
 	s.iteration_id = iteration.id
 	s.developer_id = request.user.id
@@ -104,7 +105,7 @@ def beginDevelopeSession(request):
 	s.sessionlast = 0
 	s.save()
 	#return HttpResponse("%d   %d"%(s.id,int(request.session['Session'])))
-	c = Context({'prj':project,'phase':phase,'itrno':iteration.id,'user':request.user,'sid':s.id})
+	c = Context({'prj':project,'phase':phase,'itrno':iteration.no,'user':request.user,'sid':s.id})
 	return render_to_response("devaction.html",c)
 
 @login_required
@@ -112,18 +113,26 @@ def endDevelopeSession(request):
 	s = SLOCSession.objects.get(id = int(request.POST['sid']))
 	t = str(request.POST['time'])
 	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
-	print t, t[6:8]
 	s.sessionlast = ts
+	i = Iteration.objects.get(id = s.iteration_id)
+	p = Phase.objects.get(id = i.phase_id)
+	pj = Project.objects.get(id = p.project_id)
+	i.totalTime = i.totalTime + ts
+	i.totalSLOC = i.totalSLOC + int(request.POST['sloc'])
+	p.totalTime = p.totalTime + ts
+	p.totalSLOC = p.totalSLOC + int(request.POST['sloc'])
+	pj.totalTime = pj.totalTime + ts
+	pj.totalSLOC = pj.totalSLOC + int(request.POST['sloc'])  
 	s.SLOC = int(request.POST['sloc'])
 	s.save()
 	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
 
-def beginDefectSession(request):
-	s = DefectSession(start_data = timezone.now(),defectno = 0,sessionlast = 0)
-	s.interation = int(request.session['iteration'])
-	s.developer = int(request.session['user'])
-	s.save()
-	return render_to_response("defectsession.html")
+# def beginDefectSession(request):
+# 	s = DefectSession(start_data = timezone.now(),defectno = 0,sessionlast = 0)
+# 	s.interation = int(request.session['iteration'])
+# 	s.developer = int(request.session['user'])
+# 	s.save()
+# 	return render_to_response("defectsession.html")
 
 # def addDefect(request):
 # 	s = DefectSession.objects.get(id = request.POST['id'])
@@ -163,12 +172,6 @@ def getAllSessionOfAIterationOnSLOC(request):
 # 	iid = int(request.POST['iteration'])
 # 	session_set = DefectSession.objects.get(iteration = iid)
 # 	return render_to_response("defectmanageiter.html")
-
-def getAllSessionOfAUserOnSLOC(request):
-	 uid = int(request.POST['developer'])
-	 session_set = SLOCSession.objects.get(developer = uid)
-	 return render_to_response("slocmanagedev.html")
-
 # def getAllSessionOfAUserOnDefect(request):
 # 	 uid = int(request.POST['developer'])
 # 	 session_set = DefectSession.objects.get(developer = uid)
@@ -176,92 +179,52 @@ def getAllSessionOfAUserOnSLOC(request):
 
 @login_required
 def manReport(request,pid):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.get(id = int(pid))
-		iters = []
-		sloc = 0
-		time = 0
-		pha = []
 		qphase = request.GET.get('phase','Overall')
 		totph = len(Phase.objects.filter(project_id = p.id).all())
 		qiter = request.GET.get('iteration','Overall')
-		totsloc = 0
-		tottime = 0
 		totit = 0
 		if qphase == 'Overall':
 			phases = Phase.objects.filter(project_id = p.id).all()
+			totsloc = p.totalSLOC
+			time = p.totalTime
 		else:
-			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
-		print totph
-		for p1 in phases:
-			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
-			if qphase=='Overall':
-				totit = 0
-			if qiter=='Overall':
-				iteration = Iteration.objects.filter(phase_id = p1.id).all()
+			oldphase = Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all()
+			totsloc = 0
+			time = 0
+			for ph in oldphase:
+				totsloc += ph.totalSLOC
+				time += ph.totalTime
+			nowphase = Phase.objects.get(project_id = p.id,no = int(qphase))
+			totit = len(Iteration.objects.filter(phase_id = nowphase.id))
+			if qiter== 'Overall':
+				totsloc += nowphase.totalSLOC
+				time += nowphase.totalTime
 			else:
-				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)-1).all()
-			for i in iteration:
-				sloc = 0
-				time = 0
-				iters.append(i)
-				session = SLOCSession.objects.filter(iteration_id = i.id).all()
-				for s in session:
-					sloc = sloc + int(s.SLOC)
-					time = time + int(s.sessionlast)
-				i.totalSLOC = sloc
-				i.totalTime = time
-				i.save()
-				totsloc = totsloc+sloc
-				tottime = tottime+time
-		print totit
-		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+				iteration_list = Iteration.objects.filter(phase_id = nowphase.id,no__lt = int(qiter)).all()
+				for itera in iteration_list:
+					totsloc += itera.totalSLOC
+					time += itera.totalTime
+		c = Context({'prhname':p.name, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manreport.html',c)
 	else:
 		return HttpResponseRedirect('/')
 
 @login_required
 def manProject(request,pid):
-	if request.user.profile.role == USER_DEVELOPER:
+	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.get(id = int(pid))
-		iters = []
-		sloc = 0
-		time = 0
-		pha = []
-		qphase = request.GET.get('phase','Overall')
-		totph = len(Phase.objects.filter(project_id = p.id).all())
-		qiter = request.GET.get('iteration','Overall')
-		totsloc = 0
-		tottime = 0
+		curphase = Phase.objects.get(project_id  =p.id,status = True)
+		curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
+		phase_list = Phase.objects.filter(project_id = p.id).all()
+		totph = len(phase_list)
 		totit = 0
-		if qphase == 'Overall':
-			phases = Phase.objects.filter(project_id = p.id).all()
-		else:
-			phases = Phase.objects.filter(project_id = p.id,no = int(qphase)+1).all()
-		print totph
-		for p1 in phases:
-			totit = len(Iteration.objects.filter(phase_id = p1.id).all())
-			if qphase=='Overall':
-				totit = 0
-			if qiter=='Overall':
-				iteration = Iteration.objects.filter(phase_id = p1.id).all()
-			else:
-				iteration = Iteration.objects.filter(phase_id = p1.id,no = int(qiter)-1).all()
-			for i in iteration:
-				sloc = 0
-				time = 0
-				iters.append(i)
-				session = SLOCSession.objects.filter(iteration_id = i.id).all()
-				for s in session:
-					sloc = sloc + int(s.SLOC)
-					time = time + int(s.sessionlast)
-				i.totalSLOC = sloc
-				i.totalTime = time
-				i.save()
-				totsloc = totsloc+sloc
-				tottime = tottime+time
-		print totit
-		c = Context({'project':p, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		for ph in phase_list:
+			totit = totit + len(Iteration.objects.filter(phase_id = ph.id).all())
+		time = p.totalTime
+		totsloc  = p.totalSLOC
+		c = Context({'prjname':p.name, 'totph':totph ,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manproject.html',c)
 	else:
 		return HttpResponseRedirect('/')

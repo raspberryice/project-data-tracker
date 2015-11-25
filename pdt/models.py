@@ -4,10 +4,10 @@ from django.contrib.auth.models import User,AbstractBaseUser
 class Project(models.Model):
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
-    status = models.IntegerField
-    totalTime = models.IntegerField
-    totalSLOC = models.IntegerField
-    totalDefects =models.IntegerField
+    status = models.BooleanField()
+    totalTime = models.IntegerField()
+    totalSLOC = models.IntegerField()
+    totalDefects =models.IntegerField()
 
     def __str__ (self):
         return self.name
@@ -30,22 +30,22 @@ class Phase(models.Model):
     )
     project = models.ForeignKey(Project)
     no = models.IntegerField(choices=PHASE_NAMES,default=1)
-    status = models.IntegerField()
+    status = models.BooleanField()
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
     def __str__(self):
-       return self.no
+       return self.project.name+"-"+str(self.no)
 
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
     no= models.IntegerField()
-    status = models.IntegerField()
+    status = models.BooleanField()
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
     def __str__(self):
-        return self.no
+        return self.phase.project.name+"-"+str(self.phase.no)+"-"+str(self.no)
 
 class SLOCSession(models.Model):
     iteration = models.ForeignKey(Iteration)

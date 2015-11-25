@@ -10,11 +10,10 @@
     <meta name="author" content="">
     <link rel="icon" href="{% static "favicon.ico" %}">
 
-    <title>Manager Dashboard - Project Data Tracker</title>
+    <title>View Report - Project Data Tracker</title>
 
     <!-- Bootstrap core CSS -->
     <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Custom styles for this template -->
     <link href="{% static "css/dashboard.css" %}" rel="stylesheet">
 
@@ -36,14 +35,10 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Project Data Tracker</a>
+          <a class="navbar-brand" href="/">Project Data Tracker</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">Dashboard</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Help</a></li>
             <li class="dropdown">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
               <ul class="dropdown-menu">
@@ -56,9 +51,6 @@
               </ul>
             </li>
           </ul>
-          <form class="navbar-form navbar-right">
-            <input type="text" class="form-control" placeholder="Search...">
-          </form>
         </div>
       </div>
     </nav>
@@ -67,51 +59,90 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview<span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+            <li><a href="../">Overview</a></li>
+            <li class="active"><a href="#">Reports</a></li>
+            <li><a href="#">Defects</a></li>
+            <li><a href="#">Settings</a></li>
           </ul>
-
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
+          <!-- An Ugly Implementation To Be Improved In Next Iteration -->
           <div class="row">
-          {% for prj in prjlist %}
-          <!-- Modal -->
-            <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">{{ prj.name }}</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>
-                      Project "{{ prj.phase.project.name }}" is under Phase {{ prj.phase.no }}, Iteration {{ prj.no }}. <br>
-                      Choose an action to perform, or click elsewhere to cancel.
-                    </p>
-                  </div>
-                  <div class="modal-footer">
-                    <div class="btn-group btn-group-justified">
-                      <a href="#" class="btn btn-primary">Manage Project</a>
-                      <a href="/manager/project/{{ prj.phase.project.id }}/" class="btn btn-primary">View Statistics</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Phase: {{ curphase }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase=Overall">Overall</a></li>
+                {% with ''|center:totph as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
+              </ul>
             </div>
-            <!-- Card -->
-            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
-              <h3>{{ prj.phase.project.name }}</h3>
-              <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
-            </button>
-          {% endfor %}
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Iteration: {{ curitr }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
+                {% with ''|center:totitr as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Iteration {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
 
-          </div><!--/row-->
+              </ul>
+            </div>
+          </div><!-- /.row -->
 
-
-
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivered SLOC</td>
+                  <td>{{ totsloc }}</td>
+                  <td>{{ totph }}</td>
+                </tr>
+                <tr>
+                  <td>Effort(person-months)</td>
+                  <td>{{ personmonths }}</td>
+                  <td>{{ pmesti }}</td>
+                </tr>
+                <tr>
+                  <td>Delivered SLOC per person-month</td>
+                  <td>{{ avesloc }}</td>
+                  <td>Not Applicable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>33</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
         </div>
       </div>
     </div>

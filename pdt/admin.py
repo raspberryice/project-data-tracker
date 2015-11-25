@@ -14,8 +14,9 @@ class ProfileInline(admin.StackedInline):
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (ProfileInline, )
-
+admin.site.unregister(User)
+admin.site.register(User,UserAdmin)
 admin.site.register(Project)
+admin.site.register(Participate)
 admin.site.register(Phase)
 admin.site.register(Iteration)
-
