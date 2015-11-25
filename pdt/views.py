@@ -12,6 +12,8 @@ USER_MANAGER = 2
 
 def index(request):
 	if request.user.is_authenticated():
+		if request.user.is_staff:
+			return HttpResponseRedirect("/admin")
 		if request.user.profile.role == USER_DEVELOPER:
 			return HttpResponseRedirect("/developer/dashboard/")
 		elif request.user.profile.role == USER_MANAGER:
@@ -125,6 +127,9 @@ def endDevelopeSession(request):
 	pj.totalSLOC = pj.totalSLOC + int(request.POST['sloc'])  
 	s.SLOC = int(request.POST['sloc'])
 	s.save()
+	i.save()
+	p.save()
+	pj.save()
 	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
 
 # def beginDefectSession(request):

@@ -8,7 +8,8 @@ class Project(models.Model):
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects =models.IntegerField()
-
+    slocestimate = models.IntegerField()
+    efforestimate = models.IntegerField()
     def __str__ (self):
         return self.name
 class Profile(models.Model):
