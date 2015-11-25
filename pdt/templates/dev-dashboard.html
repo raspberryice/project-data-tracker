@@ -1,0 +1,87 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+{% block sidebar %}
+<li>Projects</li>
+<li class="active"><a href ="#" >Ongoing Projects <span class="badge">{{ prjlist|length }}</span></a></li>
+<li><a href ="#">All Projects</a></li>
+
+<li>Activities</li>
+<li><a href="#">Summary</a></li>
+<li> <a href="#">Development Sessions</a></li>
+<li><a href="#" >Defect Removal Sessions</a></li>
+<li> <a href="#">Management Sessions</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <p class="pull-right visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+          </p>
+          <div class="page-header">
+            {% if justcompleted %}
+            <div class="alert alert-success fade in">
+              <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+              <strong>Success!</strong> You have completed a development session.
+            </div>
+            {% endif %}
+            <h1 id="welcomemsg"><!--This welcome message may be replaced by work-related information.--></h1>
+            <script type="text/javascript">
+                var d = new Date();
+                var n = d.getHours();
+                var msg;
+                if (n >= 0 && n <= 5) msg = "Have a Good Night!";
+                else if (n < 12) msg = "An Energetic Morning!";
+                else if (n < 14) msg = "Maybe a Rest?";
+                else if (n < 19) msg = "Good Afternoon!";
+                else msg = "Good Evening.";
+                document.getElementById("welcomemsg").innerHTML = msg;
+            </script>
+            <p>You have {{ prjlist|length }} ongoing projects.</p>
+          </div>
+          <div class="row">
+          {% for prj in prjlist %}
+          <!-- Modal -->
+            <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ prj.name }}</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      Project "{{ prj.name }}" is under Phase {{ prj.curphase }}, Iteration {{ prj.curitr }}. <br>
+                      Choose an action to perform, or click elsewhere to cancel.
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="btn-group btn-group-justified">
+                      {% comment %}<div class="btn-group">
+                        <form method="POST" action="/developer/dev/">
+                          <input type="hidden" name="prjid" value="{{ prj.id }}">
+                          <button type="submit" class="btn btn-primary firstrow">Development</button>
+                        </form>
+                      </div>
+                      <!-- the above code block is functionally identical to the next line, but it will violate the display style, therefore abandoned -->{% endcomment %}
+                      <div class="btn-group"><button type="submit" class="btn btn-primary firstrow" onclick="createsession('dev', {{ prj.id }})">Development</button></div>
+                      <div class="btn-group"><button type="button" class="btn btn-primary firstrow" onclick="createsession('rem', {{ prj.id }})">Defect Removal</button></div> <!-- post id={{prj.id}} to: /developer/createrem/ -->
+                    </div>
+                    <div class="btn-group btn-group-justified">
+                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow" onclick="createsession('mng', {{ prj.id }})">Management</button></div> <!-- post id={{prj.id}} to: /developer/createmng/ -->
+                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow" onclick="createsession('rev', {{ prj.id }})">Report Review</button></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Card -->
+            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
+              <h3>{{ prj.name }}</h3>
+              <p>Phase {{ prj.curphase }}<br>Iteration {{ prj.curitr }} </p>
+            </button>
+          {% endfor %}
+          </div><!--/row-->
+{% endblock main %}
+
+{%block js%}
+  <script src="{% static 'js/offcanvas.js' %}"></script>
+{%endblock js %}
