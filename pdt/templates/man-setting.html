@@ -1,0 +1,77 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+ <title>{{ prjname }} Settings - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+  <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li><a href="../activity/">Activities</a></li>
+  <li><a href="../defect/">Defects</a></li>
+  <li class="active"><a href="#">Settings</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <h1 class="page-header">Project Settings</h1>
+  <div class="row">
+    <form class="form-horizontal" method="POST">
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="name">Name</label>
+        <div class="col-sm-5">
+          <input type="text" class="form-control" id="name" name="name" placeholder="New Project" value="{{curname}}" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="sloc">Developers</label>
+        <div class="col-sm-5">
+          {% for developer in developerlist %}
+          <div>
+            <label class="checkbox-inline">
+              <input type="checkbox" name="developers" value="{{developer.id}}" {% if developer.id in curdeveloperlist %} checked {% endif %}> {{developer.realname}}
+            </label>
+          </div>
+          {% endfor %}
+
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="sloc">Estimated SLOC</label>
+        <div class="col-sm-5">
+          <input type="number" min="1" placeholder="Input a integer here" class="form-control" id="esloc" name="esloc" value="{{curesloc}}" required>
+        </div>
+        <!-- <strong class="col-sm-3">Please input positive integers.</strong> -->
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="sloc">Estimated Person-Month</label>
+        <div class="col-sm-5">
+          <input type="number" min="1" placeholder="Input a integer here" class="form-control" id="epm" name="epm" value="{{curepm}}" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="sloc">Last Iteration Yield Rate (%)</label>
+        <div class="col-sm-5">
+          <input type="number" min="1" max="100" placeholder="1~100" class="form-control" id="yield" name="yield" value="{{curyield}}" required>
+
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label col-sm-4" for="sloc">Description</label>
+        <div class="col-sm-5">
+          <textarea name="description" class="form-control">{{curdescription}}</textarea>
+        </div>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-12">
+          <center>
+            <input type="submit" class="col-sm-2 col-sm-offset-3 btn btn-success">
+            <input type="reset" class="col-sm-2 col-sm-offset-1 btn btn-info">
+          </center>
+        </div>
+      </div>
+    </form>
+  </div><!-- /.row -->
+
+          <!--table-->
+{% endblock main %}

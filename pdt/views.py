@@ -236,6 +236,97 @@ def manReport(req, pid):
     else:
         return HttpResponseRedirect("/")
 
+##view defects
+@login_required
+def manDefect(req, pid):
+    if req.user.profile.role == 2:
+        # projectid == pid
+        queryphase = req.GET.get('phase', 'Overall')
+        queryitr = req.GET.get('iteration', 'Overall')
+        c = Context({
+            'user': req.user,
+            'prjname': "Project 3",
+            'curphase': queryphase,
+            'curitr': queryitr,
+            'totphase': 2,
+            'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
+            'totsloc': 2345,
+            'totslocesti': 35,  # stands for 35%
+            'personmonths': 20,
+            'pmesti': 30,
+            'avesloc': 117,
+        })
+        return render_to_response("man-defect.html", c)
+    else:
+        return HttpResponseRedirect("/")
+
+##view defects
+@login_required
+def manActivity(req, pid):
+    if req.user.profile.role == 2:
+
+        c = Context({
+            'user': req.user,
+            'prjname': "Project 3",
+
+        })
+        return render_to_response("man-activity.html", c)
+    else:
+        return HttpResponseRedirect("/")
+
+
+@login_required
+def manSetting(req, pid):
+    if req.user.profile.role == 2:
+        # projectid == pid
+        c = Context({
+            'user': req.user,
+            'curname': "Project 3",
+            'curesloc': 1234,
+            'curepm': 200,
+            'curyield': 75,
+            'curdescription': "hello world",
+            'developerlist': [
+                {
+                    'id': 1001,
+                    'realname': "Harry Potter",
+                    'username': "dev01",
+                },
+                {
+                    'id': 1002,
+                    'realname': "Albus Dumbledore",
+                    'username': "dev02",
+                },
+                {
+                    'id': 1003,
+                    'realname': "Zoey Lee",
+                    'username': "dev03",
+                },
+                {
+                    'id': 1004,
+                    'realname': "Monad",
+                    'username': "dev04",
+                },
+                {
+                    'id': 1005,
+                    'realname': "Curry",
+                    'username': "dev05",
+                },
+                {
+                    'id': 1006,
+                    'realname': "Haskell",
+                    'username': "dev06",
+                }
+            ],
+            'curdeveloperlist': [1001, 1002, 1003],
+        })
+        if req.method == 'POST':
+            # do something
+            pass
+        else:
+            return render_to_response("man-setting.html", c)
+    else:
+        return HttpResponseRedirect("/")
 
 @login_required
 def manProject(req, pid):
@@ -246,6 +337,8 @@ def manProject(req, pid):
             'user': req.user,
             'prjname': "Project 3",
             'curphase': 2,
+            'curphasename': 'Elaboration',
+            'nextphasename': 'Construction',
             'curitr': 3,
             'startdate': "9/20/2015",
             'enddate': "today",
@@ -254,7 +347,7 @@ def manProject(req, pid):
             'personmonths': 20,
             'pmesti': 30,
             'avesloc': 117,
-            'iterationclosed': True
+            'closed': False, # whether the project has been closed
         })
         return render_to_response("man-project.html", c)
     else:
@@ -334,3 +427,65 @@ def manviewactivity(request):
     }
     return render_to_response('man-activities.html', c)
 
+
+def manAllProjects(req):
+    if req.user.profile.role == 2:
+        prjlist = [
+            {
+                'name': 'Project 1',
+                'id': 1001,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True, # open
+            },
+            {
+                'name': 'Project 2',
+                'id': 1002,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True,
+            },
+            {
+                'name': 'Project 3',
+                'id': 1003,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True,
+            },
+            {
+                'name': 'Project 4',
+                'id': 1004,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True,
+            },
+            {
+                'name': 'Project 5',
+                'id': 1005,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True, #open
+            },
+            {
+                'name': 'Project 6',
+                'id': 1006,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True, # open
+            },
+            {
+                'name': 'Project 7',
+                'id': 1007,
+                'curphase': 4,
+                'curitr': 4,
+                'status': False, # closed
+            },
+        ]
+        c = Context({
+            'user': req.user,
+            'prjlist': prjlist,
+            'prjcount': 6,
+        })
+        return render_to_response("man-allprojects.html", c)
+    else:
+        return HttpResponseRedirect("/")
