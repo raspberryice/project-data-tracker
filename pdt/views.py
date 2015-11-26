@@ -70,7 +70,7 @@ def devdashboard(request):
 			'totprjcnt':len(project),
 			'justcompleted':(request.GET.get('prev','')=='/developer/enddev')
 			})
-		return render_to_response("devdashboard.html",c)
+		return render_to_response("dev-dashboard.html",c)
 	else:
 		raise Http404("User is not a developer.")
 
@@ -89,7 +89,7 @@ def mandashboard(request):
 			'prjlist':itera,
 			'totprjcnt':len(p),
 			})
-		return render_to_response("mandashboard.html",c)
+		return render_to_response("man-dashboard.html",c)
 	else:
 		return HttpResponseRedirect("/")
 
@@ -108,7 +108,7 @@ def beginDevelopeSession(request):
 	s.save()
 	#return HttpResponse("%d   %d"%(s.id,int(request.session['Session'])))
 	c = Context({'prj':project,'phase':phase,'itrno':iteration.no,'user':request.user,'sid':s.id})
-	return render_to_response("devaction.html",c)
+	return render_to_response("dev-action.html",c)
 
 @login_required
 def endDevelopeSession(request):
@@ -188,34 +188,20 @@ def addDefect(request):
 def endDefectSession(request):
  	s = DefectSession.objects.get(id = int(request.session['sid']))
  	s.time = int(request.POST['time'])
- 	return render_to_response("index.html")
+ 	return render_to_response("dev-dashboard.html")
 
 def beginManageSession(request):
 	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
 	s.interation = int(request.session['iteration'])
 	s.developer = int(request.session['user'])
 	s.save()
-	return render_to_response("manage.html")
+	return render_to_response("dev-manage.html")
 
 def endManageSession(request):
 	s = ManageSession.objects.get(id = int(request.POST['id']))
 	s.time = int(request.POST['time'])
 	s.save()
-	return render_to_response("index.html")
-
-def getAllSessionOfAIterationOnSLOC(request):
-	iid = int(request.POST['iteration'])
-	session_set = SLOCSesson.objects.get(iteration = iid)
-	return render_to_response("slocmanageiter.html")
-
-# def getAllSessionOfAIterationOnDefect(request):
-# 	iid = int(request.POST['iteration'])
-# 	session_set = DefectSession.objects.get(iteration = iid)
-# 	return render_to_response("defectmanageiter.html")
-# def getAllSessionOfAUserOnDefect(request):
-# 	 uid = int(request.POST['developer'])
-# 	 session_set = DefectSession.objects.get(developer = uid)
-# 	 return render_to_response("defectmanagedev.html")
+	return render_to_response("dev-dashboard.html")
 
 @login_required
 def manReport(request,pid):
@@ -247,7 +233,7 @@ def manReport(request,pid):
 					totsloc += itera.totalSLOC
 					time += itera.totalTime
 		c = Context({'prhname':p.name, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
-		return render_to_response('manreport.html',c)
+		return render_to_response('man-report.html',c)
 	else:
 		return HttpResponseRedirect('/')
 
@@ -266,7 +252,7 @@ def manProject(request,pid):
 		totsloc  = p.totalSLOC
 		slocestimate = totsloc/p.slocestimate
 		c = Context({'prjname':p.name, 'totph':totph ,'slocestimate':slocestimate,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
-		return render_to_response('manproject.html',c)
+		return render_to_response('man-project.html',c)
 	else:
 		return HttpResponseRedirect('/')
 
