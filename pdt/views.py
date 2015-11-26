@@ -247,7 +247,8 @@ def manProject(req, pid):
             'prjname': "Project 3",
             'curphase': 2,
             'curitr': 3,
-            'tottime': 30,  # days from project creation to today
+            'startdate': "9/20/2015",
+            'enddate': "today",
             'totsloc': 2345,
             'totslocesti': 35,  # stands for 35%
             'personmonths': 20,
@@ -270,27 +271,33 @@ def mannewproject(req):
             developerlist = [
                 {
                     'id': 1001,
-                    'name': "Harry Potter"
+                    'realname': "Harry Potter",
+                    'username': "dev01",
                 },
                 {
                     'id': 1002,
-                    'name': "Albus Dumbledore"
+                    'realname': "Albus Dumbledore",
+                    'username': "dev02",
                 },
                 {
                     'id': 1003,
-                    'name': "Zoey Lee"
+                    'realname': "Zoey Lee",
+                    'username': "dev03",
                 },
                 {
                     'id': 1004,
-                    'name': "Monad"
+                    'realname': "Monad",
+                    'username': "dev04",
                 },
                 {
                     'id': 1005,
-                    'name': "Curry"
+                    'realname': "Curry",
+                    'username': "dev05",
                 },
                 {
                     'id': 1006,
-                    'name': "Haskell"
+                    'realname': "Haskell",
+                    'username': "dev06",
                 }
             ]
             return render_to_response("man-newproject.html", Context({'user': req.user, 'developerlist': developerlist}))

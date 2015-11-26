@@ -87,8 +87,8 @@
 {%block sidebar %}
    <li class="active"><a href="#">Overview</a></li>
    <li><a href="report/">Reports</a></li>
-   <li><a href="#">Defects</a></li>
-   <li><a href="#">Settings</a></li>
+   <li><a href="defect/">Defects</a></li>
+   <li><a href="setting/">Settings</a></li>
 {% endblock sidebar %}
 
 {% block main %}
@@ -105,7 +105,7 @@
           <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src="{% static 'img/time-sm.png' %}" class="img-responsive" alt="time">
-              <h4>{{ tottime }} days</h4>
+              <h4>{{ startdate }} ~ {{ enddate }}</h4>
               <span class="text-muted">Total time spent</span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
