@@ -9,7 +9,11 @@
 <div class="modal fade" id="defectReport" tabindex="-1" role="dialog" aria-labelledby="createDefectLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
+<<<<<<< HEAD
          <form class="form-horizontal" id="createDefectForm" autocomplete="off">
+=======
+         <form class="form-horizontal" id="createDefectForm">
+>>>>>>> models
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="createDefectLabel">New Defect</h4>
@@ -18,21 +22,36 @@
             <div class="form-group">
             <label for="defectName" class="col-sm-4 control-label">Defect Name</label>
             <div class="col-sm-8">
+<<<<<<< HEAD
               <input autocomplete="off" type="text" class="form-control" id="defectName" placeholder="Defect" >
+=======
+              <input type="text" class="form-control" id="defectName" placeholder="Defect">
+>>>>>>> models
             </div>
             </div>
             <div class="form-group">
             <label for="defectDate" class="col-sm-4 control-label">Date Discovered</label>
             <div class="col-sm-8">
+<<<<<<< HEAD
               <input autocomplete="off" type="date" class="form-control" id="defectDate" placeholder="{{date}}">
+=======
+              <input type="date" class="form-control" id="defectDate" placeholder="{{date}}">
+>>>>>>> models
             </div>
             </div>
            <div class="form-group">
                <label for="iterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
                 <div class="col-sm-8">
+<<<<<<< HEAD
                 <select autocomplete="off" class="form-control" id="iterationInjected">
                   <option>1</option>
                   <option>2</option>
+=======
+                <select class="form-control" id="iterationInjected">
+                  {% for i in iters%}
+                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
+                  {%endfor%}
+>>>>>>> models
                 </select>
                 </div>
             </div>
@@ -41,7 +60,11 @@
           <div class="form-group">
                <label for="defectType" class="col-sm-4 control-label">Type</label>
                 <div class="col-sm-8">
+<<<<<<< HEAD
                 <select autocomplete="off" class="form-control" id="defectType">
+=======
+                <select class="form-control" id="defectType">
+>>>>>>> models
                  <option value="1">Requirements</option>
                   <option value="2">Design</option>
                   <option value="3">Implementation</option>
@@ -53,7 +76,11 @@
           <div class="form-group">
             <label for="defectDesc" class="col-sm-4 control-label">Description</label>
             <div class="col-sm-8">
+<<<<<<< HEAD
              <textarea autocomplete="off" class="form-control" id="defectDesc" rows="3"></textarea>
+=======
+             <textarea class="form-control" id="defectDesc" rows="3"></textarea>
+>>>>>>> models
             </div>
             </div>
       </div>
@@ -183,7 +210,11 @@
           <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
            Ongoing Defects
           </a>
+<<<<<<< HEAD
             <button class="btn btn-default" id="createDefectBtn">New Defect</button>
+=======
+            <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">New Defect</button>
+>>>>>>> models
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
@@ -221,7 +252,14 @@
 {% endblock main %}
 
 {%block js %}
+<<<<<<< HEAD
     <script src="{% static 'js/timer.js' %}"></script>
     <script src="{% static 'js/defect-session.js'%}"></script>
+=======
+<script src="{% static 'js/defect-session.js'%}"></script>
+    <script src="{% static 'js/timer.js' %}"></script>
+    
+
+>>>>>>> models
 {% endblock js %}
 

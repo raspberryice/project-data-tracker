@@ -1,325 +1,272 @@
-from django.shortcuts import render, render_to_response, get_object_or_404
-from django.http import HttpResponse, HttpResponseRedirect
-from django.template import Context, RequestContext
+from django.shortcuts import render, render_to_response
+from django.template import RequestContext,loader,Context
+from django.http import HttpResponse,HttpResponseRedirect,Http404
+from django.utils import timezone
 from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User, Group
-from .models import *
-from django.utils import timezone
-import json
-
-
+from models import *
 # Create your views here.
+USER_DEVELOPER = 1
+USER_MANAGER = 2
 
-def index(req):
-    if req.user.is_authenticated():
-        if req.user.profile.role == 1:
-            return HttpResponseRedirect("/developer/dashboard/")
-        else:
-            return HttpResponseRedirect("/manager/dashboard/")
-    else:
-        return HttpResponseRedirect("/auth/login/")
+def index(request):
+	if request.user.is_authenticated():
+		if request.user.is_staff:
+			return HttpResponseRedirect("/admin")
+		if request.user.profile.role == USER_DEVELOPER:
+			return HttpResponseRedirect("/developer/dashboard/")
+		elif request.user.profile.role == USER_MANAGER:
+			return HttpResponseRedirect("/manager/dashboard/")
+		else:
+			raise Http404("Not a valid user.")
+	else:
+		return HttpResponseRedirect("/auth/login/")
 
+def login(request):
+	return render_to_response("login.html")
 
-def login(req):
-    if req.POST:
-        user = auth.authenticate(username=req.POST['username'], password=req.POST['password'])
-        if user is not None:
-            auth.login(req, user)
-            if req.user.profile.role == 1:
-                return HttpResponseRedirect("/developer/dashboard/")
-            else:
-                return HttpResponseRedirect("/manager/dashboard/")
-        else:
-            return render_to_response("login.html", Context({'failed': True}))
-    else:
-        return render_to_response("login.html", Context({'logged_out': (req.GET.get('prev', '') == '/auth/logout/')}))
-
+def verify(request):
+	if request.POST:
+		user = auth.authenticate(username = request.POST['username'],password = request.POST['password'])
+		if user is not None:
+			auth.login(request,user)
+			#return HttpResponse("uid %d" % request.user.id)
+			if request.user.profile.role == USER_DEVELOPER:
+				return HttpResponseRedirect("/developer/dashboard/")
+			elif request.user.profile.role == USER_MANAGER:
+				return HttpResponseRedirect("/manager/dashboard/")
+			else:
+				raise Http404("Not a valid user.")
+		else:
+			return render_to_response("login.html",{'failed':True})
+	else:
+		pass
 
 def logout(req):
-    log_out(req)
-    return HttpResponseRedirect("/auth/login/?prev=/auth/logout/")
-
-
-@login_required
-def devdashboard(req):
-    if req.user.profile.role == 1:
-        prjlist = [
-            {
-                'name': 'Project 1',
-                'id': 1001,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 2',
-                'id': 1002,
-                'curphase': 1,
-                'curitr': 2
-            },
-            {
-                'name': 'Project 3',
-                'id': 1003,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 4',
-                'id': 1004,
-                'curphase': 1,
-                'curitr': 2
-            },
-            {
-                'name': 'Project 5',
-                'id': 1005,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 6',
-                'id': 1006,
-                'curphase': 1,
-                'curitr': 2
-            },
-        ]
-        c = Context({
-            'user': req.user,
-            'prjlist': prjlist,
-            'totprjcnt': 10,  # total number of projects the developer attended
-            'justcompleted': (req.GET.get('prev', '') == '/developer/enddev/'),
-        })
-        return render_to_response("dev-dashboard.html", c)
-    else:
-        return HttpResponseRedirect("/")
-
+	log_out(req)
+	return HttpResponseRedirect("/auth/login/?prev=/auth/logout/")
 
 @login_required
-def beginDevelopSession(request):
-    prjid = request.POST.get("prjid", -1)
-    if prjid != -1:
-        # create a development session
-        # ...
-        # pass the sessionid
-        c = Context({'prjname': "Project 1", 'phasename': "Elaboration", 'itrno': 3, 'user': request.user, 'sid': 1023})
-        return render_to_response("dev-action.html", c)
-    return HttpResponseRedirect("/")
-
+def devdashboard(request):
+	if request.user.profile.role == USER_DEVELOPER:
+		p = Participate.objects.filter(developer_id = request.user.id).all()
+		project = list()
+		itera = list()
+		phase = list()
+		for item in p:
+			if not item.project.status:
+				continue;
+			pid = item.project.id 
+			project.append(item.project)
+			ph = Phase.objects.get(project_id = pid,status = True)
+			i = Iteration.objects.get(phase = ph,status = True)
+			itera.append(i)
+			phase.append(ph)
+		#return HttpResponse("uid %d" % request.user.id)
+		c = Context({
+			'user':request.user,
+			'prjlist':itera,
+			'totprjcnt':len(project),
+			'justcompleted':(request.GET.get('prev','')=='/developer/enddev')
+			})
+		return render_to_response("devdashboard.html",c)
+	else:
+		raise Http404("User is not a developer.")
 
 @login_required
-def endDevelopSession(request):
-    # do the saving
-    # s = SLOCSesson.objects.get(id = request.id)
-    # s.sessionlast = request.POST['time']
-    # s.SLOC = request.POST['SLOC']
-    # s.save()
-    print("sid: " + request.POST['sid'])  # development session id
-    print("sloc: " + request.POST['sloc'])
-    print("time: " + request.POST['time'] + ", type: ")
-    print(type(request.POST['time']))
-    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/endrem/')
-
+def mandashboard(request):
+	if request.user.profile.role == USER_MANAGER:
+		p = Project.objects.all()
+		itera = list()
+		for item in p:
+			if not item.status: #ongoing project
+				continue
+			ph = Phase.objects.get(project_id = item.id,status = True)
+			itera.append(Iteration.objects.get(phase_id = ph.id,status = True))
+		c = Context({
+			'user':request.user,
+			'prjlist':itera,
+			'totprjcnt':len(p),
+			})
+		return render_to_response("mandashboard.html",c)
+	else:
+		return HttpResponseRedirect("/")
 
 @login_required
+def beginDevelopeSession(request):
+	#return HttpResponse("hahh")
+	s = SLOCSession(start_date=timezone.now())
+	project = Project.objects.get(id = int(request.POST['prjid']))
+	phase = Phase.objects.get(project_id = project.id,status = True)
+	iteration = Iteration.objects.get(phase_id = phase.id,status = True)
+	#return HttpResponse(iteration.id)
+	s.iteration_id = iteration.id
+	s.developer_id = request.user.id
+	s.SLOC = 0
+	s.sessionlast = 0
+	s.save()
+	#return HttpResponse("%d   %d"%(s.id,int(request.session['Session'])))
+	c = Context({'prj':project,'phase':phase,'itrno':iteration.no,'user':request.user,'sid':s.id})
+	return render_to_response("devaction.html",c)
+
+@login_required
+def endDevelopeSession(request):
+	s = SLOCSession.objects.get(id = int(request.POST['sid']))
+	t = str(request.POST['time'])
+	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+	s.sessionlast = ts
+	i = Iteration.objects.get(id = s.iteration_id)
+	p = Phase.objects.get(id = i.phase_id)
+	pj = Project.objects.get(id = p.project_id)
+	i.totalTime = i.totalTime + ts
+	i.totalSLOC = i.totalSLOC + int(request.POST['sloc'])
+	p.totalTime = p.totalTime + ts
+	p.totalSLOC = p.totalSLOC + int(request.POST['sloc'])
+	pj.totalTime = pj.totalTime + ts
+	pj.totalSLOC = pj.totalSLOC + int(request.POST['sloc'])  
+	s.SLOC = int(request.POST['sloc'])
+	request.session['ds'] = s.id
+	s.save()
+	i.save()
+	p.save()
+	pj.save()
+	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
+
 def beginDefectSession(request):
-    # pid = request.POST['prjid']
-    # project = get_object_or_404(Project, pk=pid)
-    # create session
-    # add session to project's current iteration
-    # pass the session id
-    c = {
-        'prjname': "Project 1",
-        'phasename': "Elaboration",
-        'itrno': 3,
-        'sid': 1011,
-    }
-    return render(request, "dev-defect.html", c)
+ 	s = DefectSession(start_date = timezone.now(),defectno = 0,sessionlast = 0)
+ 	if request.POST.get('prjid',"") == "":
+ 		project = Project.objects.get(id = int(request.session['prjid']))
+ 	else:
+ 		project = Project.objects.get(id = int(request.POST['prjid']))
+ 		request.session['prjid'] = request.POST['prjid']
+	phase = Phase.objects.get(project_id = project.id,status = True)
+	iteration = Iteration.objects.get(phase_id = phase.id,status = True)
+	phases = Phase.objects.filter(project_id = project.id)
+	iterations = []
+	for ph in phases:
+		ites = Iteration.objects.filter(phase_id = ph.id)
+		for i in ites:
+			iterations.append(i)
+	s.iteration = iteration
+ 	s.developer = request.user
+ 	iters = [0 for x in range(4)]
+ 	for x in range(4):
+ 		if x<phase.no:
+ 			iters[x] = len(Iteration.objects.filter(phase = (Phase.objects.get(project_id = project.id,no = x+1))).all())
+	s.save()
+	request.session['sid'] = s.id
+	print len(iterations)
+	iterno = iters[0]+iters[1]+iters[2]+iters[3]
+	c = Context({'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
+ 	return render_to_response("dev-defect.html",c)
 
-@login_required
+def addDefect(request):
+ 	s = DefectSession.objects.get(id = int(request.session['sid']))
+ 	d = Defects(session_id = s.id,name = request.POST['name'],typed = int(request.POST['type']),desc = request.POST['desc'])
+ 	#d.iterationInjected = request.POST['iterationInjected']
+ 	iters = [0 for x in range(4)]
+ 	for x in range(4):
+ 		if x<s.iteration.phase.no:
+ 			iters[x] = len(Iteration.objects.filter(phase = (Phase.objects.get(project_id = s.iteration.phase.project.id,no = x+1))).all())
+ 	iternum = int(request.POST['iterationInjected'])
+ 	m  = 0
+ 	while(1):
+ 		if iternum - iters[m]>0:
+ 			iternum -=iters[m]
+ 			m+=1
+ 		else:
+ 			break
+ 	d.iterationInjected = Iteration.objects.get(phase_id = (Phase.objects.get(project_id = s.iteration.phase.project.id,no = m+1).id),no = iternum)
+
+ 	d.iterationRemoved = s.iteration
+ 	s.defectno = s.defectno+1
+ 	s.save()
+ 	d.save()
+ 	return HttpResponse("")
+
 def endDefectSession(request):
-    # save session
-    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddef/')
+ 	s = DefectSession.objects.get(id = int(request.session['sid']))
+ 	s.time = int(request.POST['time'])
+ 	return render_to_response("index.html")
 
-
-@login_required
 def beginManageSession(request):
-    pid = request.POST['prjid']
-    # project = get_object_or_404(Project, pk=pid)
-    # create session
-    # add session to project's current iteration
-    # pass the session id
-    c = {
-        'prjname': "Project 1",
-        'phasename': "Elaboration",
-        'itrno': 3,
-        'sid': 1011,
-    }
-    return render(request, "dev-manage.html", c)
+	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
+	s.interation = int(request.session['iteration'])
+	s.developer = int(request.session['user'])
+	s.save()
+	return render_to_response("manage.html")
 
-@login_required
 def endManageSession(request):
-     # save session
-    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/endman/')
+	s = ManageSession.objects.get(id = int(request.POST['id']))
+	s.time = int(request.POST['time'])
+	s.save()
+	return render_to_response("index.html")
+
+def getAllSessionOfAIterationOnSLOC(request):
+	iid = int(request.POST['iteration'])
+	session_set = SLOCSesson.objects.get(iteration = iid)
+	return render_to_response("slocmanageiter.html")
+
+# def getAllSessionOfAIterationOnDefect(request):
+# 	iid = int(request.POST['iteration'])
+# 	session_set = DefectSession.objects.get(iteration = iid)
+# 	return render_to_response("defectmanageiter.html")
+# def getAllSessionOfAUserOnDefect(request):
+# 	 uid = int(request.POST['developer'])
+# 	 session_set = DefectSession.objects.get(developer = uid)
+# 	 return render_to_response("defectmanagedev.html")
 
 @login_required
-def mandashboard(req):
-    if req.user.profile.role == 2:
-        prjlist = [
-            {
-                'name': 'Project 1',
-                'id': 1001,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 2',
-                'id': 1002,
-                'curphase': 1,
-                'curitr': 2
-            },
-            {
-                'name': 'Project 3',
-                'id': 1003,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 4',
-                'id': 1004,
-                'curphase': 1,
-                'curitr': 2
-            },
-            {
-                'name': 'Project 5',
-                'id': 1005,
-                'curphase': 2,
-                'curitr': 3,
-            },
-            {
-                'name': 'Project 6',
-                'id': 1006,
-                'curphase': 1,
-                'curitr': 2
-            },
-        ]
-        c = Context({
-            'user': req.user,
-            'prjlist': prjlist,
-            'prjcount': 6,
-        })
-        return render_to_response("man-dashboard.html", c)
-    else:
-        return HttpResponseRedirect("/")
-
-
-##view report
-@login_required
-def manReport(req, pid):
-    if req.user.profile.role == 2:
-        # projectid == pid
-        queryphase = req.GET.get('phase', 'Overall')
-        queryitr = req.GET.get('iteration', 'Overall')
-        c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-            'curphase': queryphase,
-            'curitr': queryitr,
-            'totphase': 2,
-            'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
-            'totsloc': 2345,
-            'totslocesti': 35,  # stands for 35%
-            'personmonths': 20,
-            'pmesti': 30,
-            'avesloc': 117,
-        })
-        return render_to_response("man-report.html", c)
-    else:
-        return HttpResponseRedirect("/")
-
+def manReport(request,pid):
+	if request.user.profile.role == USER_MANAGER:
+		p = Project.objects.get(id = int(pid))
+		qphase = request.GET.get('phase','Overall')
+		totph = len(Phase.objects.filter(project_id = p.id).all())
+		qiter = request.GET.get('iteration','Overall')
+		totit = 0
+		if qphase == 'Overall':
+			phases = Phase.objects.filter(project_id = p.id).all()
+			totsloc = p.totalSLOC
+			time = p.totalTime
+		else:
+			oldphase = Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all()
+			totsloc = 0
+			time = 0
+			for ph in oldphase:
+				totsloc += ph.totalSLOC
+				time += ph.totalTime
+			nowphase = Phase.objects.get(project_id = p.id,no = int(qphase))
+			totit = len(Iteration.objects.filter(phase_id = nowphase.id))
+			if qiter== 'Overall':
+				totsloc += nowphase.totalSLOC
+				time += nowphase.totalTime
+			else:
+				iteration_list = Iteration.objects.filter(phase_id = nowphase.id,no__lt = int(qiter)).all()
+				for itera in iteration_list:
+					totsloc += itera.totalSLOC
+					time += itera.totalTime
+		c = Context({'prhname':p.name, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		return render_to_response('manreport.html',c)
+	else:
+		return HttpResponseRedirect('/')
 
 @login_required
-def manProject(req, pid):
-    if req.user.profile.role == 2:
-        # get data of project(id = pid)
+def manProject(request,pid):
+	if request.user.profile.role == USER_MANAGER:
+		p = Project.objects.get(id = int(pid))
+		curphase = Phase.objects.get(project_id  =p.id,status = True)
+		curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
+		phase_list = Phase.objects.filter(project_id = p.id).all()
+		totph = len(phase_list)
+		totit = 0
+		for ph in phase_list:
+			totit = totit + len(Iteration.objects.filter(phase_id = ph.id).all())
+		time = p.totalTime
+		totsloc  = p.totalSLOC
+		slocestimate = totsloc/p.slocestimate
+		c = Context({'prjname':p.name, 'totph':totph ,'slocestimate':slocestimate,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		return render_to_response('manproject.html',c)
+	else:
+		return HttpResponseRedirect('/')
 
-        c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-            'curphase': 2,
-            'curitr': 3,
-            'startdate': "9/20/2015",
-            'enddate': "today",
-            'totsloc': 2345,
-            'totslocesti': 35,  # stands for 35%
-            'personmonths': 20,
-            'pmesti': 30,
-            'avesloc': 117,
-            'iterationclosed': True
-        })
-        return render_to_response("man-project.html", c)
-    else:
-        return HttpResponseRedirect("/")
-
-@login_required
-def mannewproject(req):
-    if req.user.profile.role == 2:
-        if req.method == 'POST':
-            print ("Create a new project: ")
-            print (req.POST.getlist("developers", []))
-            return HttpResponseRedirect("/")
-        else:
-            developerlist = [
-                {
-                    'id': 1001,
-                    'realname': "Harry Potter",
-                    'username': "dev01",
-                },
-                {
-                    'id': 1002,
-                    'realname': "Albus Dumbledore",
-                    'username': "dev02",
-                },
-                {
-                    'id': 1003,
-                    'realname': "Zoey Lee",
-                    'username': "dev03",
-                },
-                {
-                    'id': 1004,
-                    'realname': "Monad",
-                    'username': "dev04",
-                },
-                {
-                    'id': 1005,
-                    'realname': "Curry",
-                    'username': "dev05",
-                },
-                {
-                    'id': 1006,
-                    'realname': "Haskell",
-                    'username': "dev06",
-                }
-            ]
-            return render_to_response("man-newproject.html", Context({'user': req.user, 'developerlist': developerlist}))
-    else:
-        return HttpResponseRedirect("/")
-
-@login_required
-def manNewIteration(req, pid):
-    if req.user.profile.role == 2 and req.method == 'POST':
-        print ("new iteration at", req.POST.get("phase"), "phase")
-        # do something
-
-    return HttpResponseRedirect("/manager/project/" + pid)
-
-@login_required
-def create_defect(request):
-    name = request.POST['name']
-    date = request.POST['date']
-
-    # TODO:create new Defect object
-    # pass the iteration by phase and itrno?
-    response_data = {'result': 'Create defect success!', 'name': name, 'date': date, 'defectpk': 1}
-    # return JSON
-    return HttpResponse(json.dumps(response_data),
-                        content_type="application/json")

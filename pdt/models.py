@@ -1,37 +1,29 @@
 from django.db import models
-from django.contrib.auth.models import User
-from django.db.models.signals import post_save
-
-class Profile(models.Model):
-    ROLE_NAMES = (
-        (1, 'Developer'),
-        (2, 'Manager')
-    )
-    user = models.OneToOneField(User)
-    role = models.IntegerField(choices = ROLE_NAMES)
-    def __str__(self):
-        return self.user.username + ": " + str(self.role)
-# def create_user_profile(sender, instance, created, **kwargs):
-#     if created:
-#        profile, created = Profile.objects.get_or_create(user=instance) # cannot get??
-#
-# post_save.connect(create_user_profile, sender=User)
-
+from django.contrib.auth.models import User,AbstractBaseUser
 class Project(models.Model):
     creator = models.ForeignKey(User, related_name='creator')
     developers = models.ManyToManyField(User, related_name='developer')
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
-    status = models.BooleanField
-    totalTime = models.IntegerField
-    totalSLOC = models.IntegerField
-    totalDefects = models.IntegerField
-    start_date = models.DateTimeField
-    close_date = models.DateTimeField
-    def __str__(self):
+    status = models.BooleanField()
+    totalTime = models.IntegerField()
+    totalSLOC = models.IntegerField()
+    totalDefects =models.IntegerField()
+    slocestimate = models.IntegerField()
+    effortestimate = models.IntegerField()
+    
+    def __str__ (self):
         return self.name
-
-
+class Profile(models.Model):
+    user = models.OneToOneField(User)
+    ROLE_NAMES = (
+        (1, 'Developer'),
+        (2, 'Manager')
+    )
+    role = models.IntegerField(choices = ROLE_NAMES)
+    def __str__(self):
+        return self.user.username + ": " + str(self.role)
+        
 class Phase(models.Model):
     PHASE_NAMES = (
         (1,'Inception'),
@@ -41,54 +33,52 @@ class Phase(models.Model):
     )
     project = models.ForeignKey(Project)
     no = models.IntegerField(choices=PHASE_NAMES,default=1)
-    status = models.BooleanField
-    totalTime = models.IntegerField
-    totalSLOC = models.IntegerField
-    totalDefects = models.IntegerField
-    start_date = models.DateTimeField
-    close_date = models.DateTimeField
+    status = models.BooleanField()
+    totalTime = models.IntegerField()
+    totalSLOC = models.IntegerField()
+    totalDefects = models.IntegerField()
     def __str__(self):
-       return self.no
-
+       return self.project.name+"-"+str(self.no)
 
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
-    no = models.IntegerField
-    status = models.BooleanField
-    totalTime = models.IntegerField
-    totalSLOC = models.IntegerField
-    totalDefects = models.IntegerField
-    start_date = models.DateTimeField
-    close_date = models.DateTimeField
+    no= models.IntegerField()
+    status = models.BooleanField()
+    totalTime = models.IntegerField()
+    totalSLOC = models.IntegerField()
+    totalDefects = models.IntegerField()
     def __str__(self):
-        return self.no
-
-
-class Session(models.Model):
-    start_date = models.DateTimeField
-    creator = models.ForeignKey(User)
+        return self.phase.project.name+"-"+str(self.phase.no)+"-"+str(self.no)
+class SLOCSession(models.Model):
     iteration = models.ForeignKey(Iteration)
-    totalTime = models.DurationField
+    developer = models.ForeignKey(User)
+    start_date = models.DateTimeField(auto_now_add=True)
+    sessionlast = models.IntegerField()
+    SLOC = models.IntegerField()
+
+class DefectSession(models.Model):
+    iteration = models.ForeignKey(Iteration)
+    developer = models.ForeignKey(User,related_name='defect')
+    start_date = models.DateTimeField(auto_now_add=True)
+    sessionlast = models.IntegerField()
+    defectno = models.IntegerField()
 
 
-class DevelopmentSession(Session):
-    SLOC = models.IntegerField
-    def getSLOC (self,newSLOC):
-        self.SLOC = newSLOC
+class ManageSession(models.Model):
+    iteration = models.ForeignKey(Iteration)
+    manager = models.ForeignKey(User)
+    start_date = models.DateTimeField(auto_now_add=True)
+    sessionlast = models.IntegerField
 
-
-class ManagementSession(Session):
-    pass
-
-
-class DefectRemovalSession(Session):
-    removed = models.IntegerField
-
-
-class Defect(models.Model):
-    session = models.ForeignKey(DefectRemovalSession)
-    type = models.IntegerField
+class Defects(models.Model):
+    session=models.ForeignKey(DefectSession)
+    typed = models.IntegerField()
+    name = models.CharField(max_length = 30)
     iterationInjected = models.ForeignKey(Iteration,related_name='injected')
     iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
     desc = models.CharField(max_length=300)
-    status = models.BooleanField
+
+class Participate(models.Model):
+    developer = models.ForeignKey(User)
+    project = models.ForeignKey(Project)
+
