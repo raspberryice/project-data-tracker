@@ -323,3 +323,14 @@ def create_defect(request):
     # return JSON
     return HttpResponse(json.dumps(response_data),
                         content_type="application/json")
+
+@login_required
+def manviewactivity(request):
+    c = {
+        'developsessions':{},
+        'managesessions':{},
+        'defectsessions':{},
+        'defect_list':{},
+    }
+    return render_to_response('man-activities.html', c)
+

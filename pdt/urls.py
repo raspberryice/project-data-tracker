@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'developer/endmng/',endManageSession,name='endmng'),
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
 	url(r'manager/newproject/$', mannewproject, name = 'mannewproject'),
+	url(r'manager/activity/$',manviewactivity,name = 'manviewactivity'),
 	url(r'manager/project/(?P<pid>\d+)/$',manProject,name="manproject"),
 	url(r'manager/project/(?P<pid>\d+)/newiteration/$',manNewIteration,name="mannewiteration"),
 	url(r'manager/project/(?P<pid>\d+)/report/$',manReport,name="manreport"),
