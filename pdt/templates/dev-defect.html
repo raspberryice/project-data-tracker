@@ -9,7 +9,7 @@
 <div class="modal fade" id="defectReport" tabindex="-1" role="dialog" aria-labelledby="createDefectLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-         <form class="form-horizontal" id="createDefectForm">
+         <form class="form-horizontal" id="createDefectForm" autocomplete="off">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="createDefectLabel">New Defect</h4>
@@ -18,19 +18,19 @@
             <div class="form-group">
             <label for="defectName" class="col-sm-4 control-label">Defect Name</label>
             <div class="col-sm-8">
-              <input type="text" class="form-control" id="defectName" placeholder="Defect">
+              <input autocomplete="off" type="text" class="form-control" id="defectName" placeholder="Defect" >
             </div>
             </div>
             <div class="form-group">
             <label for="defectDate" class="col-sm-4 control-label">Date Discovered</label>
             <div class="col-sm-8">
-              <input type="date" class="form-control" id="defectDate" placeholder="{{date}}">
+              <input autocomplete="off" type="date" class="form-control" id="defectDate" placeholder="{{date}}">
             </div>
             </div>
            <div class="form-group">
                <label for="iterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
                 <div class="col-sm-8">
-                <select class="form-control" id="iterationInjected">
+                <select autocomplete="off" class="form-control" id="iterationInjected">
                   <option>1</option>
                   <option>2</option>
                 </select>
@@ -41,7 +41,7 @@
           <div class="form-group">
                <label for="defectType" class="col-sm-4 control-label">Type</label>
                 <div class="col-sm-8">
-                <select class="form-control" id="defectType">
+                <select autocomplete="off" class="form-control" id="defectType">
                  <option value="1">Requirements</option>
                   <option value="2">Design</option>
                   <option value="3">Implementation</option>
@@ -53,7 +53,7 @@
           <div class="form-group">
             <label for="defectDesc" class="col-sm-4 control-label">Description</label>
             <div class="col-sm-8">
-             <textarea class="form-control" id="defectDesc" rows="3"></textarea>
+             <textarea autocomplete="off" class="form-control" id="defectDesc" rows="3"></textarea>
             </div>
             </div>
       </div>
@@ -183,7 +183,7 @@
           <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
            Ongoing Defects
           </a>
-            <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">New Defect</button>
+            <button class="btn btn-default" id="createDefectBtn">New Defect</button>
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">

@@ -28,13 +28,19 @@ function pausetimer() {
 var removedList = $("#removedList").children('ul');
 var ongoingList = $("#ongoingList").children('ul');
 function stoptimer() {
-    clearInterval(myVar);
-    document.getElementById("stopbutton").innerHTML = "Submit";
-    document.getElementById("stopbutton").setAttribute("class", "btn btn-md btn-success")
-    document.getElementById("pausebutton").remove();
+    pausetimer();
     document.getElementById("time").setAttribute("value", document.getElementById("timerdisplay").innerHTML);
+    //for defect session
     $('#defectNo').attr("value",removedList.find('li').length);
     if (ongoingList.find('li').length !=0){
         $('#submitMessage').text("You have "+ ongoingList.find('li').length +" defects not yet removed!");
      }
 }
+
+$('#submitmodal').on('hidden.bs.modal',function(){
+        paused = false;
+        document.getElementById("pausebutton").innerHTML = "Pause";
+        document.getElementById("pausebutton").setAttribute("class", "btn btn-md btn-info");
+        myVar = setInterval(myTimer, 1000);
+
+});

@@ -24,7 +24,7 @@ function create_defect(report){
 
 sessionStorage.defect_no = 0;
 function create_local_defect(){
-    sessionStorage.defect_no +=1;
+    sessionStorage.defect_no = parseInt(sessionStorage.defect_no) +1;
     var defect = "defect_"+ sessionStorage.defect_no;
     var report = {
           name: $('#defectName').val(),
@@ -46,9 +46,27 @@ function create_local_defect(){
         $('#ongoingList').children('ul').append(new_item);
 }
 
+$('#createDefectBtn').on('click',function(e){
+    clear_report();
+    $('#defectReport').modal('show');
+});
 
-function render_report(defect){
-    var report = JSON.parse(sessionStorage.getItem(defect));
+
+function clear_report(){
+    $('#defectName').val('');
+    $('#defectDate').val('');
+    $('#iterationInjected').children().each(function(){
+    $(this).removeAttr('selected');
+    });
+    $('#defectType').children().each(function(){
+    $(this).removeAttr('selected');
+    });
+    $('#defectDesc').text('');
+}
+
+
+function render_report(report){
+
     $('#viewDefectName').val(report['name']);
     $('#viewDefectDate').val(report['date']);
     var iterationInjected = report['iterationInjected'];
@@ -66,6 +84,7 @@ function render_report(defect){
      console.log('done rendering report for'+defect);
 
 }
+
 
 $('#editDefectForm').on('submit',function(event){
     event.preventDefault();
@@ -85,6 +104,9 @@ function update_local_defect(){
           status: 'True',
         };
      sessionStorage.setItem (defect,JSON.stringify(report));
+     //update name
+     var id = '#'+ defect;
+     $(id).children('span').text($('#viewDefectName').val());
      console.log(report);
      console.log('defect no ' + sessionStorage.defect_no+ ' has been updated locally.');
 
@@ -95,7 +117,8 @@ var removedList = $("#removedList").children('ul');
 $('#ongoingList').on('click','.edit-btn',function(){
     var defect_id = $(this).parent().attr('id');
     console.log(defect_id);
-    render_report(defect_id);
+     var report = JSON.parse(sessionStorage.getItem(defect));
+    render_report(report);
     $('#editReport').modal('show');
     sessionStorage.current_defect= defect_id;
 })
