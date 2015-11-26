@@ -13,6 +13,9 @@ urlpatterns = [
     url(r'developer/endrem/',endDefectSession,name='endrem'),
 	url(r'developer/createmng/',beginManageSession,name='createmng'),
     url(r'developer/endmng/',endManageSession,name='endmng'),
+	url(r'developer/project/(?P<pid>\d+)/$',devProject,name='devproject'),
+	url(r'developer/project/(?P<pid>\d+)/report/$',devReport,name='devreport'),
+
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
 	url(r'manager/newproject/$', mannewproject, name = 'mannewproject'),
 	url(r'manager/allprojects/$', manAllProjects, name = 'manallprojects'),

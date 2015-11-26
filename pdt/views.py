@@ -162,6 +162,54 @@ def endManageSession(request):
     return HttpResponseRedirect('/developer/dashboard/?prev=/developer/endman/')
 
 @login_required
+def devProject(req, pid):
+    if req.user.profile.role == 1:
+        # get data of project(id = pid)
+
+        c = Context({
+            'user': req.user,
+            'prjname': "Project 3",
+            'curphase': 2,
+            'curphasename': 'Elaboration',
+            'nextphasename': 'Construction',
+            'curitr': 3,
+            'startdate': "9/20/2015",
+            'enddate': "today",
+            'totsloc': 2345,
+            'totslocesti': 35,  # stands for 35%
+            'personmonths': 20,
+            'pmesti': 30,
+            'avesloc': 117,
+            'closed': False, # whether the project has been closed
+        })
+        return render_to_response("dev-project.html", c)
+    else:
+        return HttpResponseRedirect("/")
+
+@login_required
+def devReport(req, pid):
+    if req.user.profile.role == 1:
+        # projectid == pid
+        queryphase = req.GET.get('phase', 'Overall')
+        queryitr = req.GET.get('iteration', 'Overall')
+        c = Context({
+            'user': req.user,
+            'prjname': "Project 3",
+            'curphase': queryphase,
+            'curitr': queryitr,
+            'totphase': 2,
+            'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
+            'totsloc': 2345,
+            'totslocesti': 35,  # stands for 35%
+            'personmonths': 20,
+            'pmesti': 30,
+            'avesloc': 117,
+        })
+        return render_to_response("dev-report.html", c)
+    else:
+        return HttpResponseRedirect("/")
+
+@login_required
 def mandashboard(req):
     if req.user.profile.role == 2:
         prjlist = [
@@ -318,7 +366,23 @@ def manSetting(req, pid):
                     'username': "dev06",
                 }
             ],
-            'curdeveloperlist': [1001, 1002, 1003],
+            'curdeveloperlist': [
+                {
+                    'id': 1001,
+                    'realname': "Harry Potter",
+                    'username': "dev01",
+                },
+                {
+                    'id': 1002,
+                    'realname': "Albus Dumbledore",
+                    'username': "dev02",
+                },
+                {
+                    'id': 1003,
+                    'realname': "Zoey Lee",
+                    'username': "dev03",
+                },
+            ],
         })
         if req.method == 'POST':
             # do something

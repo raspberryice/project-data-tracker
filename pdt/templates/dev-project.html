@@ -11,59 +11,9 @@
     <link href="{% static 'css/morris.css' %}" rel="stylesheet">
 {% endblock css %}
 
-{%block modal %}
-<div id="newiteration" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">New Iteration</h4>
-          </div>
-
-          <form class="form-horizontal" role="form" method="post" action="newiteration/">
-            <div class="modal-body">
-              <div class="form-group">
-                <label class="control-label col-sm-3" for="phase">New iteration at:</label>
-                <div class="col-sm-9">
-                  <!-- <input type="number" min="0" class="form-control" id="sloc" name="sloc" placeholder="Enter Source Line of Code" required autofocus> -->
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="phase" id="phaseCurrent" value="current" checked>
-                      Current Phase: {{ curphasename }}
-                    </label>
-                  </div>
-                  {% if curphase != "4" %}
-                  <div class="radio">
-                    <label>
-                      <input type="radio" name="phase" id="phaseNext" value="next">
-                      Next Phase: {{ nextphasename }} (The current phase will be closed)
-                    </label>
-                  </div>
-                  {% endif %}
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-              <input type="hidden" id="sid" name="sid" value="{{ sid }}">
-              <button type="submit" class="btn btn-success">Submit</button>
-            </div>
-          </form>
-
-
-    </div>
-
-  </div>
-</div>
-
-{% endblock modal %}
 {%block sidebar %}
    <li class="active"><a href="#">Overview</a></li>
    <li><a href="report/">Reports</a></li>
-   <li><a href="activity/">Activities</a></li>
-   <li><a href="defect/">Defects</a></li>
-   <li><a href="setting/">Settings</a></li>
 {% endblock sidebar %}
 
 {% block main %}
@@ -89,11 +39,11 @@
               <h4>XX</h4>
               <span class="text-muted">Total number of defects </span>
             </div>
-            <div class="col-xs-6 col-sm-3 placeholder hoverlight" data-toggle="modal" data-target="#newiteration">
-              <img src= "{% static 'img/new-sm.png'%}" class="img-responsive" alt="defect">
-              <h4>New Iteration</h4>
-              <!-- <span class="text-muted"></span> -->
-            </div>
+            <a class="col-xs-6 col-sm-3 placeholder hoverlight" href="/">
+              <img src= "{% static 'img/back.png'%}" class="img-responsive" alt="defect">
+              <h4>Return</h4>
+              <span class="text-muted">Go back to dashboard</span>
+            </a>
           </div>
 
           <div id="latestActivity"></div>

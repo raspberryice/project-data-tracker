@@ -130,6 +130,7 @@ body {
 /* for newiteration */
 .hoverlight:hover {
   color: red;
+  text-decoration: none;
 }
 
 #latestActivity {
