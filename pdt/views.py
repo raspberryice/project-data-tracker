@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User, Group
 from .models import *
 from django.utils import timezone
+import json
 
 
 # Create your views here.
@@ -121,7 +122,7 @@ def endDevelopSession(request):
 
 @login_required
 def beginDefectSession(request):
-    pid = request.POST['prjid']
+    # pid = request.POST['prjid']
     # project = get_object_or_404(Project, pk=pid)
     # create session
     # add session to project's current iteration
@@ -257,3 +258,17 @@ def manProject(req, pid):
         return render_to_response("man-project.html", c)
     else:
         return HttpResponseRedirect("/")
+
+
+@login_required
+def create_defect(request):
+    name = request.POST['name']
+    date = request.POST['date']
+
+    # TODO:create new Defect object
+    # pass the iteration by phase and itrno?
+    response_data = {'result': 'Create defect success!', 'name': name, 'date': date, 'defectpk': 1}
+    # return JSON
+    return HttpResponse(json.dumps(response_data),
+                        content_type="application/json")
+
