@@ -108,6 +108,7 @@
 
           </div>
         </div>
+
 <div id="submitmodal" class="modal fade" role="dialog">
           <div class="modal-dialog">
 
@@ -138,6 +139,7 @@
 
           </div>
         </div>
+
 <div class="modal fade" id="defectReport" tabindex="-1" role="dialog" aria-labelledby="createDefectLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -245,6 +247,22 @@
               <span>Defect Removal Session</span>
               <span>24/11/2015</span>
               <button class="btn btn-default" data-toggle="modal" data-target="#submitRem">Edit</button></li>
+            {% for session in session_list %}
+             <li class="list-group-item">
+              <span>{{session['typename']}}</span>
+              <span>{{session['date']}}</span>
+                 {% if session['type'] == 'dev' %}
+                 <button class="btn btn-default" data-toggle="modal" data-target="#submitDev">Edit</button>
+                 {% endif %}
+                 {% if session['type'] == 'mng' %}
+                 <button class="btn btn-default" data-toggle="modal" data-target="#submitMng">Edit</button>
+                 {% endif %}
+                 {% if session['type'] == 'rem' %}
+                 <button class="btn btn-default" data-toggle="modal" data-target="#submitRem">Edit</button>
+                 {% endif %}
+          </li>
+            {% endfor %}
+
         </ul>
       </div>
     </div>
@@ -263,6 +281,13 @@
               <span>24/11/2015</span>
               <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">Edit</button>
           </li>
+            {% for defect in defect_list %}
+             <li class="list-group-item">
+              <span>{{defect ['name']}}</span>
+              <span>{{defect ['date']}}</span>
+              <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">Edit</button>
+          </li>
+            {% endfor %}
         </ul>
       </div>
     </div>
