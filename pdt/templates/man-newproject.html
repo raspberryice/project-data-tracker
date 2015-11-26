@@ -1,0 +1,128 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+<title>New Project - Project Data Tracker</title>
+{% endblock title %}
+
+{% block modal %}
+<!-- modal -->
+<div id="selectdevelopers" class="modal fade" role="dialog">
+     <div class="modal-dialog">
+
+       <!-- Modal content-->
+       <div class="modal-content">
+         <div class="modal-header">
+           <button type="button" class="close" data-dismiss="modal">&times;</button>
+           <h4 class="modal-title">Select Developers</h4>
+         </div>
+
+
+           <div class="modal-body">
+             <div class="form-group">
+              <label for="sel1">Developer list:</label>
+              <select multiple class="form-control" id="sel1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+              </select>
+            </div>
+            <div class="form-group">
+             <label for="sel1">Selected Developers:</label>
+             <select multiple class="form-control" id="sel2">
+
+             </select>
+           </div>
+          </div>
+
+         <div class="modal-footer">
+           <button class="btn btn-success">Save</button>
+           <button class="btn btn-info">Cancel</button>
+         </div>
+   </div>
+ </div>
+</div>
+   <!-- modal end -->
+{% endblock modal %}
+
+{% block sidebar %}
+            <li><a href="/manager/dashboard/">Ongoing Projects</a></li>
+            <li><a href="#">All Projects</a></li>
+            <li class="active"><a href="/manager/newproject/">New Project</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+        <h1 class="page-header">Create A New Project</h1>
+        <form class="form-horizontal" role="form">
+
+  </form>
+          <div class="row">
+
+              <form class="form-horizontal" method="POST">
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="name">Name</label>
+                  <div class="col-sm-5">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="New Project" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="sloc">Developers</label>
+                  <div class="col-sm-5">
+                    <!-- <center>
+                    <a class="center btn btn-primary" data-toggle="modal" data-target="#selectdevelopers" id="developersbtn">Click to Edit List</a>
+                    </center>
+                    <input type="hidden" id="developers" name="developers" value=""> -->
+                    <!-- <select multiple class="form-control" id="developers" name="developers">
+                      {% for developer in developerlist %}
+                      <option value="{{developer.id}}">{{developer.name}}</option>
+                      {% endfor %}
+                    </select> -->
+                    {% for developer in developerlist %}
+                    <div>
+                      <label class="checkbox-inline">
+                        <input type="checkbox" name="developers" value="{{developer.id}}"> {{developer.realname}}
+                      </label>
+                    </div>
+                    {% endfor %}
+
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="sloc">Estimated SLOC</label>
+                  <div class="col-sm-5">
+                    <input type="number" min="1" placeholder="Input a integer here" class="form-control" id="esloc" name="esloc" required>
+                  </div>
+                  <!-- <strong class="col-sm-3">Please input positive integers.</strong> -->
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="sloc">Estimated Person-Month</label>
+                  <div class="col-sm-5">
+                    <input type="number" min="1" placeholder="Input a integer here" class="form-control" id="epm" name="epm" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="sloc">Last Iteration Yield Rate (%)</label>
+                  <div class="col-sm-5">
+                    <input type="number" min="1" max="100" placeholder="1~100" class="form-control" id="yield" name="yield" required>
+
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="control-label col-sm-4" for="sloc">Description</label>
+                  <div class="col-sm-5">
+                    <textarea name="description" class="form-control"></textarea>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <div class="col-sm-12">
+                    <center>
+                      <input type="submit" class="col-sm-2 col-sm-offset-3 btn btn-success">
+                      <input type="reset" class="col-sm-2 col-sm-offset-1 btn btn-info">
+                    </center>
+                  </div>
+                </div>
+              </form>
+          </div><!--/row-->
+{% endblock main %}

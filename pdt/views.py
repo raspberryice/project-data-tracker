@@ -247,18 +247,70 @@ def manProject(req, pid):
             'prjname': "Project 3",
             'curphase': 2,
             'curitr': 3,
-            'tottime': 30,  # days from project creation to today
+            'startdate': "9/20/2015",
+            'enddate': "today",
             'totsloc': 2345,
             'totslocesti': 35,  # stands for 35%
             'personmonths': 20,
             'pmesti': 30,
             'avesloc': 117,
-
+            'iterationclosed': True
         })
         return render_to_response("man-project.html", c)
     else:
         return HttpResponseRedirect("/")
 
+@login_required
+def mannewproject(req):
+    if req.user.profile.role == 2:
+        if req.method == 'POST':
+            print ("Create a new project: ")
+            print (req.POST.getlist("developers", []))
+            return HttpResponseRedirect("/")
+        else:
+            developerlist = [
+                {
+                    'id': 1001,
+                    'realname': "Harry Potter",
+                    'username': "dev01",
+                },
+                {
+                    'id': 1002,
+                    'realname': "Albus Dumbledore",
+                    'username': "dev02",
+                },
+                {
+                    'id': 1003,
+                    'realname': "Zoey Lee",
+                    'username': "dev03",
+                },
+                {
+                    'id': 1004,
+                    'realname': "Monad",
+                    'username': "dev04",
+                },
+                {
+                    'id': 1005,
+                    'realname': "Curry",
+                    'username': "dev05",
+                },
+                {
+                    'id': 1006,
+                    'realname': "Haskell",
+                    'username': "dev06",
+                }
+            ]
+            return render_to_response("man-newproject.html", Context({'user': req.user, 'developerlist': developerlist}))
+    else:
+        return HttpResponseRedirect("/")
+
+@login_required
+def manNewIteration(req, pid):
+    if req.user.profile.role == 2 and req.method == 'POST':
+        print ("new iteration at", req.POST.get("phase"), "phase")
+        # do something
+
+    return HttpResponseRedirect("/manager/project/" + pid)
 
 @login_required
 def create_defect(request):
@@ -271,4 +323,3 @@ def create_defect(request):
     # return JSON
     return HttpResponse(json.dumps(response_data),
                         content_type="application/json")
-
