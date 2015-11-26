@@ -15,9 +15,11 @@ urlpatterns = [
     url(r'developer/endmng/',endManageSession,name='endmng'),
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
 	url(r'manager/newproject/$', mannewproject, name = 'mannewproject'),
+	url(r'manager/allprojects/$', manAllProjects, name = 'manallprojects'),
 	url(r'manager/project/(?P<pid>\d+)/$',manProject,name="manproject"),
 	url(r'manager/project/(?P<pid>\d+)/newiteration/$',manNewIteration,name="mannewiteration"),
 	url(r'manager/project/(?P<pid>\d+)/report/$',manReport,name="manreport"),
-
-
+	url(r'manager/project/(?P<pid>\d+)/activity/$',manActivity,name="manactivity"),
+	url(r'manager/project/(?P<pid>\d+)/defect/$',manDefect,name="mandefect"),
+	url(r'manager/project/(?P<pid>\d+)/setting/$',manSetting,name="mansetting"),
 ]

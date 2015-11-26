@@ -1,0 +1,23 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+ <title>{{ prjname }} Settings - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+  <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li class="active"><a href="#">Activities</a></li>
+  <li><a href="../defect/">Defects</a></li>
+  <li><a href="../setting/">Settings</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <!-- An Ugly Implementation To Be Improved In Next Iteration -->
+          <div class="row">
+
+          </div><!-- /.row -->
+
+          <!--table-->
+{% endblock main %}
