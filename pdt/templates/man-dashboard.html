@@ -8,7 +8,7 @@
 {% block sidebar %}
             <li class="active"><a href="#">Ongoing Projects<span class="sr-only">(current)</span></a></li>
             <li><a href="#">All Projects</a></li>
-            <li><a href="#" data-toggle="modal" data-target="#createproject">New Project</a></li>
+            <li><a href="/manager/newproject/">New Project</a></li>
 {% endblock sidebar %}
 
 {% block main %}
@@ -20,43 +20,9 @@
               <p>Phase {{ prj.curphase }}<br>Iteration {{ prj.curitr }} </p>
             </a>
             {% endfor %}
-            <!-- Modal -->
-            <div id="createproject" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Create New Project</h4>
-                  </div>
-
-                  <form class="form-horizontal" role="form" method="post" action="/manager/newproject/">
-                    <div class="modal-body"> To be implemented...
-                      <!--
-                      <div class="form-group">
-                        <label class="control-label col-sm-4" for="sloc">SLOC:</label>
-                        <div class="col-sm-6">
-                          <input type="number" min="0" class="form-control" id="sloc" name="sloc" placeholder="Enter Source Line of Code" required autofocus>
-                        </div>
-                      </div> -->
-                    </div>
-                    <div class="modal-footer">
-                      <input type="hidden" id="sid" name="sid" value="{{ sid }}">
-                      <button type="submit" class="btn btn-success">Submit</button>
-                    </div>
-                  </form>
-
-
-                </div>
-
-              </div>
-            </div>
-            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#createproject">
+            <a type="button" class="btn btn-info btn-lg gradient" href="/manager/newproject/">
               <h1>+</h1>
               <p>New Project</p>
-            </button>
+            </a>
           </div><!--/row-->
 {% endblock main %}
-
-

@@ -252,8 +252,53 @@ def manProject(req, pid):
             'personmonths': 20,
             'pmesti': 30,
             'avesloc': 117,
-
+            'iterationclosed': True
         })
         return render_to_response("man-project.html", c)
     else:
         return HttpResponseRedirect("/")
+
+@login_required
+def mannewproject(req):
+    if req.user.profile.role == 2:
+        if req.method == 'POST':
+            print ("Create a new project: ")
+            print (req.POST.getlist("developers", []))
+            return HttpResponseRedirect("/")
+        else:
+            developerlist = [
+                {
+                    'id': 1001,
+                    'name': "Harry Potter"
+                },
+                {
+                    'id': 1002,
+                    'name': "Albus Dumbledore"
+                },
+                {
+                    'id': 1003,
+                    'name': "Zoey Lee"
+                },
+                {
+                    'id': 1004,
+                    'name': "Monad"
+                },
+                {
+                    'id': 1005,
+                    'name': "Curry"
+                },
+                {
+                    'id': 1006,
+                    'name': "Haskell"
+                }
+            ]
+            return render_to_response("man-newproject.html", Context({'user': req.user, 'developerlist': developerlist}))
+    else:
+        return HttpResponseRedirect("/")
+
+def manNewIteration(req, pid):
+    if req.user.profile.role == 2 and req.method == 'POST':
+        print ("new iteration at", req.POST.get("phase"), "phase")
+        # do something
+
+    return HttpResponseRedirect("/manager/project/" + pid)
