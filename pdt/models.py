@@ -9,7 +9,8 @@ class Project(models.Model):
     totalSLOC = models.IntegerField()
     totalDefects =models.IntegerField()
     slocestimate = models.IntegerField()
-    efforestimate = models.IntegerField()
+    effortestimate = models.IntegerField()
+    
     def __str__ (self):
         return self.name
 class Profile(models.Model):
@@ -55,12 +56,12 @@ class SLOCSession(models.Model):
     sessionlast = models.IntegerField()
     SLOC = models.IntegerField()
 
-# class DefectSession(models.Model):
-#     iteration = models.ForeignKey(Iteration)
-#     developer = models.ForeignKey(User,related_name='defect')
-#     start_date = models.DateTimeField(auto_now_add=True)
-#     sessionlast = models.IntegerField
-#     defectno = models.IntegerField
+class DefectSession(models.Model):
+    iteration = models.ForeignKey(Iteration)
+    developer = models.ForeignKey(User,related_name='defect')
+    start_date = models.DateTimeField(auto_now_add=True)
+    sessionlast = models.IntegerField()
+    defectno = models.IntegerField()
 
 
 class ManageSession(models.Model):
@@ -69,13 +70,13 @@ class ManageSession(models.Model):
     start_date = models.DateTimeField(auto_now_add=True)
     sessionlast = models.IntegerField
 
-# class Defects(models.Model):
-#     session=models.ForeignKey(DefectSession)
-#     typed = models.IntegerField
-#     iterationInjected = models.ForeignKey(Iteration,related_name='injected')
-#     iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
-#     desc = models.CharField(max_length=300)
-#     status = models.IntegerField
+class Defects(models.Model):
+    session=models.ForeignKey(DefectSession)
+    typed = models.IntegerField()
+    name = models.CharField(max_length = 30)
+    iterationInjected = models.ForeignKey(Iteration,related_name='injected')
+    iterationRemoved = models.ForeignKey(Iteration,related_name='removed')
+    desc = models.CharField(max_length=300)
 
 class Participate(models.Model):
     developer = models.ForeignKey(User)

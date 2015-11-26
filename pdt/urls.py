@@ -12,5 +12,8 @@ urlpatterns = [
 	url(r'manager/dashboard/$',views.mandashboard, name = 'mandashboard'),
 	url(r'manager/project/(?P<pid>\d+)/$',views.manProject,name="manproject"),
 	url(r'manager/project/(?P<pid>\d+)/report/$',views.manReport,name="manreport"),
+	url(r'developer/createrem/$',views.beginDefectSession,name="createrem"),
+	url(r'developer/endrem/$',views.endDefectSession,name="endrem"),
+	url(r'developer/createrem/adddefect/$',views.addDefect,name='add'),
 ]
 

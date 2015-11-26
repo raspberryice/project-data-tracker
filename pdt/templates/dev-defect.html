@@ -1,0 +1,230 @@
+{% extends 'base-session.html' %}
+{% load staticfiles %}
+
+{%block title%}
+<title> Defect Removal Session - PDT</title>
+{% endblock %}
+{%block modal %}
+<!-- Modal -->
+<div class="modal fade" id="defectReport" tabindex="-1" role="dialog" aria-labelledby="createDefectLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+         <form class="form-horizontal" id="createDefectForm">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="createDefectLabel">New Defect</h4>
+      </div>
+      <div class="modal-body">
+            <div class="form-group">
+            <label for="defectName" class="col-sm-4 control-label">Defect Name</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="defectName" placeholder="Defect">
+            </div>
+            </div>
+            <div class="form-group">
+            <label for="defectDate" class="col-sm-4 control-label">Date Discovered</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="defectDate" placeholder="{{date}}">
+            </div>
+            </div>
+           <div class="form-group">
+               <label for="iterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="iterationInjected">
+                  {% for i in iters%}
+                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
+                  {%endfor%}
+                </select>
+                </div>
+            </div>
+          <input class="hidden" id="iterationRemoved" name="iterationRemoved" value={{itrno}}>
+          <input class="hidden" id="defectStatus" value = "False">
+          <div class="form-group">
+               <label for="defectType" class="col-sm-4 control-label">Type</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="defectType">
+                 <option value="1">Requirements</option>
+                  <option value="2">Design</option>
+                  <option value="3">Implementation</option>
+                    <option value="4">Deployment</option>
+                    <option value="5">Bad fix</option>
+                </select>
+                </div>
+            </div>
+          <div class="form-group">
+            <label for="defectDesc" class="col-sm-4 control-label">Description</label>
+            <div class="col-sm-8">
+             <textarea class="form-control" id="defectDesc" rows="3"></textarea>
+            </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" value="Create Report">
+      </div>
+         </form>
+    </div>
+  </div>
+</div>
+<div class="modal fade" id="editReport" tabindex="-1" role="dialog" aria-labelledby="editDefectLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form class="form-horizontal" id="editDefectForm">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="viewDefectLabel">Defect Report</h4>
+      </div>
+      <div class="modal-body">
+            <div class="form-group">
+            <label for="viewDefectName" class="col-sm-4 control-label">Defect Name</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="viewDefectName" placeholder="Defect">
+            </div>
+            </div>
+            <div class="form-group">
+            <label for="viewDefectDate" class="col-sm-4 control-label">Date Discovered</label>
+            <div class="col-sm-8">
+              <input type="date" class="form-control" id="viewDefectDate" value="{{date}}">
+            </div>
+            </div>
+           <div class="form-group">
+               <label for="viewIterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="viewIterationInjected">
+                  <option>1</option>
+                  <option>2</option>
+                </select>
+                </div>
+            </div>
+          <input class="hidden" name="iterationRemoved" value={{itrno}}>
+          <div class="form-group">
+               <label for="defectType" class="col-sm-4 control-label">Type</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="viewDefectType">
+                  <option value="1">Requirements</option>
+                  <option value="2">Design</option>
+                  <option value="3">Implementation</option>
+                    <option value="4">Deployment</option>
+                    <option value="5">Bad fix</option>
+                </select>
+                </div>
+            </div>
+          <div class="form-group">
+            <label for="defectDesc" class="col-sm-4 control-label">Description</label>
+            <div class="col-sm-8">
+             <textarea class="form-control" id="viewDefectDesc" rows="3"></textarea>
+            </div>
+            </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" id='save-btn' value="Save Report">
+      </div>
+         </form>
+    </div>
+  </div>
+</div>
+
+<div id="submitmodal" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Defect Removal Summary</h4>
+              </div>
+
+              <form class="form-horizontal" role="form" action="{% url 'endrem' %}" method="post">
+                <div class="modal-body">
+                    <div id="submitMessage"></div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="time">Time:</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" id="time" name="time" value="00:00:00" required readonly>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="defectNo">Defects removed:</label>
+                    <div class="col-sm-6">
+                      <input type="number" min="0" class="form-control" id="defectNo" name="defectNo" placeholder="0" required readonly>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="sid" name="sid" value="{{ sid }}">
+                  <button type="submit" class="btn btn-success">Submit</button>
+                </div>
+              </form>
+
+
+            </div>
+
+          </div>
+        </div>
+
+{%endblock modal %}
+
+{%block main %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="well timer">
+        <p class="lead">Time Elapsed</p>
+          <h1 id="timerdisplay">00:00:00</h1>
+          <p class="control">
+            <button class="btn btn-md btn-info" onclick="pausetimer()" id="pausebutton" role="button">Pause</button>
+            <button class="btn btn-md btn-danger" onclick="stoptimer()" data-toggle="modal" data-target="#submitmodal" id="stopbutton" role="button">Stop</button> <!-- Modal -->
+          </p></div>
+    </div>
+    <div class="col-md-9">
+    <div class="panel-group" role="tablist">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="ongoingDefects">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
+           Ongoing Defects
+          </a>
+            <button class="btn btn-default" data-toggle="modal" data-target="#defectReport">New Defect</button>
+        </h4>
+      </div>
+      <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
+        <ul class="list-group"  >
+          <li class="list-group-item">
+              <span>Requirements Change</span>
+              <button class="btn btn-default edit-btn" data-toggle="modal" data-target="#editReport">Edit</button>
+              <button class="btn btn-success remove-btn" >Removed</button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <br>
+        <div class="panel-group" role="tablist">
+    <div class="panel panel-default">
+      <div class="panel-heading" role="tab" id="removedListHeading">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#removedList" aria-expanded="false" aria-controls="removedList">
+           Removed Defects
+          </a>
+        </h4>
+      </div>
+      <div id="removedList" class="panel-collapse collapse" role="tabpanel" aria-labelledby="removedListHeading" aria-expanded="false">
+        <ul class="list-group" >
+        </ul>
+      </div>
+    </div>
+  </div>
+
+    </div>
+
+</div>
+</div>
+{% endblock main %}
+
+{%block js %}
+<script src="{% static 'js/defect-session.js'%}"></script>
+    <script src="{% static 'js/timer.js' %}"></script>
+    
+
+{% endblock js %}
+

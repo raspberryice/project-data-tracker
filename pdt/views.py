@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
-from models import SLOCSession,ManageSession,Participate,Phase,Iteration,Project
+from models import *
 # Create your views here.
 USER_DEVELOPER = 1
 USER_MANAGER = 2
@@ -126,34 +126,69 @@ def endDevelopeSession(request):
 	pj.totalTime = pj.totalTime + ts
 	pj.totalSLOC = pj.totalSLOC + int(request.POST['sloc'])  
 	s.SLOC = int(request.POST['sloc'])
+	request.session['ds'] = s.id
 	s.save()
 	i.save()
 	p.save()
 	pj.save()
 	return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
 
-# def beginDefectSession(request):
-# 	s = DefectSession(start_data = timezone.now(),defectno = 0,sessionlast = 0)
-# 	s.interation = int(request.session['iteration'])
-# 	s.developer = int(request.session['user'])
-# 	s.save()
-# 	return render_to_response("defectsession.html")
+def beginDefectSession(request):
+ 	s = DefectSession(start_date = timezone.now(),defectno = 0,sessionlast = 0)
+ 	if request.POST.get('prjid',"") == "":
+ 		project = Project.objects.get(id = int(request.session['prjid']))
+ 	else:
+ 		project = Project.objects.get(id = int(request.POST['prjid']))
+ 		request.session['prjid'] = request.POST['prjid']
+	phase = Phase.objects.get(project_id = project.id,status = True)
+	iteration = Iteration.objects.get(phase_id = phase.id,status = True)
+	phases = Phase.objects.filter(project_id = project.id)
+	iterations = []
+	for ph in phases:
+		ites = Iteration.objects.filter(phase_id = ph.id)
+		for i in ites:
+			iterations.append(i)
+	s.iteration = iteration
+ 	s.developer = request.user
+ 	iters = [0 for x in range(4)]
+ 	for x in range(4):
+ 		if x<phase.no:
+ 			iters[x] = len(Iteration.objects.filter(phase = (Phase.objects.get(project_id = project.id,no = x+1))).all())
+	s.save()
+	request.session['sid'] = s.id
+	print len(iterations)
+	iterno = iters[0]+iters[1]+iters[2]+iters[3]
+	c = Context({'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
+ 	return render_to_response("dev-defect.html",c)
 
-# def addDefect(request):
-# 	s = DefectSession.objects.get(id = request.POST['id'])
-# 	d = Defect(session = s.id,type = int(request.POST['type']),desc = request.POST['desc'])
-# 	d.iterationInjected = request.POST['injected']
-# 	d.iterationRemoved = DefectSession.objects.get(id = s.iteration).id
-# 	d.status = int(request.POST['status'])
-# 	s.defectno = s.defectno+1
-# 	s.save()
-# 	d.save()
-# 	return render_to_response("defectsession.html")
+def addDefect(request):
+ 	s = DefectSession.objects.get(id = int(request.session['sid']))
+ 	d = Defects(session_id = s.id,name = request.POST['name'],typed = int(request.POST['type']),desc = request.POST['desc'])
+ 	#d.iterationInjected = request.POST['iterationInjected']
+ 	iters = [0 for x in range(4)]
+ 	for x in range(4):
+ 		if x<s.iteration.phase.no:
+ 			iters[x] = len(Iteration.objects.filter(phase = (Phase.objects.get(project_id = s.iteration.phase.project.id,no = x+1))).all())
+ 	iternum = int(request.POST['iterationInjected'])
+ 	m  = 0
+ 	while(1):
+ 		if iternum - iters[m]>0:
+ 			iternum -=iters[m]
+ 			m+=1
+ 		else:
+ 			break
+ 	d.iterationInjected = Iteration.objects.get(phase_id = (Phase.objects.get(project_id = s.iteration.phase.project.id,no = m+1).id),no = iternum)
 
-# def endDefectSession(request):
-# 	s = DefectSession.objects.get(id = request.POST['id'])
-# 	s.time = int(request.POST['time'])
-# 	return render_to_response("index.html")
+ 	d.iterationRemoved = s.iteration
+ 	s.defectno = s.defectno+1
+ 	s.save()
+ 	d.save()
+ 	return HttpResponse("")
+
+def endDefectSession(request):
+ 	s = DefectSession.objects.get(id = int(request.session['sid']))
+ 	s.time = int(request.POST['time'])
+ 	return render_to_response("index.html")
 
 def beginManageSession(request):
 	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
@@ -229,7 +264,8 @@ def manProject(request,pid):
 			totit = totit + len(Iteration.objects.filter(phase_id = ph.id).all())
 		time = p.totalTime
 		totsloc  = p.totalSLOC
-		c = Context({'prjname':p.name, 'totph':totph ,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		slocestimate = totsloc/p.slocestimate
+		c = Context({'prjname':p.name, 'totph':totph ,'slocestimate':slocestimate,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('manproject.html',c)
 	else:
 		return HttpResponseRedirect('/')
