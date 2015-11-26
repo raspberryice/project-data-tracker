@@ -334,6 +334,7 @@ def manProject(req, pid):
         # get data of project(id = pid)
 
         c = Context({
+            'pid':pid,
             'user': req.user,
             'prjname': "Project 3",
             'curphase': 2,
@@ -418,15 +419,26 @@ def create_defect(request):
                         content_type="application/json")
 
 @login_required
-def manviewactivity(request):
+def manActivity(request,pid):
     c = {
         'developsessions':{},
         'managesessions':{},
         'defectsessions':{},
         'defect_list':{},
+        'pid':pid,
     }
     return render_to_response('man-activities.html', c)
 
+@login_required
+def manDefect(request,pid):
+    c = {
+        'developsessions':{},
+        'managesessions':{},
+        'defectsessions':{},
+        'defect_list':{},
+        'pid':pid,
+    }
+    return render_to_response('man-defects.html', c)
 
 def manAllProjects(req):
     if req.user.profile.role == 2:
