@@ -31,14 +31,14 @@
                   <div class="radio">
                     <label>
                       <input type="radio" name="phase" id="phaseCurrent" value="current" checked>
-                      Current Phase: {{ curphasename }}
+                      Current Phase: {{ curphase }}
                     </label>
                   </div>
                   {% if curphase != "4" %}
                   <div class="radio">
                     <label>
                       <input type="radio" name="phase" id="phaseNext" value="next">
-                      Next Phase: {{ nextphasename }} (The current phase will be closed)
+                      Next Phase: {{next}} (The current phase will be closed)
                     </label>
                   </div>
                   {% endif %}
@@ -61,7 +61,8 @@
 {%block sidebar %}
    <li class="active"><a href="#">Overview</a></li>
    <li><a href="report/">Reports</a></li>
-   <li><a href="manager/activity">Activities</a></li>
+   <li><a href="activity/">Activities</a></li>
+   <li><a href="defect/">Defects</a></li>
    <li><a href="setting/">Settings</a></li>
 {% endblock sidebar %}
 
@@ -85,7 +86,7 @@
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
               <img src= "{% static 'img/bug-sm.png'%}" class="img-responsive" alt="defect">
-              <h4>XX</h4>
+              <h4>{{removed}}</h4>
               <span class="text-muted">Total number of defects </span>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder hoverlight" data-toggle="modal" data-target="#newiteration">
@@ -111,12 +112,12 @@
                 <tr>
                   <td>Delivered SLOC</td>
                   <td>{{ totsloc }}</td>
-                  <td>{{ totslocesti }}</td>
+                  <td>{{ esloc }}</td>
                 </tr>
                 <tr>
                   <td>Effort(person-months)</td>
                   <td>{{ personmonths }}</td>
-                  <td>{{ pmesti }}</td>
+                  <td>{{ epm }}</td>
                 </tr>
                 <tr>
                   <td>Delivered SLOC per person-month</td>
@@ -139,27 +140,27 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>Not Closed Yet</td>
+                  <td>{% if injected == "" %}Not Closed Yet{%else%}{{injected}}{%endif%}</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
-                  <td>22</td>
+                  <td>{{removed}}</td>
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>Not Closed Yet</td>
+                  <td>{% if injectionrate == "" %}Not Closed Yet{%else%}{{injectionrate}}{%endif%}</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
-                  <td>2.5</td>
+                  <td>{{removalrate}}</td>
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>Not Closed Yet</td>
+                  <td>{% if density == "" %}Not Closed Yet{%else%}{{density}}{%endif%}</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>Not Closed Yet</td>
+                  <td>{% if yield == "" %}Not Closed Yet{%else%}{{yield}}{%endif%}</td>
                 </tr>
               </tbody>
             </table>

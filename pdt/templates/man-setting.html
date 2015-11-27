@@ -180,17 +180,17 @@
           <input type="hidden" name="action" value="change_yield">
           <label for="yield">Yield Rate for Last Iteration</label>
           <div class="form-inline">
-            <input type="number" min="1" max="100" step="any" class="form-control" id="epm" name="epm" value="{{curepm}}">
+            <input type="number" min="0" max="1" step="any" class="form-control" id="yield" name="yiled" value="{{curyield}}">
             <button type="submit" class="btn btn-primary">Change</button>
           </div>
         </form>
         <p class="text-muted" style="margin-top: 10px">
-          The assumed yield rate (%) of the last iteration. Will be used to calculate yields. Please input a number > 0 and <= 100.
+          The assumed yield rate (%) of the last iteration. Will be used to calculate yields.
         </p>
       </div>
     </div>
   </div>
-  <h3 class="page-header">Danger Zone</h3>
+  <h3 class="page-header">Status Control</h3>
   <div class="row col-sm-12">
     <div class="panel panel-danger">
       <div class="panel-heading">Close/Delete Project</div>
