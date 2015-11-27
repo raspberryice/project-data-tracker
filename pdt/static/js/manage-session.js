@@ -1,3 +1,24 @@
+//convert all time in seconds to H:mm:ss
+$(document).ready(function(){
+    $('#devSessionList').find('.time').each(function()
+    {   timeInSeconds = $(this).text();
+        $(this).text(render_time(timeInSeconds));
+    }
+    );
+    $('#remSessionList').find('.time').each(function()
+    {   timeInSeconds = $(this).text();
+        $(this).text(render_time(timeInSeconds));
+    }
+    );
+    $('#mngSessionList').find('.time').each(function()
+    {   timeInSeconds = $(this).text();
+        $(this).text(render_time(timeInSeconds));
+    }
+    );
+})
+
+
+
 $('.devSessionBtn').on('click',function(e){
     var li = $(this).parent();
     li.addClass('current');
@@ -5,7 +26,7 @@ $('.devSessionBtn').on('click',function(e){
     var sloc = parseInt(li.children('.sloc').text());
     console.log (sloc);
     var id = li.children('.id').text();
-    $('#devTime').val(render_time(time));
+    $('#devTime').val(time);
     $('#devSLOC').val(sloc);
     $('#devId').val(id);
     $('#submitDev').modal('show');
@@ -15,7 +36,7 @@ $('.mngSessionBtn').on('click',function(e){
     li.addClass('current');
     var time = li.children('.time').text();
     var id = li.children('.id').text();
-    $('#mngTime').val(render_time(time));
+    $('#mngTime').val(time);
     $('#mngId').val(id);
     $('#submitMng').modal('show');
 });
@@ -26,7 +47,7 @@ $('.remSessionBtn').on('click',function(e){
     var time = li.children('.time').text();
     var defect_no = li.children('.defectno').text();
     var id = li.children('.id').text();
-    $('#remTime').val(render_time(time));
+    $('#remTime').val(time);
     $('#defectNo').val(defect_no);
     $('#remId').val(id);
     $('#submitRem').modal('show');
@@ -37,7 +58,6 @@ $('.viewDefectBtn').on('click',function(){
     li.addClass('current');
     var report = {
     'name':li.children('.name').text(),
-    'date':li.children('.date').text(),
     'iterationInjected':li.children ('.inject').text(),
     'iterationRemoved':li.children('.remove').text(),
     'type':li.children('.type').text(),
@@ -101,9 +121,11 @@ $('#updateDev').on('submit',function(e){
     },
     });
     //update in html
-    var li =$('#devSessionList').children('.current');
+    var li =$('#devSessionList').find('.current');
     li.children('.time').text($('#devTime').val());
     li.children('.sloc').text($('#devSLOC').val());
+
+    li.removeClass('current');
 
 
 });
@@ -126,9 +148,11 @@ $('#updateRem').on('submit',function(e){
     },
     });
 
-    var li =$('#remSessionList').children('.current');
+    var li =$('#remSessionList').find('.current');
     li.children('.time').text($('#remTime').val());
     li.children('.sloc').text($('#defectNo').val());
+
+    li.removeClass('current');
 
 });
 
@@ -149,9 +173,11 @@ $('#updateMng').on('submit',function(e){
         console.log(xhr.status + ': '+xhr.responseText);
     },
     });
-    var li =$('#mngSessionList').children('.current');
+    var li =$('#mngSessionList').find('.current');
     li.children('.time').text($('#remTime').val());
     li.children('.sloc').text($('#defectNo').val());
+
+    li.removeClass('current');
 
 
 });
@@ -159,17 +185,24 @@ $('#updateMng').on('submit',function(e){
 $('#editDefectForm').on('submit',function(e){
     e.preventDefault();
     $('#editReport').modal('hide');
-    var id = $('')
     var report = {
           id:$('#defectId').val(),
           name: $('#viewDefectName').val(),
-          date: $("#viewDefectDate").val(),
           iterationInjected: $('#viewIterationInjected').val(),
           iterationRemoved: $('#viewIterationRemoved').val(),
           type: $('#viewDefectType').val(),
           desc: $('#viewDefectDesc').val(),
         };
+    var li = $('#recentDefectList').find('.current');
+    li.children('.name').text($('#viewDefectName').val());
+    li.children ('.inject').text($('#viewIterationInjected').val());
+    li.children('.remove').text( $('#viewIterationRemoved').val());
+    li.children('.type').text($('#viewDefectType').val());
+    li.children('.desc').text($('#viewDefectDesc').val());
+
+    li.removeClass('current');
     update_defect(report);
+
 
 });
 
