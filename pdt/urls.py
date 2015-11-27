@@ -6,6 +6,7 @@ urlpatterns = [
 	url(r'auth/login/$', login, name = 'login'),
 	url(r'auth/logout/$', logout, name = 'logout'),
     url(r'developer/dashboard/$', devdashboard, name = 'devdashboard'),
+	url(r'developer/allprojects/$', devAllProjects, name = 'devallprojects'),
     url(r'developer/create_defect/',create_defect,name="create_defect"),
 	url(r'developer/createdev/', beginDevelopSession, name = 'createdev'),
 	url(r'developer/enddev/', endDevelopSession, name = 'enddev'),
@@ -13,6 +14,9 @@ urlpatterns = [
     url(r'developer/endrem/',endDefectSession,name='endrem'),
 	url(r'developer/createmng/',beginManageSession,name='createmng'),
     url(r'developer/endmng/',endManageSession,name='endmng'),
+	url(r'developer/project/(?P<pid>\d+)/$',devProject,name='devproject'),
+	url(r'developer/project/(?P<pid>\d+)/report/$',devReport,name='devreport'),
+
 	url(r'manager/dashboard/$', mandashboard, name = 'mandashboard'),
 	url(r'manager/newproject/$', mannewproject, name = 'mannewproject'),
 	url(r'manager/allprojects/$', manAllProjects, name = 'manallprojects'),
