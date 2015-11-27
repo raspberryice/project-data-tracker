@@ -178,7 +178,7 @@
           <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
            Ongoing Defects
           </a>
-            <button class="btn btn-default" id="createDefectBtn">New Defect</button>
+            <div style="text-align:right; margin-top: -1.2pc;"><a id="createDefectBtn">+</a></div>
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
@@ -219,4 +219,3 @@
     <script src="{% static 'js/timer.js' %}"></script>
     <script src="{% static 'js/defect-session.js'%}"></script>
 {% endblock js %}
-

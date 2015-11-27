@@ -329,8 +329,10 @@ def mandashboard(req):
 def manReport(req, pid):
     if req.user.profile.role == 2:
         # projectid == pid
-        queryphase = req.GET.get('phase', 'Overall')
-        queryitr = req.GET.get('iteration', 'Overall')
+        last_phase_that_has_closed_iteration = '2'
+        last_closed_iteration = '2'
+        queryphase = req.GET.get('phase', last_phase_that_has_closed_iteration)
+        queryitr = req.GET.get('iteration', last_closed_iteration)
         c = Context({
             'user': req.user,
             'prjname': "Project 3",
@@ -475,6 +477,7 @@ def manProject(req, pid):
             'totslocesti': 35,  # stands for 35%
             'personmonths': 20,
             'pmesti': 30,
+            'injected': "",
             'avesloc': 117,
             'closed': False, # whether the project has been closed
         })
@@ -568,6 +571,7 @@ def manDefect(request,pid):
     }
     return render_to_response('man-defects.html', c)
 
+@login_required
 def manAllProjects(req):
     if req.user.profile.role == 2:
         prjlist = [
@@ -629,3 +633,7 @@ def manAllProjects(req):
         return render_to_response("man-allprojects.html", c)
     else:
         return HttpResponseRedirect("/")
+
+@login_required
+def editprofile(req):
+    return render_to_response("profile.html")
