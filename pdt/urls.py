@@ -1,6 +1,5 @@
 from django.conf.urls import url
-from .views import *
-
+import views
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'verify$',views.verify,name='verify'),
@@ -15,4 +14,5 @@ urlpatterns = [
 	url(r'developer/createrem/$',views.beginDefectSession,name="createrem"),
 	url(r'developer/endrem/$',views.endDefectSession,name="endrem"),
 	url(r'developer/createrem/adddefect/$',views.addDefect,name='add'),
+	url(r'manager/newproject/$',views.addproject,name='addproject'),
 ]

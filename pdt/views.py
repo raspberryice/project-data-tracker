@@ -187,8 +187,11 @@ def addDefect(request):
 
 def endDefectSession(request):
  	s = DefectSession.objects.get(id = int(request.session['sid']))
- 	s.time = int(request.POST['time'])
- 	return render_to_response("dev-dashboard.html")
+ 	t = str(request.POST['time'])
+	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+	s.time = ts
+	s.save()
+ 	return HttpResponseRedirect("/developer/dashboard")
 
 def beginManageSession(request):
 	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
@@ -201,7 +204,7 @@ def endManageSession(request):
 	s = ManageSession.objects.get(id = int(request.POST['id']))
 	s.time = int(request.POST['time'])
 	s.save()
-	return render_to_response("dev-dashboard.html")
+	return HttpResponseRedirect("/developer/dashboard")
 
 @login_required
 def manReport(request,pid):
@@ -232,7 +235,7 @@ def manReport(request,pid):
 				for itera in iteration_list:
 					totsloc += itera.totalSLOC
 					time += itera.totalTime
-		c = Context({'prhname':p.name, 'totph':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		c = Context({'prhname':p.name, 'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('man-report.html',c)
 	else:
 		return HttpResponseRedirect('/')
@@ -255,4 +258,35 @@ def manProject(request,pid):
 		return render_to_response('man-project.html',c)
 	else:
 		return HttpResponseRedirect('/')
+
+@login_required
+def addproject(request):
+	if request.POST.get('name',"")!="":
+		p = Project(name = request.POST['name'],desc = request.POST['description'],slocestimate = int(request.POST['esloc']),effortestimate = int(request.POST['epm']))
+		p.status = True
+		p.totalSLOC=  0
+		p.totalTime = 0
+		p.totalDefects = 0
+		p.end_date = timezone.now()
+		p.start_date = timezone.now()
+		p.yieldrate = int(request.POST['yield'])/100.0
+		p.save()
+		ph = Phase(no = 1,status = True,totalSLOC = 0,totalTime = 0,totalDefects = 0,project_id = p.id, start_date = timezone.now(),end_date = timezone.now())
+		ph.save()
+		itera = Iteration(no = 1,status = True,totalSLOC = 0,totalTime = 0,totalDefects = 0,phase_id = ph.id, start_date = timezone.now(),end_date = timezone.now())
+		liss = request.POST.getlist("developers",[])
+		itera.save()
+		for i in liss:
+			par = Participate(project_id = p.id,developer_id = int(i))
+			par.save()
+		return HttpResponseRedirect('/manager/dashboard')
+	else:
+		u = []
+		for i  in User.objects.all():
+			if not i.is_staff:
+				if i.profile.role == USER_DEVELOPER:
+					u.append(i)
+		c= Context({'developerlist':u})
+		return render_to_response("man-newproject.html",c)
+
 

@@ -1,19 +1,20 @@
 from django.db import models
 from django.contrib.auth.models import User,AbstractBaseUser
 class Project(models.Model):
-    creator = models.ForeignKey(User, related_name='creator')
-    developers = models.ManyToManyField(User, related_name='developer')
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
     status = models.BooleanField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField()
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects =models.IntegerField()
     slocestimate = models.IntegerField()
     effortestimate = models.IntegerField()
-    
+    yieldrate = models.FloatField()
     def __str__ (self):
         return self.name
+
 class Profile(models.Model):
     user = models.OneToOneField(User)
     ROLE_NAMES = (
@@ -34,6 +35,8 @@ class Phase(models.Model):
     project = models.ForeignKey(Project)
     no = models.IntegerField(choices=PHASE_NAMES,default=1)
     status = models.BooleanField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField()
     totalTime = models.IntegerField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
@@ -45,6 +48,8 @@ class Iteration(models.Model):
     no= models.IntegerField()
     status = models.BooleanField()
     totalTime = models.IntegerField()
+    start_date = models.DateTimeField(auto_now_add=True)
+    end_date = models.DateTimeField()
     totalSLOC = models.IntegerField()
     totalDefects = models.IntegerField()
     def __str__(self):
