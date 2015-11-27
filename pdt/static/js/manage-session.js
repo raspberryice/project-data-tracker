@@ -1,7 +1,8 @@
 $('.devSessionBtn').on('click',function(e){
     var li = $(this).parent();
     var time = li.children('.time').text();
-    var sloc = li.children('.sloc').text();
+    var sloc = parseInt(li.children('.sloc').text());
+    console.log (sloc);
     var id = li.children('.id').text();
     $('#devTime').val(time);
     $('#devSLOC').val(sloc);
@@ -13,8 +14,8 @@ $('.mngSessionBtn').on('click',function(e){
     var time = li.children('.time').text();
     var id = li.children('.id').text();
     $('#mngTime').val(time);
-    $('mngId').val(id);
-    $('#submitMng').modal('.show');
+    $('#mngId').val(id);
+    $('#submitMng').modal('show');
 });
 
 $('.remSessionBtn').on('click',function(e){
