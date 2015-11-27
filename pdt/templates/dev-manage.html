@@ -228,6 +228,13 @@
       </div>
         <div class="panel-collapse collapse in" id= "devSessionList" role="tabpanel" aria-labelledby="devListHeading" aria-expanded="true">
         <ul class="list-group">
+             <li class="list-group-item">
+              <span>2015-11-27</span>
+                 <span class="hidden time" >300</span>
+                 <span class="hidden sloc"> 1290</span>
+                 <span class="hidden id">1</span>
+                 <button class="btn btn-default devSessionBtn">Edit</button>
+          </li>
             {% for session in developsessions %}
              <li class="list-group-item">
               <span>{{session.start_date}}</span>
@@ -251,6 +258,13 @@
       </div>
         <div class="panel-collapse collapse in" id= "remSessionList" role="tabpanel" aria-labelledby="remListHeading" aria-expanded="true">
         <ul class="list-group">
+             <li class="list-group-item">
+              <span>2015-11-27</span>
+                 <span class="hidden time">390</span>
+                 <span class="hidden defectno">1</span>
+                   <span class="hidden id">1</span>
+                 <button class="btn btn-default remSessionBtn">Edit</button>
+          </li>
             {% for session in defectsessions %}
              <li class="list-group-item">
               <span>{{session.start_date}}</span>
@@ -274,6 +288,12 @@
       </div>
         <div class="panel-collapse collapse in" id="mngSessionList" role="tabpanel" aria-labelledby="mngListHeading" aria-expanded="true">
         <ul class="list-group">
+              <li class="list-group-item">
+              <span>2015/11/27</span>
+                 <span class="hidden time">673</span>
+                 <span class="hidden id">1</span>
+                 <button class="btn btn-default mngSessionBtn">Edit</button>
+          </li>
             {% for session in managesessions %}
              <li class="list-group-item">
               <span>{{session.start_date}}</span>
@@ -297,6 +317,16 @@
       </div>
         <div id="recentDefectList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="recentDefectListHeading" aria-expanded="true">
         <ul class="list-group" >
+             <li class="list-group-item">
+                <span class="name">Requirements Change</span>
+                <span class="date">2015-11-27</span>
+                 <span class="hidden id">1</span>
+                 <span class="hidden inject">1</span>
+                 <span class="hidden remove">2</span>
+                 <span class="hidden desc">display of metrics have changed.</span>
+                 <span class="hidden type">Requirements</span>
+              <button class="btn btn-default viewDefectBtn">Edit</button>
+          </li>
             {% for defect in defect_list %}
              <li class="list-group-item">
                 <span class="name">{{defect.name}}</span>

@@ -77,7 +77,6 @@
               <input type="text" class="form-control" id="viewDefectName" placeholder="Defect">
             </div>
             </div>
-
            <div class="form-group">
                <label for="iterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
                 <div class="col-sm-8">
@@ -136,12 +135,6 @@
                       <input type="text" class="form-control" id="time" name="time" value="00:00:00" required readonly>
                     </div>
                   </div>
-                  <div class="form-group">
-                    <label class="control-label col-sm-4" for="defectNo">Defects removed:</label>
-                    <div class="col-sm-6">
-                      <input type="number" min="0" class="form-control" id="defectNo" name="defectNo" placeholder="0" required readonly>
-                    </div>
-                  </div>
                 </div>
                 <div class="modal-footer">
                   <input type="hidden" id="sid" name="sid" value="{{ sid }}">
@@ -176,7 +169,7 @@
           <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
            Ongoing Defects
           </a>
-            <button class="btn btn-default" id="createDefectBtn">New Defect</button>
+            <div style="text-align:right; margin-top: -1.2pc;"><a id="createDefectBtn">+</a></div>
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
@@ -212,4 +205,3 @@
     <script src="{% static 'js/timer.js' %}"></script>
     <script src="{% static 'js/defect-session.js'%}"></script>
 {% endblock js %}
-

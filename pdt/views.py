@@ -718,3 +718,7 @@ def setting(request,pid):
             return HttpResponseRedirect("/manager/dashboard/")
     c = Context({'user':request.user,'curname':name,'curesloc':esloc,'curepm':epm,'curyield':yieldrate,'curdescription':desc,'developerlist':unparti,'curdeveloperlist':parti})
     return render_to_response("man-setting.html",c)
+
+
+def editprofile(req):
+    return render_to_response("profile.html")

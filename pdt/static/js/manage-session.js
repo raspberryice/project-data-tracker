@@ -5,7 +5,7 @@ $('.devSessionBtn').on('click',function(e){
     var sloc = parseInt(li.children('.sloc').text());
     console.log (sloc);
     var id = li.children('.id').text();
-    $('#devTime').val(time);
+    $('#devTime').val(render_time(time));
     $('#devSLOC').val(sloc);
     $('#devId').val(id);
     $('#submitDev').modal('show');
@@ -15,7 +15,7 @@ $('.mngSessionBtn').on('click',function(e){
     li.addClass('current');
     var time = li.children('.time').text();
     var id = li.children('.id').text();
-    $('#mngTime').val(time);
+    $('#mngTime').val(render_time(time));
     $('#mngId').val(id);
     $('#submitMng').modal('show');
 });
@@ -26,7 +26,7 @@ $('.remSessionBtn').on('click',function(e){
     var time = li.children('.time').text();
     var defect_no = li.children('.defectno').text();
     var id = li.children('.id').text();
-    $('#remTime').val(time);
+    $('#remTime').val(render_time(time));
     $('#defectNo').val(defect_no);
     $('#remId').val(id);
     $('#submitRem').modal('show');
@@ -51,6 +51,13 @@ $('.viewDefectBtn').on('click',function(){
     $('#editReport').modal('show');
 });
 
+function render_time(time){
+     var hours = parseInt( time / 3600 ) % 24;
+    var minutes = parseInt( time / 60 ) % 60;
+    var seconds = time % 60;
+    var result = (hours < 10 ? "0" + hours : hours) + ":" + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds  < 10 ? "0" + seconds : seconds);
+    return result;
+}
 function render_report(report){
 
     $('#viewDefectName').val(report['name']);
