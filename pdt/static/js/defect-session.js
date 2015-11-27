@@ -60,7 +60,7 @@ function clear_report(){
     $('#defectType').children().each(function(){
     $(this).removeAttr('selected');
     });
-    $('#defectDesc').text('');
+    $('#defectDesc').val('');
 }
 
 
@@ -79,7 +79,7 @@ function render_report(report){
      if ($(this).attr('value')==selectedType)
        { $(this).attr('selected','selected');}
     });
-    $('#viewDefectDesc').text(report['desc']);
+    $('#viewDefectDesc').val(report['desc']);
 
 }
 $('#editDefectForm').on('submit',function(event){

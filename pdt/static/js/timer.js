@@ -32,8 +32,11 @@ function stoptimer() {
     document.getElementById("time").setAttribute("value", document.getElementById("timerdisplay").innerHTML);
     //for defect session
     $('#defectNo').attr("value",removedList.find('li').length);
-    if (ongoingList.find('li').length !=0){
+    if (ongoingList.find('li').length ){
         $('#submitMessage').text("You have "+ ongoingList.find('li').length +" defects not yet removed!");
+     }
+     else {
+         $('#submitMessage').text('');
      }
 }
 $('#submitmodal').on('hidden.bs.modal',function(){
