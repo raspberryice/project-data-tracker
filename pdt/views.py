@@ -329,8 +329,10 @@ def mandashboard(req):
 def manReport(req, pid):
     if req.user.profile.role == 2:
         # projectid == pid
-        queryphase = req.GET.get('phase', 'Overall')
-        queryitr = req.GET.get('iteration', 'Overall')
+        last_phase_that_has_closed_iteration = '2'
+        last_closed_iteration = '2'
+        queryphase = req.GET.get('phase', last_phase_that_has_closed_iteration)
+        queryitr = req.GET.get('iteration', last_closed_iteration)
         c = Context({
             'user': req.user,
             'prjname': "Project 3",
@@ -633,5 +635,5 @@ def manAllProjects(req):
         return HttpResponseRedirect("/")
 
 @login_required
-def profile(req):
+def editprofile(req):
     pass

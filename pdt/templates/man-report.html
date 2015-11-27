@@ -20,7 +20,7 @@
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Phase: {{ curphase }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="./?phase=Overall">Overall</a></li>
+                {% if projectclosed %}<li><a href="./?phase=Overall">Overall</a></li>{% endif %}
                 {% with ''|center:totphase as range %}
                 {% for _ in range %}
                     <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
@@ -32,7 +32,7 @@
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Iteration: {{ curitr }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
+                {% if projectclosed or phaseclosed %}<li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>{% endif %}
                 {% with ''|center:totitr as range %}
                 {% for _ in range %}
                     <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
@@ -85,27 +85,27 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>33</td>
+                  <td>{{injected}}</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
-                  <td>22</td>
+                  <td>{{removed}}</td>
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>3.4</td>
+                  <td>{{injectionrate}}</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
-                  <td>2.5</td>
+                  <td>{{removalrate}}</td>
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>10</td>
+                  <td>{{density}}</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>60%</td>
+                  <td>{{yield}}</td>
                 </tr>
               </tbody>
             </table>
