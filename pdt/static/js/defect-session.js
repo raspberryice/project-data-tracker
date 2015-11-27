@@ -80,7 +80,6 @@ function render_report(report){
        { $(this).attr('selected','selected');}
     });
     $('#viewDefectDesc').text(report['desc']);
-     console.log('done rendering report for'+defect);
 
 }
 $('#editDefectForm').on('submit',function(event){
@@ -114,7 +113,7 @@ var removedList = $("#removedList").children('ul');
 $('#ongoingList').on('click','.edit-btn',function(){
     var defect_id = $(this).parent().attr('id');
     console.log(defect_id);
-     var report = JSON.parse(sessionStorage.getItem(defect));
+     var report = JSON.parse(sessionStorage.getItem(defect_id));
     render_report(report);
     $('#editReport').modal('show');
     sessionStorage.current_defect= defect_id;
