@@ -5,6 +5,7 @@ urlpatterns = [
 	url(r'^$', index, name = 'index'),
 	url(r'auth/login/$', login, name = 'login'),
 	url(r'auth/logout/$', logout, name = 'logout'),
+	url(r'auth/profile/$', editprofile, name='editprofile'),
     url(r'developer/dashboard/$', devdashboard, name = 'devdashboard'),
 	url(r'developer/allprojects/$', devAllProjects, name = 'devallprojects'),
     url(r'developer/create_defect/',create_defect,name="create_defect"),

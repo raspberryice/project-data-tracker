@@ -475,6 +475,7 @@ def manProject(req, pid):
             'totslocesti': 35,  # stands for 35%
             'personmonths': 20,
             'pmesti': 30,
+            'injected': "",
             'avesloc': 117,
             'closed': False, # whether the project has been closed
         })
@@ -568,6 +569,7 @@ def manDefect(request,pid):
     }
     return render_to_response('man-defects.html', c)
 
+@login_required
 def manAllProjects(req):
     if req.user.profile.role == 2:
         prjlist = [
@@ -629,3 +631,7 @@ def manAllProjects(req):
         return render_to_response("man-allprojects.html", c)
     else:
         return HttpResponseRedirect("/")
+
+@login_required
+def profile(req):
+    pass
