@@ -87,12 +87,76 @@ def devdashboard(req):
             'user': req.user,
             'prjlist': prjlist,
             'totprjcnt': 10,  # total number of projects the developer attended
-            'justcompleted': (req.GET.get('prev', '') == '/developer/enddev/'),
+            'justcompleteddev': (req.GET.get('prev', '') == '/developer/enddev/'),
+            'justcompleteddef': (req.GET.get('prev', '') == '/developer/enddef/'),
+            'justcompletedman': (req.GET.get('prev', '') == '/developer/endman/'),
         })
         return render_to_response("dev-dashboard.html", c)
     else:
         return HttpResponseRedirect("/")
 
+@login_required
+def devAllProjects(req):
+    if req.user.profile.role == 1:
+        prjlist = [
+            {
+                'name': 'Project 1',
+                'id': 1001,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True, # open
+            },
+            {
+                'name': 'Project 2',
+                'id': 1002,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True,
+            },
+            {
+                'name': 'Project 3',
+                'id': 1003,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True,
+            },
+            {
+                'name': 'Project 4',
+                'id': 1004,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True,
+            },
+            {
+                'name': 'Project 5',
+                'id': 1005,
+                'curphase': 2,
+                'curitr': 3,
+                'status': True, #open
+            },
+            {
+                'name': 'Project 6',
+                'id': 1006,
+                'curphase': 1,
+                'curitr': 2,
+                'status': True, # open
+            },
+            {
+                'name': 'Project 7',
+                'id': 1007,
+                'curphase': 4,
+                'curitr': 4,
+                'status': False, # closed
+            },
+        ]
+        c = Context({
+            'user': req.user,
+            'prjlist': prjlist,
+            'totopenprj': 6,
+        })
+        return render_to_response("dev-allprojects.html", c)
+    else:
+        return HttpResponseRedirect("/")
 
 @login_required
 def beginDevelopSession(request):
@@ -117,7 +181,7 @@ def endDevelopSession(request):
     print("sloc: " + request.POST['sloc'])
     print("time: " + request.POST['time'] + ", type: ")
     print(type(request.POST['time']))
-    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/endrem/')
+    return HttpResponseRedirect('/developer/dashboard/?prev=/developer/enddev/')
 
 
 @login_required
