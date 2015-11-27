@@ -25,7 +25,7 @@ $('.remSessionBtn').on('click',function(e){
     $('#remTime').val(time);
     $('#defectNo').val(defect_no);
     $('#remId').val(id);
-    $('#submitMng').modal('show');
+    $('#submitRem').modal('show');
 });
 
 $('.viewDefectBtn').on('click',function(){
