@@ -126,6 +126,7 @@ def endDevelopeSession(request):
 	pj.totalTime = pj.totalTime + ts
 	pj.totalSLOC = pj.totalSLOC + int(request.POST['sloc'])  
 	s.SLOC = int(request.POST['sloc'])
+	print s.SLOC
 	request.session['ds'] = s.id
 	s.save()
 	i.save()
@@ -184,58 +185,142 @@ def addDefect(request):
  	s.save()
  	d.save()
  	return HttpResponse("")
-
+@login_required
 def endDefectSession(request):
  	s = DefectSession.objects.get(id = int(request.session['sid']))
  	t = str(request.POST['time'])
 	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
 	s.time = ts
 	s.save()
+	i = Iteration.objects.get(id = s.iteration_id)
+	p = Phase.objects.get(id = i.phase_id)
+	pj = Project.objects.get(id = p.project_id)
+	i.totalTime = i.totalTime + ts
+	p.totalTime = p.totalTime + ts
+	pj.totalTime = pj.totalTime + ts
+	i.save()
+	p.save()
+	pj.save()
  	return HttpResponseRedirect("/developer/dashboard")
-
+@login_required
 def beginManageSession(request):
-	s = ManageSession(start_data = timezone.now(),sessionlast = 0)
-	s.interation = int(request.session['iteration'])
-	s.developer = int(request.session['user'])
+	s = ManageSession(start_date = timezone.now(),sessionlast = 0)
+	s.manager = request.user
+	project = Project.objects.get(id = int(request.POST['prjid']))
+	phase = Phase.objects.get(project_id = project.id,status = True)
+	iteration = Iteration.objects.get(phase_id = phase.id,status = True)
+	s.iteration = iteration
+	developsessions = []
+	managesessions = []
+	defectsessions = []
+	defectlist = []
+	s.end_date = timezone.now()
+	for ph in Phase.objects.filter(project_id = project.id).all():
+		for i in Iteration.objects.filter(phase_id = ph.id).all():
+			for ses in SLOCSession.objects.filter(developer = s.manager,iteration = i).all():
+				developsessions.append(ses)
+			for ses in ManageSession.objects.filter(manager = s.manager,iteration = i).all():
+				managesessions.append(ses)
+			for ses in DefectSession.objects.filter(developer = s.manager,iteration = i).all():
+				defectsessions.append(ses)
+				for de in Defects.objects.filter(session = ses).all():
+					defectlist.append(de)
+	print len(developsessions),len(managesessions),len(defectlist),len(defectsessions)
+	c = Context({'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
 	s.save()
-	return render_to_response("dev-manage.html")
+	request.session['sid'] = s.id
+	return render_to_response("dev-manage.html",c)
 
 def endManageSession(request):
-	s = ManageSession.objects.get(id = int(request.POST['id']))
-	s.time = int(request.POST['time'])
+	s = ManageSession.objects.get(id = int(request.session['sid']))
+	t = str(request.POST['time'])
+	ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+	s.time = ts
 	s.save()
+	i = Iteration.objects.get(id = s.iteration_id)
+	p = Phase.objects.get(id = i.phase_id)
+	pj = Project.objects.get(id = p.project_id)
+	i.totalTime = i.totalTime + ts
+	p.totalTime = p.totalTime + ts
+	pj.totalTime = pj.totalTime + ts
+	i.save()
+	p.save()
+	pj.save()
 	return HttpResponseRedirect("/developer/dashboard")
 
 @login_required
 def manReport(request,pid):
 	if request.user.profile.role == USER_MANAGER:
 		p = Project.objects.get(id = int(pid))
-		qphase = request.GET.get('phase','Overall')
-		totph = len(Phase.objects.filter(project_id = p.id).all())
-		qiter = request.GET.get('iteration','Overall')
-		totit = 0
-		if qphase == 'Overall':
-			phases = Phase.objects.filter(project_id = p.id).all()
-			totsloc = p.totalSLOC
-			time = p.totalTime
-		else:
-			oldphase = Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all()
-			totsloc = 0
-			time = 0
-			for ph in oldphase:
-				totsloc += ph.totalSLOC
-				time += ph.totalTime
-			nowphase = Phase.objects.get(project_id = p.id,no = int(qphase))
-			totit = len(Iteration.objects.filter(phase_id = nowphase.id))
-			if qiter== 'Overall':
-				totsloc += nowphase.totalSLOC
-				time += nowphase.totalTime
+		if p.status:
+			qphase = request.GET.get('phase','Overall')
+			totph = len(Phase.objects.filter(project_id = p.id).all())
+			qiter = request.GET.get('iteration','Overall')
+			totit = 0
+			#lastphase = Phase.objects.get(project_id = p.id,status = True)
+			#lastiteration = Iteration.objects.get(phase_id = lastphase.id,status = True)
+			if qphase == 'Overall':
+				phases = Phase.objects.filter(project_id = p.id).all()
+				totsloc = p.totalSLOC
+				time = p.totalTime
+				totaldefects = 0
+				lastiterationdefect = 0
+				for ph in phases:
+					for itera in Iteration.objects.filter(phase_id = ph.id).all():
+						for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+							totaldefects += ses.defectno
+				#for ses in DefectSession.objects.filter(iteration_id = lastiteration.id):
+				#	lastiterationdefect += ses.defectno
+				#injected = totaldefects+lastiterationdefect*p.yieldrate
+				#yieldrate = totaldefects*1.0/(totaldefects+lastiterationdefect*p.yieldrate)
+				#density = injected/(p.totalSLOC/1000)
+				personhourrate = totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id))*p.totalTime/3600.0)
+				#injectedpersonhourrate = injected*1.0/(len(Participate.objects.filter(project_id = p.id))*p.totalTime/3600)
+				day = (timezone.now() - p.start_date).days+1
+				pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
+				personmonth = p.totalSLOC/(len(Participate.objects.filter(project_id = p.id))*day/30.0)
 			else:
-				iteration_list = Iteration.objects.filter(phase_id = nowphase.id,no__lt = int(qiter)).all()
-				for itera in iteration_list:
-					totsloc += itera.totalSLOC
-					time += itera.totalTime
-		c = Context({'prhname':p.name, 'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+				oldphase = Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all()
+				totsloc = 0
+				time = 0
+				for ph in oldphase:
+					totsloc += ph.totalSLOC
+					time += ph.totalTime
+				nowphase = Phase.objects.get(project_id = p.id,no = int(qphase))
+				lastphase = Phase.objects.get(project_id = p.id,status = True)
+				totaldefects = 0
+				#injected = 0
+				#lastiteration = Iteration.objects.get(phase_id = lastphase.id,status = True)
+				#lastiterremove = 0
+				for itera in Iteration.objects.filter(phase_id = nowphase.id).all():
+					#injected += len(Defects.objects.filter(iterationInjected_id = itera.id).all())
+					totaldefects += len(Defects.objects.filter(iterationRemoved_id = itera.id).all())
+					#lastiterremove += len(Defects.objects.filter(iterationRemoved_id = lastiteration.id,iterationInjected_id = itera.id).all())
+
+				#for ses in DefectSession.objects.filter(iteration_id = lastiteration.id).all():
+				#	lastiterationdefect+=ses.defe
+				personhourrate = totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id))*nowphase.totalTime/3600.0)
+				totit = len(Iteration.objects.filter(phase_id = nowphase.id))
+				if qiter== 'Overall':
+					totsloc += nowphase.totalSLOC
+					time += nowphase.totalTime
+					day = (timezone.now() - p.start_date).days
+					pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
+					personmonth = totsloc/(len(Participate.objects.filter(project_id = p.id))*day/30.0)
+				else:
+					iteration_list = Iteration.objects.filter(phase_id = nowphase.id,no__lt = int(qiter)).all()
+					for itera in iteration_list:
+						totsloc += itera.totalSLOC
+						time += itera.totalTime
+					iternow = Iteration.objects.get(phase_id = nowphase.id,no = int(qiter))
+					totsloc+=iternow.totalSLOC
+					time +=iternow.totalTime
+					totaldefects = len(Defects.objects.filter(iterationRemoved_id = iternow.id).all())
+					personhourrate = totaldefects/(len(Participate.objects.filter(project_id = p.id))*iternow.totalTime/3600.0)
+					day = (timezone.now() - p.start_date).days
+					pm  = len(Participate.objects.filter(project_id = p.id))*day/30
+					personmonth = totsloc/(len(Participate.objects.filter(project_id = p.id))*day/30)
+		c = Context({'prhname':p.name,'personmonths':pm,'avesloc':personmonth,'epm':pm/p.effortestimate,'esloc':totsloc/p.slocestimate,'remove':totaldefects,'personhourrate':personhourrate,'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('man-report.html',c)
 	else:
 		return HttpResponseRedirect('/')
@@ -249,12 +334,23 @@ def manProject(request,pid):
 		phase_list = Phase.objects.filter(project_id = p.id).all()
 		totph = len(phase_list)
 		totit = 0
+		totaldefects = 0
+		lastiterationdefect = 0
+		for ph in phase_list:
+			for itera in Iteration.objects.filter(phase_id = ph.id).all():
+				for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+					totaldefects += ses.defectno
+		print len(Participate.objects.filter(project_id = p.id)),p.totalTime
+		personhourrate = totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id))*p.totalTime/3600.0)
 		for ph in phase_list:
 			totit = totit + len(Iteration.objects.filter(phase_id = ph.id).all())
 		time = p.totalTime
 		totsloc  = p.totalSLOC
 		slocestimate = totsloc/p.slocestimate
-		c = Context({'prjname':p.name, 'totph':totph ,'slocestimate':slocestimate,'curphase':curphase.no,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
+		day = (timezone.now() - p.start_date).days+1
+		pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
+		personmonth = p.totalSLOC/(len(Participate.objects.filter(project_id = p.id))*day/30.0)
+		c = Context({'prjname':p.name,'density':"",'yield':"",'avesloc':personmonth,'removalrate':personmonth,'personmonths':pm,'epm':pm/p.effortestimate,'esloc':totsloc*1.0/p.slocestimate,'injected' :"",'injectionrate':"",'removed':totaldefects, 'totph':totph ,'slocestimate':slocestimate,'curphase':curphase.no,'next':curphase.no+1,'curitr':curitr.no,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
 		return render_to_response('man-project.html',c)
 	else:
 		return HttpResponseRedirect('/')
@@ -288,5 +384,95 @@ def addproject(request):
 					u.append(i)
 		c= Context({'developerlist':u})
 		return render_to_response("man-newproject.html",c)
+@login_required
+def newIteration(request,pid):
+	p = Project.objects.get(id = int(pid))
+	ph = Phase.objects.get(project_id = p.id,status = True)
+	itera = Iteration.objects.get(phase_id = ph.id,status = True)
+	if request.POST['phase'] == "current":
+		i = Iteration(phase_id = ph.id,no = itera.no+1,status = True)
+		i.start_date = timezone.now()
+		i.end_date = timezone.now()
+		i.totalDefects =0
+		i.totalTime = 0
+		i.totalSLOC = 0
+		i.save()
+		itera.status = False
+		itera.save()
+	else:
+		pha = Phase(project_id = p.id,no = ph.no+1,status=True)
+		pha.start_date = timezone.now()
+		pha.end_date = timezone.now()
+		pha.totalDefects =0
+		pha.totalTime = 0
+		pha.totalSLOC = 0
+		ph.status = False
+		pha.save()
+		ph.save()
+		i = Iteration(phase_id = pha.id,no = 1,status = True)
+		i.start_date = timezone.now()
+		i.end_date = timezone.now()
+		i.totalDefects =0
+		i.totalTime = 0
+		i.totalSLOC = 0
+		i.save()
+		itera.status = False
 
-
+		itera.save()
+	return HttpResponseRedirect('/manager/project/'+pid+"/")
+@login_required
+def setting(request,pid):
+	p = Project.objects.get(id = int(pid))
+	name = p.name
+	parti = []
+	for par in Participate.objects.filter(project_id = p.id).all():
+		parti.append(par.developer)
+	unparti = []
+	esloc = p.slocestimate
+	epm = p.effortestimate
+	yieldrate = p.yieldrate
+	for u in User.objects.all():
+		if not u.is_staff:
+			if u.profile.role == USER_DEVELOPER and u not in parti:
+				unparti.append(u)
+	desc = p.desc
+	#if request.POST.get('action',"") == "":
+	print len(parti),len(unparti)
+	if request.method == 'POST':
+		if request.POST['action'] == "rename":
+			name = request.POST['newname']
+			p.name = name
+			p.save()
+		elif request.POST['action'] == "edit_developer":
+			cur = request.POST.getlist("developers")
+			for par in Participate.objects.filter(project_id=  p.id).all():
+				par.delete()
+			for c in cur:
+				developer  = User.objects.get(id  = int(c))
+				par = Participate(project_id = p.id,developer_id = developer.id)
+				par.save()
+		elif request.POST['action'] == "edit_description":
+			desc = request.POST["description"]
+			p.desc = desc
+			p.save()
+		elif request.POST['action']  == "change_esloc":
+			esloc = request.POST["esloc"]
+			p.slocestimate = esloc
+			p.save()
+		elif request.POST['action']  == "change_epm":
+			epm = request.POST["epm"]
+			p.effortestimate = epm
+			p.save()
+		elif request.POST['action']  == "change_yield":
+			yieldrate = request.POST["yield"]
+			p.yieldrate = yieldrate
+			p.save()
+		elif request.POST['action']  == "delete_project":
+			p.delete()
+			return HttpResponseRedirect("/manager/dashboard/")
+		elif request.POST['action']  == "close_project":
+			p.status=False
+			p.save()
+			return HttpResponseRedirect("/manager/dashboard/")
+	c = Context({'user':request.user,'curname':name,'curesloc':esloc,'curepm':epm,'curyield':yieldrate,'curdescription':desc,'developerlist':unparti,'curdeveloperlist':parti})
+	return render_to_response("man-setting.html",c)

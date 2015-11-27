@@ -1,0 +1,220 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+ <title>{{ prjname }} Settings - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+  <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li><a href="../activity/">Activities</a></li>
+  <li><a href="../defect/">Defects</a></li>
+  <li class="active"><a href="#">Settings</a></li>
+{% endblock sidebar %}
+
+{%block modal %}
+<div id="closethisproject" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Close this project</h4>
+          </div>
+
+          <form class="form-horizontal" role="form" method="post">
+            <input type="hidden" name="action" value="close_project">
+            <div class="modal-body">
+              Are you sure to close this project? Once closed, it cannot be opened again. A project report will be generated and we will take you to it.
+            </div>
+            <div class="modal-footer" style="text-align: center">
+              <button type="submit" class="btn btn-danger">Yes, close it and show me the report</button>
+              <button class="btn btn-success" data-dismiss="modal">No, not yet</button>
+            </div>
+          </form>
+
+
+    </div>
+
+  </div>
+</div>
+
+<div id="deletethisproject" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">Delete this project</h4>
+          </div>
+
+          <form class="form-horizontal" role="form" method="post">
+            <input type="hidden" name="action" value="delete_project">
+            <div class="modal-body">
+              Are you sure to delete this project? This cannot be recovered and all related data will be deleted.
+            </div>
+            <div class="modal-footer" style="text-align: center">
+              <button type="submit" class="btn btn-danger">Yes, I'm sure</button>
+              <button class="btn btn-success" data-dismiss="modal">No, take me back</button>
+            </div>
+          </form>
+
+
+    </div>
+
+  </div>
+</div>
+{% endblock modal %}
+
+{% block main %}
+  <h3 class="page-header">Project Settings</h3>
+  <div class="row col-sm-12">
+    <div class="panel panel-info">
+      <div class="panel-heading">Basic Information</div>
+      <div class="panel-body" style="padding-bottom: 0px">
+        <form role="form" method="POST">
+          <input type="hidden" name="action" value="rename">
+          <label for="newname">Project name</label>
+          <div class="form-inline">
+            <input type="text" class="form-control" id="newname" name="newname" value="{{curname}}">
+            <button type="submit" class="btn btn-primary">Rename</button>
+          </div>
+        </form>
+      </div>
+      <hr>
+      <div class="panel-body" style="padding-top: 0px">
+        <form id="developerform" role="form" method="POST">
+          <input type="hidden" name="action" value="edit_developer">
+          <label for="developerlist">Developers participating in this project</label>
+          <!-- <div class="form" id="developerlist">
+            {% for developer in developerlist %}
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" name="developers" value="{{developer.id}}" {% if developer.id in curdeveloperlist %} checked {% endif %}> {{developer.realname}}
+              </label>
+            </div>
+            {% endfor %}
+            <button type="submit" class="btn btn-primary col-sm-2">Save</button>
+          </div> -->
+          <div class="row">
+            <div class="col-xs-4">
+                <select class="form-control" id="developerlist" multiple="multiple" style="height:200px;">
+                  {% for developer in developerlist %}
+                  <!-- warning: developers that have been selected shouldn't appear in this developerlist -->
+                    <option value="{{developer.id}}">{{developer.username}}</option>
+                  {% endfor %}
+                </select>
+            </div>
+            <div class="col-xs-3">
+                <div class="input-group">
+                    <button type="button" class="btn btn-primary col-sm-offset-10" id="add">Add >></button>
+                </div>
+                <div class="input-group" style="padding-top:10px;">
+                    <button type="button" class="btn btn-danger col-sm-offset-6" id="remove"><< Remove</button>
+                </div>
+                <div class="input-group" style="padding-top:80px;">
+                    <button type="button" class="btn btn-success col-sm-offset-10" id="submitdeveloperlist">Submit</button>
+                </div>
+            </div>
+            <div class="col-xs-4">
+                <select class="form-control" name="developers" size="9" id="selected_developers" multiple="multiple" style="height:200px;">
+                  {% for developer in curdeveloperlist %}
+                    <option value="{{developer.id}}">{{developer.username}}</option>
+                  {% endfor %}
+                </select>
+            </div>
+          </div>
+        </form>
+      </div>
+      <hr>
+      <div class="panel-body" style="padding-top: 0px">
+        <form role="form" method="POST">
+          <input type="hidden" name="action" value="edit_description">
+          <label for="description">Description</label>
+          <div class="form">
+            <div style="text-align: right">
+              <textarea class="form-control" id="description" name="description">{{curdescription}}</textarea>
+              <button type="submit" class="btn btn-primary" style="margin-top: 10px">Save</button>
+              <button type="reset" class="btn btn-primary" style="margin-top: 10px">Recover</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <!-- calculating metrics -->
+    <div class="panel panel-warning">
+      <div class="panel-heading">Calculating Metrics</div>
+      <div class="panel-body" style="padding-bottom: 0px">
+        <form role="form" method="POST">
+          <input type="hidden" name="action" value="change_esloc">
+          <label for="esloc">Estimated SLOC</label>
+          <div class="form-inline">
+            <input type="number" min="1" class="form-control" id="esloc" name="esloc" value="{{curesloc}}">
+            <button type="submit" class="btn btn-primary">Change</button>
+          </div>
+        </form>
+        <p class="text-muted" style="margin-top: 10px">
+          The estimated source line of code (SLOC) of this project. Will be used to calculate the rate of progress.
+        </p>
+      </div>
+      <hr style="margin: 0px">
+      <div class="panel-body" style="padding-bottom: 0px">
+        <form role="form" method="POST">
+          <input type="hidden" name="action" value="change_epm">
+          <label for="epm">Estimated Person-Month</label>
+          <div class="form-inline">
+            <input type="number" min="1" class="form-control" id="epm" name="epm" value="{{curepm}}">
+            <button type="submit" class="btn btn-primary">Change</button>
+          </div>
+        </form>
+        <p class="text-muted" style="margin-top: 10px">
+          The estimated effort of this project in person-month. Will be used to calculate the rate of progress.
+        </p>
+      </div>
+      <hr style="margin: 0px">
+      <div class="panel-body" style="padding-bottom: 0px">
+        <form role="form" method="POST">
+          <input type="hidden" name="action" value="change_yield">
+          <label for="yield">Yield Rate for Last Iteration</label>
+          <div class="form-inline">
+            <input type="number" min="0" max="1" step="any" class="form-control" id="yield" name="yiled" value="{{curyield}}">
+            <button type="submit" class="btn btn-primary">Change</button>
+          </div>
+        </form>
+        <p class="text-muted" style="margin-top: 10px">
+          The assumed yield rate (%) of the last iteration. Will be used to calculate yields.
+        </p>
+      </div>
+    </div>
+  </div>
+  <h3 class="page-header">Status Control</h3>
+  <div class="row col-sm-12">
+    <div class="panel panel-danger">
+      <div class="panel-heading">Close/Delete Project</div>
+      <div class="panel-body" style="padding-bottom: 0px">
+        <strong>Close This Project</strong>
+        <p class="text-muted" style="margin-top: 10px">
+          Once you close the project, a report will be generated, and the project cannot be reopened. Please be sure.
+          <button type="button" class="btn btn-danger col-sm-2" style="float: right; margin-left: 10px; margin-top: -10px" data-toggle="modal" data-target="#closethisproject">Close this project</button>
+        </p>
+      </div>
+      <hr style="margin: 0px">
+      <div class="panel-body" style="padding-bottom: 0px">
+        <strong>Delete This Project</strong>
+        <p class="text-muted" style="margin-top: 10px">
+          Once you delete the project, it cannot be recovered. Please be cautious.
+          <button type="button" class="btn btn-danger col-sm-2" style="float: right; margin-left: 10px; margin-top: -10px" data-toggle="modal" data-target="#deletethisproject">Delete this project</button>
+        </p>
+      </div>
+    </div>
+  </div>
+
+{% endblock main %}
+
+{%block js %}
+ <!-- Morris Chart js -->
+    <script src="{% static 'js/setting.js' %}"></script>
+{%endblock js %}

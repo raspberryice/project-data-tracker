@@ -93,7 +93,7 @@
                   <div class="form-group">
                     <label class="control-label col-sm-4" for="time">Time:</label>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control"  name="time" value="00:00:00" required>
+                      <input type="text" class="form-control" id="mngTime" name="time" value="00:00:00" required>
                     </div>
                   </div>
                 </div>
@@ -234,9 +234,9 @@
         <ul class="list-group">
             {% for session in developsessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time" >{{session.time}}</span>
-                 <span class="hidden sloc"> {{session.sloc}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time" >{{session.sessionlast}}</span>
+                 <span class="hidden sloc"> {{session.SLOC}}</span>
                  <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default devSessionBtn">Edit</button>
           </li>
@@ -257,8 +257,8 @@
         <ul class="list-group">
             {% for session in defectsessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time">{{session.time}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden defectno">{{session.defectno}}</span>
                    <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default remSessionBtn">Edit</button>
@@ -272,7 +272,7 @@
         <div class="panel-heading" role="tab" id="mngListHeading">
         <h4 class="panel-title">
           <a class="" role="button" data-toggle="collapse" href="#mngSessionList" aria-expanded="true" aria-controls="mngSessionList">
-           Defect Removal Sessions
+           Manage Sessions
           </a>
         </h4>
       </div>
@@ -280,8 +280,8 @@
         <ul class="list-group">
             {% for session in managesessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time">{{session.time}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default mngSessionBtn">Edit</button>
           </li>
@@ -304,12 +304,11 @@
             {% for defect in defect_list %}
              <li class="list-group-item">
                 <span class="name">{{defect.name}}</span>
-                <span class="date">{{defect.date}}</span>
                  <span class="hidden id">{{defect.id}}</span>
                  <span class="hidden inject">{{defect.iterationInjected}}</span>
                  <span class="hidden remove">{{defect.iterationRemoved}}</span>
                  <span class="hidden desc">{{defect.desc}}</span>
-                 <span class="hidden type">{{defect.type}}</span>
+                 <span class="hidden type">{{defect.typed}}</span>
               <button class="btn btn-default viewDefectBtn">Edit</button>
           </li>
             {% endfor %}

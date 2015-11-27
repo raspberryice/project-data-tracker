@@ -15,4 +15,8 @@ urlpatterns = [
 	url(r'developer/endrem/$',views.endDefectSession,name="endrem"),
 	url(r'developer/createrem/adddefect/$',views.addDefect,name='add'),
 	url(r'manager/newproject/$',views.addproject,name='addproject'),
+	url(r'developer/createmng/$',views.beginManageSession,name='beginmanage'),
+	url(r'developer/endmng/$',views.endManageSession,name='endmanage'),
+	url(r'manager/project/(?P<pid>\d+)/newiteration/$',views.newIteration,name = 'newiteration'),
+	url(r'manager/project/(?P<pid>\d+)/setting/$',views.setting,name="setting"),
 ]

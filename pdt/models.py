@@ -73,7 +73,7 @@ class ManageSession(models.Model):
     iteration = models.ForeignKey(Iteration)
     manager = models.ForeignKey(User)
     start_date = models.DateTimeField(auto_now_add=True)
-    sessionlast = models.IntegerField
+    sessionlast = models.IntegerField()
 
 class Defects(models.Model):
     session=models.ForeignKey(DefectSession)

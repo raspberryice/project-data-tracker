@@ -1,7 +1,9 @@
 $('.devSessionBtn').on('click',function(e){
     var li = $(this).parent();
+    li.addClass('current');
     var time = li.children('.time').text();
-    var sloc = li.children('.sloc').text();
+    var sloc = parseInt(li.children('.sloc').text());
+    console.log (sloc);
     var id = li.children('.id').text();
     $('#devTime').val(time);
     $('#devSLOC').val(sloc);
@@ -10,36 +12,40 @@ $('.devSessionBtn').on('click',function(e){
 });
 $('.mngSessionBtn').on('click',function(e){
     var li = $(this).parent();
+    li.addClass('current');
     var time = li.children('.time').text();
     var id = li.children('.id').text();
     $('#mngTime').val(time);
-    $('mngId').val(id);
-    $('#submitMng').modal('.show');
+    $('#mngId').val(id);
+    $('#submitMng').modal('show');
 });
 
 $('.remSessionBtn').on('click',function(e){
     var li = $(this).parent();
+    li.addClass('current');
     var time = li.children('.time').text();
     var defect_no = li.children('.defectno').text();
     var id = li.children('.id').text();
     $('#remTime').val(time);
     $('#defectNo').val(defect_no);
     $('#remId').val(id);
-    $('#submitMng').modal('show');
+    $('#submitRem').modal('show');
 });
 
 $('.viewDefectBtn').on('click',function(){
     var li = $(this).parent();
+    li.addClass('current');
     var report = {
-    'name':li.children('.name'),
-    'date':li.children('.date'),
-    'iterationInjected':li.children ('.inject'),
-    'iterationRemoved':li.children('.remove'),
-    'type':li.children('.type'),
-    'desc':li.children('.desc'),
+    'name':li.children('.name').text(),
+    'date':li.children('.date').text(),
+    'iterationInjected':li.children ('.inject').text(),
+    'iterationRemoved':li.children('.remove').text(),
+    'type':li.children('.type').text(),
+    'desc':li.children('.desc').text(),
     };
+    console.log(report);
     //hidden id field
-    var defect_id = li.children('.id');
+    var defect_id = li.children('.id').text();
     $('#defectId').val(defect_id);
     render_report(report);
     $('#editReport').modal('show');
@@ -67,7 +73,6 @@ function render_report(report){
     });
 
     $('#viewDefectDesc').text(report['desc']);
-     console.log('done rendering report for'+defect);
 }
 
 $('#updateDev').on('submit',function(e){
@@ -87,7 +92,13 @@ $('#updateDev').on('submit',function(e){
     error :function(xhr,errmsg,err){
         console.log(xhr.status + ': '+xhr.responseText);
     },
-    })
+    });
+    //update in html
+    var li =$('#devSessionList').children('.current');
+    li.children('.time').text($('#devTime').val());
+    li.children('.sloc').text($('#devSLOC').val());
+
+
 });
 
 $('#updateRem').on('submit',function(e){
@@ -106,7 +117,12 @@ $('#updateRem').on('submit',function(e){
     error :function(xhr,errmsg,err){
         console.log(xhr.status + ': '+xhr.responseText);
     },
-    })
+    });
+
+    var li =$('#remSessionList').children('.current');
+    li.children('.time').text($('#remTime').val());
+    li.children('.sloc').text($('#defectNo').val());
+
 });
 
 $('#updateMng').on('submit',function(e){
@@ -117,7 +133,7 @@ $('#updateMng').on('submit',function(e){
     type :"POST",
     data :{
      'time':$('#mngTime').val(time),
-     'id':  $('mngId').val(id),
+     'id':  $('#mngId').val(id),
     },
     success: function(json){
         console.log("success");
@@ -125,7 +141,12 @@ $('#updateMng').on('submit',function(e){
     error :function(xhr,errmsg,err){
         console.log(xhr.status + ': '+xhr.responseText);
     },
-    })
+    });
+    var li =$('#mngSessionList').children('.current');
+    li.children('.time').text($('#remTime').val());
+    li.children('.sloc').text($('#defectNo').val());
+
+
 });
 
 $('#editDefectForm').on('submit',function(e){
@@ -156,6 +177,6 @@ function update_defect(report){
     error :function(xhr,errmsg,err){
         console.log(xhr.status + ': '+xhr.responseText);
     },
-    })
+    });
 
 };

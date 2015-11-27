@@ -62,8 +62,9 @@ footer {
   Custom button style `gradient' for cards
 ************************/
 
-.btn-info.gradient {
+.gradient {
   margin: 1pc;
+  height: 135px;
 }
 
 .btn-primary.firstrow {
