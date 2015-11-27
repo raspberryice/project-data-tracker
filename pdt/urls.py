@@ -15,4 +15,20 @@ urlpatterns = [
 	url(r'developer/endrem/$',views.endDefectSession,name="endrem"),
 	url(r'developer/createrem/adddefect/$',views.addDefect,name='add'),
 	url(r'manager/newproject/$',views.addproject,name='addproject'),
+#newly added
+	
+	url(r'developer/allprojects/$', views.devAllProjects, name = 'devallprojects'),
+    url(r'developer/create_defect/',views.create_defect,name="create_defect"),
+	url(r'developer/createmng/',views.beginManageSession,name='createmng'),
+    url(r'developer/endmng/',views.endManageSession,name='endmng'),
+	url(r'developer/project/(?P<pid>\d+)/$',views.devProject,name='devproject'),
+	url(r'developer/project/(?P<pid>\d+)/report/$',views.devReport,name='devreport'),
+
+	
+	url(r'manager/allprojects/$', views.manAllProjects, name = 'manallprojects'),
+	url(r'manager/project/(?P<pid>\d+)/$',views.manProject,name="manproject"),
+	url(r'manager/project/(?P<pid>\d+)/newiteration/$',views.manNewIteration,name="mannewiteration"),
+	url(r'manager/project/(?P<pid>\d+)/activity/$',views.manActivity,name="manactivity"),
+	url(r'manager/project/(?P<pid>\d+)/defect/$',views.manDefect,name="mandefect"),
+	url(r'manager/project/(?P<pid>\d+)/setting/$',views.manSetting,name="mansetting"),
 ]

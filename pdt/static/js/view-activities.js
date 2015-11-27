@@ -25,7 +25,7 @@ $('.remSessionBtn').on('click',function(e){
     $('#remTime').val(time);
     $('#defectNo').val(defect_no);
     $('#remId').val(id);
-    $('#submitRem').modal('show');
+    $('#submitMng').modal('show');
 });
 
 $('.viewDefectBtn').on('click',function(){
@@ -69,93 +69,3 @@ function render_report(report){
     $('#viewDefectDesc').text(report['desc']);
      console.log('done rendering report for'+defect);
 }
-
-$('#updateDev').on('submit',function(e){
-    e.preventDefault();
-    $('#submitDev').modal('hide');
-    $.ajax({
-    url: "developer/update_dev",
-    type :"POST",
-    data :{
-     'time': $('#devTime').val(),
-     'sloc':$('#devSLOC').val(),
-     'id': $('#devId').val(),
-    },
-    success: function(json){
-        console.log("success");
-    },
-    error :function(xhr,errmsg,err){
-        console.log(xhr.status + ': '+xhr.responseText);
-    },
-    })
-});
-
-$('#updateRem').on('submit',function(e){
-    e.preventDefault();
-    $('#submitRem').modal('hide');
-    $.ajax({
-    url: "developer/update_rem",
-    type :"POST",
-    data :{
-    'time':$('#remTime').val(),
-    'id':$('#remId').val(),
-    },
-    success: function(json){
-        console.log("success");
-    },
-    error :function(xhr,errmsg,err){
-        console.log(xhr.status + ': '+xhr.responseText);
-    },
-    })
-});
-
-$('#updateMng').on('submit',function(e){
-    e.preventDefault();
-    $('#submitMng').modal('hide');
-    $.ajax({
-    url: "developer/update_mng",
-    type :"POST",
-    data :{
-     'time':$('#mngTime').val(time),
-     'id':  $('mngId').val(id),
-    },
-    success: function(json){
-        console.log("success");
-    },
-    error :function(xhr,errmsg,err){
-        console.log(xhr.status + ': '+xhr.responseText);
-    },
-    })
-});
-
-$('#editDefectForm').on('submit',function(e){
-    e.preventDefault();
-    $('#editReport').modal('hide');
-    var id = $('')
-    var report = {
-          id:$('#defectId').val(),
-          name: $('#viewDefectName').val(),
-          date: $("#viewDefectDate").val(),
-          iterationInjected: $('#viewIterationInjected').val(),
-          iterationRemoved: $('#viewIterationRemoved').val(),
-          type: $('#viewDefectType').val(),
-          desc: $('#viewDefectDesc').val(),
-        };
-    update_defect(report);
-
-});
-
-function update_defect(report){
-    $.ajax({
-    url: "developer/update_defect/",
-    type :"POST",
-    data :report,
-    success: function(json){
-        console.log("success");
-    },
-    error :function(xhr,errmsg,err){
-        console.log(xhr.status + ': '+xhr.responseText);
-    },
-    })
-
-};

@@ -2,46 +2,51 @@
 {% load staticfiles %}
 
 {% block title %}
- <title>View Report - Project Data Tracker</title>
+<title>Overview - {{ prjname }} - Project Data Tracker</title>
 {% endblock title %}
 
-{% block sidebar %}
-  <li><a href="../">Overview</a></li>
-  <li class="active"><a href="#">Reports</a></li>
-  <li><a href="../activity/">Activities</a></li>
-  <li><a href="../defect/">Defects</a></li>
-  <li><a href="../setting/">Settings</a></li>
+{% block css %}
+ <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'css/morris.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{%block sidebar %}
+   <li class="active"><a href="#">Overview</a></li>
+   <li><a href="report/">Reports</a></li>
 {% endblock sidebar %}
 
 {% block main %}
-  <!-- An Ugly Implementation To Be Improved In Next Iteration -->
-          <div class="row">
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-              Phase: {{ curphase }} <span class="caret"></span></button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="./?phase=Overall">Overall</a></li>
-                {% with ''|center:totphase as range %}
-                {% for _ in range %}
-                    <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
-                {% endfor %}
-                {% endwith %}
-              </ul>
-            </div>
-            <div class="btn-group">
-              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-              Iteration: {{ curitr }} <span class="caret"></span></button>
-              <ul class="dropdown-menu" role="menu">
-                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
-                {% with ''|center:totitr as range %}
-                {% for _ in range %}
-                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
-                {% endfor %}
-                {% endwith %}
+  <h1 class="page-header">{{ prjname }}
+    <span class="text-small">
+      {% if not closed %} Currently at Phase {{ curphase }}, Iteration {{ curitr }} {% else %} Closed {% endif %}
+    </span>
+  </h1>
 
-              </ul>
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/time-sm.png' %}" class="img-responsive" alt="time">
+              <h4>{{ startdate }} ~ {{ enddate }}</h4>
+              <span class="text-muted">Total time spent</span>
             </div>
-          </div><!-- /.row -->
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/code-sm.png'%}" class="img-responsive" alt="code">
+              <h4>{{ totsloc }} lines</h4>
+              <span class="text-muted">Total SLOC</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src= "{% static 'img/bug-sm.png'%}" class="img-responsive" alt="defect">
+              <h4>XX</h4>
+              <span class="text-muted">Total number of defects </span>
+            </div>
+            <a class="col-xs-6 col-sm-3 placeholder hoverlight" href="/">
+              <img src= "{% static 'img/back.png'%}" class="img-responsive" alt="defect">
+              <h4>Return</h4>
+              <span class="text-muted">Go back to dashboard</span>
+            </a>
+          </div>
+
+          <div id="latestActivity"></div>
 
           <h2 class="sub-header">Size and Progress</h2>
           <div class="table-responsive">
@@ -85,7 +90,7 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>33</td>
+                  <td>Not Closed Yet</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
@@ -93,7 +98,7 @@
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>3.4</td>
+                  <td>Not Closed Yet</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
@@ -101,14 +106,22 @@
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>10</td>
+                  <td>Not Closed Yet</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>60%</td>
+                  <td>Not Closed Yet</td>
                 </tr>
               </tbody>
             </table>
           </div>
           <!--table-->
 {% endblock main %}
+
+{%block js %}
+ <!-- Morris Chart js -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+    <script src="{% static 'js/morris-data.js' %}"></script>
+
+{%endblock js %}
