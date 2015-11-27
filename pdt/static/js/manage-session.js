@@ -2,6 +2,7 @@ $('.devSessionBtn').on('click',function(e){
     var li = $(this).parent();
     var time = li.children('.time').text();
     var sloc = li.children('.sloc').text();
+    console.log(sloc);
     var id = li.children('.id').text();
     $('#devTime').val(time);
     $('#devSLOC').val(sloc);

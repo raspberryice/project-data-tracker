@@ -1,5 +1,5 @@
 from django.conf.urls import url
-import views
+import pdt.views as views
 urlpatterns = [
 	url(r'^$', views.index, name='index'),
 	url(r'verify$',views.verify,name='verify'),
@@ -18,7 +18,6 @@ urlpatterns = [
 #newly added
 	
 	url(r'developer/allprojects/$', views.devAllProjects, name = 'devallprojects'),
-    url(r'developer/create_defect/',views.create_defect,name="create_defect"),
 	url(r'developer/createmng/',views.beginManageSession,name='createmng'),
     url(r'developer/endmng/',views.endManageSession,name='endmng'),
 	url(r'developer/project/(?P<pid>\d+)/$',views.devProject,name='devproject'),
@@ -27,7 +26,7 @@ urlpatterns = [
 	
 	url(r'manager/allprojects/$', views.manAllProjects, name = 'manallprojects'),
 	url(r'manager/project/(?P<pid>\d+)/$',views.manProject,name="manproject"),
-	url(r'manager/project/(?P<pid>\d+)/newiteration/$',views.manNewIteration,name="mannewiteration"),
+	#url(r'manager/project/(?P<pid>\d+)/newiteration/$',views.manNewIteration,name="mannewiteration"),
 	url(r'manager/project/(?P<pid>\d+)/activity/$',views.manActivity,name="manactivity"),
 	url(r'manager/project/(?P<pid>\d+)/defect/$',views.manDefect,name="mandefect"),
 	url(r'manager/project/(?P<pid>\d+)/setting/$',views.manSetting,name="mansetting"),
