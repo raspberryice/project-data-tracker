@@ -134,7 +134,8 @@ $("#ongoingList").on('click','.remove-btn',function(){
 $('#removedList').on('click','.edit-btn',function(){
     var defect_id = $(this).parent().attr('id');
     console.log(defect_id);
-    render_report(defect_id);
+    var report = JSON.parse(sessionStorage.getItem(defect_id));
+    render_report(report);
     $('#viewDefectName').attr('readonly','readonly');
     $('#viewDefectDate').attr('readonly','readonly');
     $('#viewDefectType').attr('readonly','readonly');

@@ -254,7 +254,7 @@ def endDefectSession(request):
     s = DefectSession.objects.get(id = int(request.session['sid']))
     t = str(request.POST['time'])
     ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
-    s.time = ts
+    s.sessionlast = ts
     s.save()
     i = Iteration.objects.get(id = s.iteration_id)
     p = Phase.objects.get(id = i.phase_id)
@@ -350,7 +350,7 @@ def endManageSession(request):
     s = ManageSession.objects.get(id = int(request.session['sid']))
     t = str(request.POST['time'])
     ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
-    s.time = ts
+    s.sessionlast = ts
     s.save()
     i = Iteration.objects.get(id = s.iteration_id)
     p = Phase.objects.get(id = i.phase_id)

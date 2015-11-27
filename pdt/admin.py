@@ -18,4 +18,8 @@ admin.site.register(Project)
 admin.site.register(Participate)
 admin.site.register(Phase)
 admin.site.register(Iteration)
+admin.site.register(SLOCSession)
+admin.site.register(DefectSession)
+admin.site.register(ManageSession)
+
 

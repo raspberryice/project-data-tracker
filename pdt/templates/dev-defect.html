@@ -9,7 +9,7 @@
 <div class="modal fade" id="defectReport" tabindex="-1" role="dialog" aria-labelledby="createDefectLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
-         <form class="form-horizontal" id="createDefectForm" autocomplete="off">
+         <form class="form-horizontal" id="createDefectForm" >
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="createDefectLabel">New Defect</h4>
@@ -18,7 +18,7 @@
             <div class="form-group">
             <label for="defectName" class="col-sm-4 control-label">Defect Name</label>
             <div class="col-sm-8">
-              <input autocomplete="off" type="text" class="form-control" id="defectName" placeholder="Defect" >
+              <input type="text" class="form-control" id="defectName" placeholder="Defect" >
             </div>
             </div>
         
@@ -38,7 +38,7 @@
           <div class="form-group">
                <label for="defectType" class="col-sm-4 control-label">Type</label>
                 <div class="col-sm-8">
-                <select autocomplete="off" class="form-control" id="defectType">
+                <select  class="form-control" id="defectType">
                  <option value="1">Requirements</option>
                   <option value="2">Design</option>
                   <option value="3">Implementation</option>
@@ -50,7 +50,7 @@
           <div class="form-group">
             <label for="defectDesc" class="col-sm-4 control-label">Description</label>
             <div class="col-sm-8">
-             <textarea autocomplete="off" class="form-control" id="defectDesc" rows="3"></textarea>
+             <textarea  class="form-control" id="defectDesc" rows="3"></textarea>
             </div>
             </div>
       </div>
