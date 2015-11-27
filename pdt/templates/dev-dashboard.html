@@ -113,7 +113,7 @@
                       <div class="btn-group"><button type="button" class="btn btn-primary firstrow" onclick="createsession('rem', {{ prj.phase.project.id }})">Defect Removal</button></div> <!-- post id={{prj.id}} to: /developer/createrem/ -->
                     </div>
                     <div class="btn-group btn-group-justified">
-                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow" onclick="createsession('mng', {{ prj.phase.project.id }})">Management</button></div> <!-- post id={{prj.id}} to: /developer/createmng/ -->
+                      <div class="btn-group"><a type="button" class="btn btn-primary lastrow" href = "{% url 'createmng'%} " >Management</a></div> <!-- post id={{prj.id}} to: /developer/createmng/ -->
                       <div class="btn-group"><a href="/developer/report/{{ prj.phase.project.id }}" type="button" class="btn btn-primary lastrow">Report Review</a></div>
                     </div>
                   </div>

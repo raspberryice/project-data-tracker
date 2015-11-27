@@ -234,16 +234,16 @@
         <ul class="list-group">
              <li class="list-group-item">
               <span>2015-11-27</span>
-                 <span class="hidden time" >3:09</span>
+                 <span class="hidden time" >300</span>
                  <span class="hidden sloc"> 1290</span>
                  <span class="hidden id">1</span>
                  <button class="btn btn-default devSessionBtn">Edit</button>
           </li>
             {% for session in developsessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time" >{{session.time}}</span>
-                 <span class="hidden sloc"> {{session.sloc}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time" >{{session.sessionlast}}</span>
+                 <span class="hidden sloc"> {{session.SLOC}}</span>
                  <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default devSessionBtn">Edit</button>
           </li>
@@ -264,15 +264,15 @@
         <ul class="list-group">
              <li class="list-group-item">
               <span>2015-11-27</span>
-                 <span class="hidden time">1:00</span>
+                 <span class="hidden time">390</span>
                  <span class="hidden defectno">1</span>
                    <span class="hidden id">1</span>
                  <button class="btn btn-default remSessionBtn">Edit</button>
           </li>
             {% for session in defectsessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time">{{session.time}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden defectno">{{session.defectno}}</span>
                    <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default remSessionBtn">Edit</button>
@@ -294,14 +294,14 @@
         <ul class="list-group">
               <li class="list-group-item">
               <span>2015/11/27</span>
-                 <span class="hidden time">2:10</span>
+                 <span class="hidden time">673</span>
                  <span class="hidden id">1</span>
                  <button class="btn btn-default mngSessionBtn">Edit</button>
           </li>
             {% for session in managesessions %}
              <li class="list-group-item">
-              <span>{{session.date}}</span>
-                 <span class="hidden time">{{session.time}}</span>
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden id">{{session.id}}</span>
                  <button class="btn btn-default mngSessionBtn">Edit</button>
           </li>
@@ -321,15 +321,24 @@
       </div>
         <div id="recentDefectList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="recentDefectListHeading" aria-expanded="true">
         <ul class="list-group" >
+             <li class="list-group-item">
+                <span class="name">Requirements Change</span>
+                <span class="date">2015-11-27</span>
+                 <span class="hidden id">1</span>
+                 <span class="hidden inject">1</span>
+                 <span class="hidden remove">2</span>
+                 <span class="hidden desc">display of metrics have changed.</span>
+                 <span class="hidden type">Requirements</span>
+              <button class="btn btn-default viewDefectBtn">Edit</button>
+          </li>
             {% for defect in defect_list %}
              <li class="list-group-item">
                 <span class="name">{{defect.name}}</span>
-                <span class="date">{{defect.date}}</span>
                  <span class="hidden id">{{defect.id}}</span>
                  <span class="hidden inject">{{defect.iterationInjected}}</span>
                  <span class="hidden remove">{{defect.iterationRemoved}}</span>
                  <span class="hidden desc">{{defect.desc}}</span>
-                 <span class="hidden type">{{defect.type}}</span>
+                 <span class="hidden type">{{defect.typed}}</span>
               <button class="btn btn-default viewDefectBtn">Edit</button>
           </li>
             {% endfor %}

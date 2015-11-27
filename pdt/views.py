@@ -207,7 +207,7 @@ def endDefectSession(request):
 
 @login_required
 def beginManageSession(request):
-    pid = request.POST['prjid']
+    # pid = request.POST['prjid']
     # project = get_object_or_404(Project, pk=pid)
     # create session
     # add session to project's current iteration
