@@ -636,4 +636,4 @@ def manAllProjects(req):
 
 @login_required
 def editprofile(req):
-    pass
+    return render_to_response("profile.html")
