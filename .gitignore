@@ -1,3 +1,11 @@
+
+# Python files
+*.pyc
+pdt/*.pyc
+django_project/*.pyc
+
+# Mac OS X files
+.DS_Store
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -57,3 +65,6 @@ docs/_build/
 
 # PyBuilder
 target/
+
+#database
+db.sqlite3

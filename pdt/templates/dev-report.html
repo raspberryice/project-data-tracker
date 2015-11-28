@@ -1,0 +1,110 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+ <title>View Report - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+  <li><a href="../">Overview</a></li>
+  <li class="active"><a href="#">Reports</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+          <div class="row">
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Phase: {{ curphase }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase=Overall">Overall</a></li>
+                {% with ''|center:totphase as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
+              </ul>
+            </div>
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+              Iteration: {{ curitr }} <span class="caret"></span></button>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
+                {% with ''|center:totitr as range %}
+                {% for _ in range %}
+                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                {% endfor %}
+                {% endwith %}
+
+              </ul>
+            </div>
+          </div><!-- /.row -->
+
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivered SLOC</td>
+                  <td>{{ totsloc }}</td>
+                  <td>{{ totslocesti }}</td>
+                </tr>
+                <tr>
+                  <td>Effort(person-months)</td>
+                  <td>{{ personmonths }}</td>
+                  <td>{{ pmesti }}</td>
+                </tr>
+                <tr>
+                  <td>Delivered SLOC per person-month</td>
+                  <td>{{ avesloc }}</td>
+                  <td>Not Applicable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Injected</td>
+                  <td>33</td>
+                </tr>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>22</td>
+                </tr>
+                <tr>
+                  <td>Injection rate per person-hour of development</td>
+                  <td>3.4</td>
+                </tr>
+                <tr>
+                  <td>Removal rate per person-hour of defect removal</td>
+                  <td>2.5</td>
+                </tr>
+                <tr>
+                  <td>Defect density per KSLOC</td>
+                  <td>10</td>
+                </tr>
+                <tr>
+                  <td>Yield</td>
+                  <td>60%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+{% endblock main %}

@@ -1,0 +1,193 @@
+{% extends 'base-dashboard.html'%}
+{% load staticfiles %}
+
+{%block modal%}
+<div id="submitDev" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Development Summary</h4>
+              </div>
+
+              <form class="form-horizontal" role="form" id="updateDev">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="devTime">Time:</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" id="devTime" name="time" value="00:00:00" >
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="devSLOC">SLOC:</label>
+                    <div class="col-sm-6">
+                      <input type="number" min="0" class="form-control" id="devSLOC" name="sloc" >
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="devId" name="sid" value="">
+                  <button type="submit" class="btn btn-success">Update</button>
+                </div>
+              </form>
+
+
+            </div>
+
+          </div>
+        </div>
+<div id="submitRem" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Defect Removal Summary</h4>
+              </div>
+
+              <form class="form-horizontal" role="form" id="updateRem">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="remTime">Time:</label>
+                    <div class="col-sm-6">
+                      <input type="text" id="remTime" class="form-control" name="time" value="00:00:00" required>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="defectNo">Defects removed:</label>
+                    <div class="col-sm-6">
+                      <input type="number" min="0" class="form-control" id="defectNo" name="defectNo">
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden"  id="remId" name="sid" value="">
+                  <button type="submit" class="btn btn-success">Update</button>
+                </div>
+              </form>
+
+
+            </div>
+
+          </div>
+        </div>
+<div id="submitMng" class="modal fade" role="dialog">
+          <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Management Summary</h4>
+              </div>
+
+              <form class="form-horizontal" role="form" id="updateMng">
+                <div class="modal-body">
+                  <div class="form-group">
+                    <label class="control-label col-sm-4" for="time">Time:</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" id="mngTime" name="time" value="00:00:00" required>
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <input type="hidden" id="mngId" name="sid" value="">
+                  <button type="submit" class="btn btn-success">Update</button>
+                </div>
+              </form>
+
+
+            </div>
+
+          </div>
+        </div>
+{% endblock modal %}
+
+{%block sidebar %}
+ <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li class="active"><a href="#">Activities</a></li>
+  <li><a href="../defect/">Defects</a></li>
+  <li><a href="../setting/">Settings</a></li>
+{% endblock sidebar %}
+
+col-sm-9
+{%block main %}
+<div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="devListHeading">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#devSessionList" aria-expanded="true" aria-controls="devSessionList">
+           Development Sessions
+          </a>
+        </h4>
+      </div>
+        <div class="panel-collapse collapse in" id= "devSessionList" role="tabpanel" aria-labelledby="devListHeading" aria-expanded="true">
+        <ul class="list-group">
+            {% for session in developsessions %}
+             <li class="list-group-item">
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time" >{{session.sessionlast}}</span>
+                 <span class="hidden sloc"> {{session.SLOC}}</span>
+                 <span class="hidden id">{{session.id}}</span>
+                 <button class="btn btn-default devSessionBtn">Edit</button>
+          </li>
+            {% endfor %}
+
+        </ul>
+      </div>
+    </div>
+<div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="remListHeading">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#remSessionList" aria-expanded="true" aria-controls="remSessionList">
+           Defect Removal Sessions
+          </a>
+        </h4>
+      </div>
+        <div class="panel-collapse collapse in" id= "remSessionList" role="tabpanel" aria-labelledby="remListHeading" aria-expanded="true">
+        <ul class="list-group">
+            {% for session in defectsessions %}
+             <li class="list-group-item">
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
+                 <span class="hidden defectno">{{session.defectno}}</span>
+                   <span class="hidden id">{{session.id}}</span>
+                 <button class="btn btn-default remSessionBtn">Edit</button>
+          </li>
+            {% endfor %}
+
+        </ul>
+      </div>
+    </div>
+<div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="mngListHeading">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#mngSessionList" aria-expanded="true" aria-controls="mngSessionList">
+           Manage Sessions
+          </a>
+        </h4>
+      </div>
+        <div class="panel-collapse collapse in" id="mngSessionList" role="tabpanel" aria-labelledby="mngListHeading" aria-expanded="true">
+        <ul class="list-group">
+            {% for session in managesessions %}
+             <li class="list-group-item">
+              <span>{{session.start_date}}</span>
+                 <span class="hidden time">{{session.sessionlast}}</span>
+                 <span class="hidden id">{{session.id}}</span>
+                 <button class="btn btn-default mngSessionBtn">Edit</button>
+          </li>
+            {% endfor %}
+
+        </ul>
+      </div>
+    </div>
+
+{%endblock main %}
+
+
+{%block js %}
+<script src="{% static 'js/manage-session.js'%}"></script>
+{%endblock js %}

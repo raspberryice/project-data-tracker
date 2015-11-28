@@ -1,0 +1,177 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+<title>Overview - {{ prjname }} - Project Data Tracker</title>
+{% endblock title %}
+
+{% block css %}
+ <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'css/morris.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{%block modal %}
+<div id="newiteration" class="modal fade" role="dialog">
+      <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title">New Iteration</h4>
+          </div>
+
+          <form class="form-horizontal" role="form" method="post" action="newiteration/">
+            <div class="modal-body">
+              <div class="form-group">
+                <label class="control-label col-sm-3" for="phase">New iteration at:</label>
+                <div class="col-sm-9">
+                  <!-- <input type="number" min="0" class="form-control" id="sloc" name="sloc" placeholder="Enter Source Line of Code" required autofocus> -->
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="phase" id="phaseCurrent" value="current" checked>
+                      Current Phase: {{ curphase }}
+                    </label>
+                  </div>
+                  {% if curphase != "4" %}
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="phase" id="phaseNext" value="next">
+                      Next Phase: {{next}} (The current phase will be closed)
+                    </label>
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <input type="hidden" id="sid" name="sid" value="{{ sid }}">
+              <button type="submit" class="btn btn-success">Submit</button>
+            </div>
+          </form>
+
+
+    </div>
+
+  </div>
+</div>
+
+{% endblock modal %}
+{%block sidebar %}
+   <li class="active"><a href="#">Overview</a></li>
+   <li><a href="report/">Reports</a></li>
+   <li><a href="activity/">Activities</a></li>
+   <li><a href="defect/">Defects</a></li>
+   <li><a href="setting/">Settings</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <h1 class="page-header">{{ prjname }}
+    <span class="text-small">
+      {% if not closed %} Currently at Phase {{ curphase }}, Iteration {{ curitr }} {% else %} Closed {% endif %}
+    </span>
+  </h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/time-sm.png' %}" class="img-responsive" alt="time">
+              <h4>{{ startdate }} ~ {{ enddate }}</h4>
+              <span class="text-muted">Total time spent</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/code-sm.png'%}" class="img-responsive" alt="code">
+              <h4>{{ totsloc }} lines</h4>
+              <span class="text-muted">Total SLOC</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src= "{% static 'img/bug-sm.png'%}" class="img-responsive" alt="defect">
+              <h4>{{removed}}</h4>
+              <span class="text-muted">Total number of defects </span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder hoverlight" data-toggle="modal" data-target="#newiteration">
+              <img src= "{% static 'img/new-sm.png'%}" class="img-responsive" alt="defect">
+              <h4>New Iteration</h4>
+              <!-- <span class="text-muted"></span> -->
+            </div>
+          </div>
+
+          <div id="latestActivity"></div>
+
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivered SLOC</td>
+                  <td>{{ totsloc }}</td>
+                  <td>{{ esloc }}</td>
+                </tr>
+                <tr>
+                  <td>Effort(person-months)</td>
+                  <td>{{ personmonths }}</td>
+                  <td>{{ epm }}</td>
+                </tr>
+                <tr>
+                  <td>Delivered SLOC per person-month</td>
+                  <td>{{ avesloc }}</td>
+                  <td>Not Applicable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Injected</td>
+                  <td>{% if injected == "" %}Not Closed Yet{%else%}{{injected}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>{{removed}}</td>
+                </tr>
+                <tr>
+                  <td>Injection rate per person-hour of development</td>
+                  <td>{% if injectionrate == "" %}Not Closed Yet{%else%}{{injectionrate}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Removal rate per person-hour of defect removal</td>
+                  <td>{{removalrate}}</td>
+                </tr>
+                <tr>
+                  <td>Defect density per KSLOC</td>
+                  <td>{% if density == "" %}Not Closed Yet{%else%}{{density}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Yield</td>
+                  <td>{% if yield == "" %}Not Closed Yet{%else%}{{yield}}{%endif%}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+{% endblock main %}
+
+{%block js %}
+ <!-- Morris Chart js -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+    <script src="{% static 'js/morris-data.js' %}"></script>
+
+{%endblock js %}

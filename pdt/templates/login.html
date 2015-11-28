@@ -1,29 +1,44 @@
-<html>
-<head>
-<meta charset="UTF-8" />
-<title>Login - Project Data Tracker</title>
-</head>
-<body>
-<div id="header" style="height: 20%; text-align: center">
-	<span id="title" style="font-size: 60pt;">Project Data Tracker</span>
-</div>
-<hr />
-<div id="loginframe" style="height: 60%; text-align: center">
-<div id="container" style="height: 40%"></div>
-<form method="POST" action="/login">
-	<div style="font-size: 20pt">
-		<label>Username:</label><input type="text" name="username" maxlength="100" />
-	</div>
-	<div style="font-size: 20pt">
-		<label>Password:</label><input type="password" name="password" />
-	</div>
-</form>
-</div>
-<hr />
-<div id="footer" style="text-align:center">
-Project Data Tracker <br />
-2015 © SE-one
-</div>
-</div>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block css %}
+ <!-- Custom styles for this template -->
+    <link href="{% static 'css/cover.css' %}" rel="stylesheet">
+{% endblock css %}
+{% block content %}
+ <div class="site-wrapper">
+
+      <div class="site-wrapper-inner">
+
+        <div class="cover-container">
+
+          <div class="masthead clearfix">
+            <div class="inner">
+              <h1 class="cover-heading"><a href="/">Project Data Tracker</a></h1>
+            </div>
+          </div>
+
+          <div class="inner cover">
+            {% if failed %} <h2 class="form-signin-heading">Invalid Username/Password</h2> {% endif %}
+            {% if logged_out %} <h2 class="form-signin-heading">You have successfully logged out.</h2> {% endif %}
+            <form class="form-signin" method="POST" action = "verify">
+                <label for="inputUsername" class="sr-only">Username</label>
+                <input type="text" name="username" class="form-control" placeholder="Username" required autofocus >
+                <label for="inputPassword" class="sr-only">Password</label>
+                <input type="password" name="password" class="form-control" placeholder="Password" required >
+                <button type="submit" class="btn btn-lg btn-primary btn-block" >Login</button>
+            </form>
+          </div>
+
+          <div class="mastfoot">
+            <div class="inner">
+              <p><a href="/">Your Company ™</a> 2015</p>
+              <p>Powered By <a href="https://github.com/septjew/project-data-tracker">SE-One</a> &copy; </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+{% endblock %}

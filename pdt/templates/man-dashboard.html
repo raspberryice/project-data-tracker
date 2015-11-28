@@ -1,0 +1,28 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+<title>Manager Dashboard - Project Data Tracker</title>
+{% endblock title %}
+
+{% block sidebar %}
+            <li class="active"><a href="#">Ongoing Projects<span class="sr-only">(current)</span></a></li>
+            <li><a href="/manager/allprojects/">All Projects</a></li>
+            <li><a href="/manager/newproject/">New Project</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+        <h1 class="page-header">Ongoing Projects</h1>
+          <div class="row">
+            {% for prj in prjlist %}
+            <a type="button" class="btn btn-info btn-lg gradient" href="/manager/project/{{ prj.phase.project.id }}/">
+              <h3>{{ prj.phase.project.name }}</h3>
+              <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
+            </a>
+            {% endfor %}
+            <a type="button" class="btn btn-primary btn-lg gradient" href="/manager/newproject/">
+              <h1>+</h1>
+              <p>New Project</p>
+            </a>
+          </div><!--/row-->
+{% endblock main %}

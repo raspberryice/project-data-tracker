@@ -1,0 +1,174 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="{% static "favicon.ico" %}">
+
+    <title>All Projects - Project Data Tracker</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet">
+    <!-- <link href="//cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet"> -->
+
+    <!-- Custom styles for this template -->
+    <link href="{% static "css/offcanvas.css" %}" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="//cdn.bootcss.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="//cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <nav class="navbar navbar-fixed-top navbar-inverse">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Project Data Tracker</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <!-- <ul class="nav navbar-nav">
+            <li class="active"><a href="#">Home</a></li>
+            <li><a href="#">Projects</a></li>
+            <li><a href="#">Activities</a></li>
+          </ul> -->
+          <ul class="nav navbar-nav navbar-right">
+            <!-- <li class="active"><a href="#">Home</a></li> -->
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ user.username }}<span class="caret"></span></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Signed in as <strong>{{ user.username }}</strong></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Edit Profile</a></li>
+                <li><a href="#">Change Password</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="/auth/logout/">Sign Out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.nav-collapse -->
+      </div><!-- /.container -->
+    </nav><!-- /.navbar -->
+
+    <div class="container">
+
+      <div class="row row-offcanvas row-offcanvas-right">
+
+        <div class="col-xs-12 col-sm-9">
+          <p class="pull-right visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas">Toggle nav</button>
+          </p>
+
+          <div class="row">
+          {% for prj in prjlist %}
+          {% if prj.status %}
+          <!-- Modal -->
+            <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">{{ prj.phase.project.name }}</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>
+                      Project "{{ prj.phase.project.name }}" is under Phase {{ prj.phase.no }}, Iteration {{ prj.iteration.no }}. <br>
+                      Choose an action to perform, or click elsewhere to cancel.
+                    </p>
+                  </div>
+                  <div class="modal-footer">
+                    <div class="btn-group btn-group-justified">
+                      <div class="btn-group"><button type="submit" class="btn btn-primary firstrow" onclick="createsession('dev', {{ prj.phase.project.id }})">Development</button></div>
+                      <div class="btn-group"><button type="button" class="btn btn-primary firstrow" onclick="createsession('rem', {{ prj.phase.project.id }})">Defect Removal</button></div> <!-- post id={{prj.id}} to: /developer/createrem/ -->
+                    </div>
+                    <div class="btn-group btn-group-justified">
+                      <div class="btn-group"><button type="button" class="btn btn-primary lastrow" onclick="createsession('mng', {{ prj.phase.project.id }})">Management</button></div> <!-- post id={{prj.id}} to: /developer/createmng/ -->
+                      <div class="btn-group"><a href="/developer/report/{{ prj.phase.project.id }}" type="button" class="btn btn-primary lastrow">Report Review</a></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Card -->
+            <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
+              <h3>{{ prj.phase.project.name }}</h3>
+              <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.phase.iteration.no }} </p>
+            </button>
+          {% else %}
+            <!-- Card -->
+            <a type="button" class="btn btn-success btn-lg gradient" href="/developer/report/{{ prj.phase.project.id }}">
+              <h3>{{ prj.phase.project.name }}</h3>
+              <h4 style="margin-top: 27px">Closed</h4>
+            </a>
+          {% endif %}
+          {% endfor %}
+          </div><!--/row-->
+        </div><!--/.col-xs-12.col-sm-9-->
+
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Me</div>
+            <div class="panel-body">
+              <!-- <p>Photo</p> -->
+              <div class="placeholder" style="text-align:center">
+                <img src= "{% static 'img/user.png'%}" class="img-responsive center-block" alt="defect">
+                <h4>{{ user.username }}</h4>
+
+              </div>
+            </div>
+          </div>
+
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Projects</div>
+            <!-- <div class="panel-body">
+              <p>...</p>
+            </div> -->
+            <div class="list-group">
+              <a href="/developer/dashboard/" class="list-group-item">Ongoing Projects <span class="badge">{{ totopenprj }}</span></a>
+              <a href="#" class="list-group-item active">All Projects <span class="badge">{{ prjlist|length }}</span></a>
+            </div>
+          </div>
+
+          </div><!--/.sidebar-offcanvas-->
+
+      </div><!--/row-->
+
+      <hr>
+
+      <footer style="text-align: center">
+        <p><a href="/">Your Company ™</a> 2015 <br> Powered By <a href="https://github.com/septjew/project-data-tracker">SE-One</a> &copy; </p>
+      </footer>
+
+    </div><!--/.container-->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <!-- <script src="//cdn.bootcss.com/jquery/1.11.3/jquery.min.js"></script> -->
+    <!-- <script src="//cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script> -->
+    <!-- but the above cdn seems slow in HKU -->
+    <script src="{% static "js/jquery.min.js" %}"></script>
+    <script src="{% static "js/bootstrap.min.js" %}"></script>
+
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="{% static "js/ie10-viewport-bug-workaround.js" %}"></script>
+
+    <script src="{% static "js/offcanvas.js" %}"></script>
+  </body>
+</html>
