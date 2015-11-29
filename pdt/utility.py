@@ -1,4 +1,5 @@
 from pdt.models import *
+import datetime
 
 def render_graph(devsession_list,remsession_list):
     dev = []
@@ -15,8 +16,20 @@ def render_graph(devsession_list,remsession_list):
     rem.sort(key=lambda e: e[0])
 
     i,j=0,0
-    cur_date = min(rem[0][0], dev[0][0])
-    last_date = max(rem[-1][0],dev[-1][0])
+    if len(dev) ==0:
+        if len(rem)==0:
+            cur_date = datetime.date.today()
+            last_date = datetime.date.today()
+        else:
+            cur_date = rem[0][0]
+            last_date = rem[-1][0]
+    elif len(rem)== 0:
+        cur_date = dev[0][0]
+        last_date = dev[-1][0]
+    else:
+        cur_date = min(rem[0][0], dev[0][0])
+        last_date = max(rem[-1][0],dev[-1][0])
+
     while cur_date <= last_date:
         sloc,defect =0,0
         while i < len(dev) and dev[i][0] == cur_date:
