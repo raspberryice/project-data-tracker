@@ -194,7 +194,7 @@ def beginDefectSession(request):
     request.session['sid'] = s.id
     print (len(iterations))
     iterno = iters[0]+iters[1]+iters[2]+iters[3]
-    c = Context({'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
+    c = Context({'user': request.user, 'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
     return render_to_response("dev-defect.html",c)
 
 def addDefect(request):
@@ -311,7 +311,7 @@ def beginManageSession(request):
                 for de in Defects.objects.filter(session = ses).all():
                     defectlist.append(de)
     print (len(developsessions),len(managesessions),len(defectlist),len(defectsessions))
-    c = Context({'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
+    c = Context({'user': request.user, 'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
     s.save()
     request.session['sid'] = s.id
     return render_to_response("dev-manage.html",c)
@@ -541,7 +541,7 @@ def addproject(request):
             if not i.is_staff:
                 if i.profile.role == USER_DEVELOPER:
                     u.append(i)
-        c= Context({'developerlist':u})
+        c= Context({'developerlist':u, 'user': request.user})
         return render_to_response("man-newproject.html",c)
 
 
