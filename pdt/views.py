@@ -694,14 +694,24 @@ def setting(request,pid):
             cur = request.POST.getlist("developers")
             for par in Participate.objects.filter(project_id=  p.id).all():
                 par.delete()
+            print len(Participate.objects.all())
+            print cur
             for c in cur:
                 developer  = User.objects.get(id  = int(c))
                 par = Participate(project_id = p.id,developer_id = developer.id)
                 par.save()
+            parti = []
+            for par in Participate.objects.filter(project_id = p.id).all():
+        		parti.append(par.developer)
+            unparti = []
+            for u in User.objects.all():
+        	if not u.is_staff:
+        		if u.profile.role == USER_DEVELOPER and u not in parti:
+        			unparti.append(u)
         elif request.POST['action'] == "edit_description":
-            desc = request.POST["description"]
-            p.desc = desc
-            p.save()
+        	desc = request.POST["description"]
+        	p.desc = desc
+        	p.save()
         elif request.POST['action']  == "change_esloc":
             esloc = request.POST["esloc"]
             p.slocestimate = esloc
