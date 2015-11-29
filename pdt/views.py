@@ -34,7 +34,9 @@ def verify(request):
         if user is not None:
             auth.login(request,user)
             #return HttpResponse("uid %d" % request.user.id)
-            if request.user.profile.role == USER_DEVELOPER:
+            if request.user.is_staff:
+                return HttpResponseRedirect("/admin/")
+            elif request.user.profile.role == USER_DEVELOPER:
                 return HttpResponseRedirect("/developer/dashboard/")
             elif request.user.profile.role == USER_MANAGER:
                 return HttpResponseRedirect("/manager/dashboard/")
@@ -87,9 +89,9 @@ def devAllProjects(request):
         closed = []
         for item in p:
             if not item.project.status:
-        		closed.append(item.project)
+                closed.append(item.project)
             if not item.project.status:
-        		continue
+                continue
             pid = item.project.id
             project.append(item.project)
             ph = Phase.objects.get(project_id = pid,status = True)
@@ -403,7 +405,7 @@ def manReport(request,pid):
                 time +=iternow.totalTime
                 totaldefects = len(Defects.objects.filter(iterationRemoved_id = iternow.id).all())
                 personhourrate = '%.2f' % (totaldefects/(len(Participate.objects.filter(project_id = p.id))*iternow.totalTime/3600.0)) if iternow.totalTime > 0 else 'No Record'
-                day = (timezone.now() - p.start_date).days
+                day = (timezone.now() - p.start_date).days + 1
                 pm  = len(Participate.objects.filter(project_id = p.id))*day/30
                 personmonth = totsloc/(len(Participate.objects.filter(project_id = p.id))*day/30)
         c = Context({'projectclosed': False, 'phaseclosed': phaseclosed, 'prhname':p.name,'personmonths':pm,'avesloc':personmonth,'epm':pm/p.effortestimate,'esloc':totsloc/p.slocestimate,'removed':totaldefects,'removalrate':personhourrate,'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
@@ -419,10 +421,10 @@ def manDefect(request, pid):
         project = Project.objects.get(id = int(request.session['pid']))
         defectlist = []
         for ph in Phase.objects.filter(project_id = project.id).all():
-        	for i in Iteration.objects.filter(phase_id = ph.id).all():
-        		for ses in DefectSession.objects.filter(iteration = i).all():
-        			for de in Defects.objects.filter(session = ses).all():
-        				defectlist.append(de)
+            for i in Iteration.objects.filter(phase_id = ph.id).all():
+                for ses in DefectSession.objects.filter(iteration = i).all():
+                    for de in Defects.objects.filter(session = ses).all():
+                        defectlist.append(de)
         c = Context({'user':request.user,'defect_list':defectlist})
         return render_to_response("man-defect.html", c)
     else:
@@ -432,20 +434,20 @@ def manDefect(request, pid):
 @login_required
 def manActivity(request, pid):
     if request.user.profile.role == 2:
-    	project = Project.objects.get(id = int(request.session['pid']))
-    	developsessions = []
-    	managesessions = []
-    	defectsessions = []
-    	defectlist = []
-    	for ph in Phase.objects.filter(project_id = project.id).all():
-        	for i in Iteration.objects.filter(phase_id = ph.id).all():
-        		for ses in SLOCSession.objects.filter(iteration = i).all():
-        			developsessions.append(ses)
-            	for ses in ManageSession.objects.filter(iteration = i).all():
-                	managesessions.append(ses)
-            	for ses in DefectSession.objects.filter(iteration = i).all():
-                	defectsessions.append(ses)
-    	c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
+        project = Project.objects.get(id = int(request.session['pid']))
+        developsessions = []
+        managesessions = []
+        defectsessions = []
+        defectlist = []
+        for ph in Phase.objects.filter(project_id = project.id).all():
+            for i in Iteration.objects.filter(phase_id = ph.id).all():
+                for ses in SLOCSession.objects.filter(iteration = i).all():
+                    developsessions.append(ses)
+                for ses in ManageSession.objects.filter(iteration = i).all():
+                    managesessions.append(ses)
+                for ses in DefectSession.objects.filter(iteration = i).all():
+                    defectsessions.append(ses)
+        c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
         return render_to_response("man-activity.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -553,9 +555,9 @@ def manAllProjects(request):
         closed = []
         for item in p:
             if not item.status:
-        		closed.append(item)
+                closed.append(item)
             if not item.status:
-        		continue
+                continue
             pid = item.id
             project.append(item)
             ph = Phase.objects.get(project_id = pid,status = True)
@@ -635,24 +637,24 @@ def setting(request,pid):
             cur = request.POST.getlist("developers")
             for par in Participate.objects.filter(project_id=  p.id).all():
                 par.delete()
-            print len(Participate.objects.all())
-            print cur
+            print (len(Participate.objects.all()))
+            print (cur)
             for c in cur:
                 developer  = User.objects.get(id  = int(c))
                 par = Participate(project_id = p.id,developer_id = developer.id)
                 par.save()
             parti = []
             for par in Participate.objects.filter(project_id = p.id).all():
-        		parti.append(par.developer)
+                parti.append(par.developer)
             unparti = []
             for u in User.objects.all():
-        	if not u.is_staff:
-        		if u.profile.role == USER_DEVELOPER and u not in parti:
-        			unparti.append(u)
+                if not u.is_staff:
+                    if u.profile.role == USER_DEVELOPER and u not in parti:
+                        unparti.append(u)
         elif request.POST['action'] == "edit_description":
-        	desc = request.POST["description"]
-        	p.desc = desc
-        	p.save()
+            desc = request.POST["description"]
+            p.desc = desc
+            p.save()
         elif request.POST['action']  == "change_esloc":
             esloc = request.POST["esloc"]
             p.slocestimate = esloc
