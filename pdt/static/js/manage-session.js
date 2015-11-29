@@ -20,7 +20,7 @@ $(document).ready(function(){
 
 
 $('.devSessionBtn').on('click',function(e){
-    var li = $(this).parent();
+    var li = $(this).parent().parent();
     li.addClass('current');
     var time = li.children('.time').text();
     var sloc = parseInt(li.children('.sloc').text());
@@ -32,7 +32,7 @@ $('.devSessionBtn').on('click',function(e){
     $('#submitDev').modal('show');
 });
 $('.mngSessionBtn').on('click',function(e){
-    var li = $(this).parent();
+    var li = $(this).parent().parent();
     li.addClass('current');
     var time = li.children('.time').text();
     var id = li.children('.id').text();
@@ -42,7 +42,7 @@ $('.mngSessionBtn').on('click',function(e){
 });
 
 $('.remSessionBtn').on('click',function(e){
-    var li = $(this).parent();
+    var li = $(this).parent().parent();
     li.addClass('current');
     var time = li.children('.time').text();
     var defect_no = li.children('.defectno').text();
@@ -54,7 +54,7 @@ $('.remSessionBtn').on('click',function(e){
 });
 
 $('.viewDefectBtn').on('click',function(){
-    var li = $(this).parent();
+    var li = $(this).parent().parent();
     li.addClass('current');
     var report = {
     'name':li.children('.name').text(),
