@@ -140,8 +140,8 @@ $('#removedList').on('click','.edit-btn',function(){
     render_report(report);
     $('#viewDefectName').attr('readonly','readonly');
     $('#viewDefectDate').attr('readonly','readonly');
-    $('#viewDefectType').attr('readonly','readonly');
-    $('#viewIterationInjected').attr('readonly','readonly');
+    $('#viewDefectType').attr('disabled','disabled');
+    $('#viewIterationInjected').attr('disabled','disabled');
     $('#viewDefectDesc').attr('readonly','readonly');
     $('#save-btn').remove();
     $('#editReport').modal('show');
