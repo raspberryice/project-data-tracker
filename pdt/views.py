@@ -411,38 +411,39 @@ def manReport(request,pid):
 
 ##view defects
 @login_required
-def manDefect(req, pid):
-    if req.user.profile.role == 2:
+def manDefect(request, pid):
+    if request.user.profile.role == 2:
         # projectid == pid
-        queryphase = req.GET.get('phase', 'Overall')
-        queryitr = req.GET.get('iteration', 'Overall')
-        c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-            'curphase': queryphase,
-            'curitr': queryitr,
-            'totphase': 2,
-            'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
-            'totsloc': 2345,
-            'totslocesti': 35,  # stands for 35%
-            'personmonths': 20,
-            'pmesti': 30,
-            'avesloc': 117,
-        })
+        project = Project.objects.get(id = int(request.session['pid']))
+        defectlist = []
+        for ph in Phase.objects.filter(project_id = project.id).all():
+        	for i in Iteration.objects.filter(phase_id = ph.id).all():
+        		for ses in DefectSession.objects.filter(iteration = i).all():
+        			for de in Defects.objects.filter(session = ses).all():
+        				defectlist.append(de)
+        c = Context({'user':request.user,'defect_list':defectlist})
         return render_to_response("man-defect.html", c)
     else:
         return HttpResponseRedirect("/")
 
 ##view defects
 @login_required
-def manActivity(req, pid):
-    if req.user.profile.role == 2:
-
-        c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-
-        })
+def manActivity(request, pid):
+    if request.user.profile.role == 2:
+    	project = Project.objects.get(id = int(request.session['pid']))
+    	developsessions = []
+    	managesessions = []
+    	defectsessions = []
+    	defectlist = []
+    	for ph in Phase.objects.filter(project_id = project.id).all():
+        	for i in Iteration.objects.filter(phase_id = ph.id).all():
+        		for ses in SLOCSession.objects.filter(iteration = i).all():
+        			developsessions.append(ses)
+            	for ses in ManageSession.objects.filter(iteration = i).all():
+                	managesessions.append(ses)
+            	for ses in DefectSession.objects.filter(iteration = i).all():
+                	defectsessions.append(ses)
+    	c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
         return render_to_response("man-activity.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -453,6 +454,7 @@ def manActivity(req, pid):
 def manProject(request,pid):
     if request.user.profile.role == USER_MANAGER:
         p = Project.objects.get(id = int(pid))
+        request.session['pid'] = p.id
         curphase = Phase.objects.get(project_id  =p.id,status = True)
         curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         phase_list = Phase.objects.filter(project_id = p.id).all()
