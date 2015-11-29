@@ -411,7 +411,9 @@ def manReport(request,pid):
         c = Context({'projectclosed': False, 'phaseclosed': phaseclosed, 'prhname':p.name,'personmonths':pm,'avesloc':personmonth,'epm':pm/p.effortestimate,'esloc':totsloc/p.slocestimate,'removed':totaldefects,'removalrate':personhourrate,'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
         return render_to_response('man-report.html',c)
     else:
-        return HttpResponseRedirect('/')
+        c = Context()
+        # do something
+        return render_to_response('man-report.html',c)
 
 ##view defects
 @login_required
@@ -556,7 +558,6 @@ def manAllProjects(request):
         for item in p:
             if not item.status:
                 closed.append(item)
-            if not item.status:
                 continue
             pid = item.id
             project.append(item)
