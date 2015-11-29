@@ -73,7 +73,6 @@
 
           <div class="row">
           {% for prj in prjlist %}
-          {% if prj.status %}
           <!-- Modal -->
             <div id="prj{{ forloop.counter }}" class="modal fade" role="dialog">
               <div class="modal-dialog">
@@ -84,7 +83,7 @@
                   </div>
                   <div class="modal-body">
                     <p>
-                      Project "{{ prj.phase.project.name }}" is under Phase {{ prj.phase.no }}, Iteration {{ prj.iteration.no }}. <br>
+                      Project "{{ prj.phase.project.name }}" is under Phase {{ prj.phase.no }}, Iteration {{ prj.no }}. <br>
                       Choose an action to perform, or click elsewhere to cancel.
                     </p>
                   </div>
@@ -104,15 +103,15 @@
             <!-- Card -->
             <button type="button" class="btn btn-info btn-lg gradient" data-toggle="modal" data-target="#prj{{ forloop.counter }}">
               <h3>{{ prj.phase.project.name }}</h3>
-              <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.phase.iteration.no }} </p>
+              <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
             </button>
-          {% else %}
+            {%endfor%}
+          {% for c in closed%}
             <!-- Card -->
             <a type="button" class="btn btn-success btn-lg gradient" href="/developer/report/{{ prj.phase.project.id }}">
-              <h3>{{ prj.phase.project.name }}</h3>
+              <h3>{{ c.name }}</h3>
               <h4 style="margin-top: 27px">Closed</h4>
             </a>
-          {% endif %}
           {% endfor %}
           </div><!--/row-->
         </div><!--/.col-xs-12.col-sm-9-->

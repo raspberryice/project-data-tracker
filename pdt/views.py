@@ -67,7 +67,7 @@ def devdashboard(request):
         c = Context({
             'user':request.user,
             'prjlist':itera,
-            'totprjcnt':len(project),
+            'totprjcnt':len(p),
             'justcompleted':(request.GET.get('prev','')=='/developer/enddev')
             })
         return render_to_response("dev-dashboard.html",c)
@@ -76,63 +76,29 @@ def devdashboard(request):
 
 
 @login_required
-def devAllProjects(req):
-    if req.user.profile.role == 1:
-        prjlist = [
-            {
-                'name': 'Project 1',
-                'id': 1001,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True, # open
-            },
-            {
-                'name': 'Project 2',
-                'id': 1002,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True,
-            },
-            {
-                'name': 'Project 3',
-                'id': 1003,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True,
-            },
-            {
-                'name': 'Project 4',
-                'id': 1004,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True,
-            },
-            {
-                'name': 'Project 5',
-                'id': 1005,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True, #open
-            },
-            {
-                'name': 'Project 6',
-                'id': 1006,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True, # open
-            },
-            {
-                'name': 'Project 7',
-                'id': 1007,
-                'curphase': 4,
-                'curitr': 4,
-                'status': False, # closed
-            },
-        ]
+def devAllProjects(request):
+    if request.user.profile.role == USER_DEVELOPER:
+        p = Participate.objects.filter(developer_id = request.user.id).all()
+        project = list()
+        itera = list()
+        phase = list()
+        closed = []
+        for item in p:
+            if not item.project.status:
+        		closed.append(item.project)
+            if not item.project.status:
+        		continue
+            pid = item.project.id
+            project.append(item.project)
+            ph = Phase.objects.get(project_id = pid,status = True)
+            i = Iteration.objects.get(phase = ph,status = True)
+            itera.append(i)
+            phase.append(ph)
         c = Context({
-            'user': req.user,
-            'prjlist': prjlist,
-            'totopenprj': 6,
+            'user': request.user,
+            'prjlist': itera,
+            'closed': closed,
+            'totopenprj': len(itera),
         })
         return render_to_response("dev-allprojects.html", c)
     else:
@@ -569,63 +535,29 @@ def addproject(request):
 
 
 @login_required
-def manAllProjects(req):
-    if req.user.profile.role == 2:
-        prjlist = [
-            {
-                'name': 'Project 1',
-                'id': 1001,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True, # open
-            },
-            {
-                'name': 'Project 2',
-                'id': 1002,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True,
-            },
-            {
-                'name': 'Project 3',
-                'id': 1003,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True,
-            },
-            {
-                'name': 'Project 4',
-                'id': 1004,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True,
-            },
-            {
-                'name': 'Project 5',
-                'id': 1005,
-                'curphase': 2,
-                'curitr': 3,
-                'status': True, #open
-            },
-            {
-                'name': 'Project 6',
-                'id': 1006,
-                'curphase': 1,
-                'curitr': 2,
-                'status': True, # open
-            },
-            {
-                'name': 'Project 7',
-                'id': 1007,
-                'curphase': 4,
-                'curitr': 4,
-                'status': False, # closed
-            },
-        ]
+def manAllProjects(request):
+    if request.user.profile.role == USER_MANAGER:
+        p = Project.objects.all()
+        project = list()
+        itera = list()
+        phase = list()
+        closed = []
+        for item in p:
+            if not item.status:
+        		closed.append(item)
+            if not item.status:
+        		continue
+            pid = item.id
+            project.append(item)
+            ph = Phase.objects.get(project_id = pid,status = True)
+            i = Iteration.objects.get(phase = ph,status = True)
+            itera.append(i)
+            phase.append(ph)
         c = Context({
-            'user': req.user,
-            'prjlist': prjlist,
-            'prjcount': 6,
+            'user': request.user,
+            'prjlist': itera,
+            'closed': closed,
+            'prjcount': len(itera),
         })
         return render_to_response("man-allprojects.html", c)
     else:
