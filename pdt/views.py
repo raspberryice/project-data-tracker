@@ -6,6 +6,8 @@ from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
 from pdt.models import *
+from pdt.utility import *
+import json
 # Create your views here.
 USER_DEVELOPER = 1
 USER_MANAGER = 2
@@ -32,7 +34,9 @@ def verify(request):
         if user is not None:
             auth.login(request,user)
             #return HttpResponse("uid %d" % request.user.id)
-            if request.user.profile.role == USER_DEVELOPER:
+            if request.user.is_staff:
+                return HttpResponseRedirect("/admin/")
+            elif request.user.profile.role == USER_DEVELOPER:
                 return HttpResponseRedirect("/developer/dashboard/")
             elif request.user.profile.role == USER_MANAGER:
                 return HttpResponseRedirect("/manager/dashboard/")
@@ -88,9 +92,9 @@ def devAllProjects(request):
         closed = []
         for item in p:
             if not item.project.status:
-        		closed.append(item.project)
+                closed.append(item.project)
             if not item.project.status:
-        		continue
+                continue
             pid = item.project.id
             project.append(item.project)
             ph = Phase.objects.get(project_id = pid,status = True)
@@ -193,7 +197,7 @@ def beginDefectSession(request):
     request.session['sid'] = s.id
     print (len(iterations))
     iterno = iters[0]+iters[1]+iters[2]+iters[3]
-    c = Context({'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
+    c = Context({'user': request.user, 'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
     return render_to_response("dev-defect.html",c)
 
 def addDefect(request):
@@ -310,7 +314,7 @@ def beginManageSession(request):
                 for de in Defects.objects.filter(session = ses).all():
                     defectlist.append(de)
     print (len(developsessions),len(managesessions),len(defectlist),len(defectsessions))
-    c = Context({'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
+    c = Context({'user': request.user, 'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
     s.save()
     request.session['sid'] = s.id
     return render_to_response("dev-manage.html",c)
@@ -404,13 +408,15 @@ def manReport(request,pid):
                 time +=iternow.totalTime
                 totaldefects = len(Defects.objects.filter(iterationRemoved_id = iternow.id).all())
                 personhourrate = '%.2f' % (totaldefects/(len(Participate.objects.filter(project_id = p.id))*iternow.totalTime/3600.0)) if iternow.totalTime > 0 else 'No Record'
-                day = (timezone.now() - p.start_date).days
+                day = (timezone.now() - p.start_date).days + 1
                 pm  = len(Participate.objects.filter(project_id = p.id))*day/30
                 personmonth = totsloc/(len(Participate.objects.filter(project_id = p.id))*day/30)
         c = Context({'projectclosed': False, 'phaseclosed': phaseclosed, 'prhname':p.name,'personmonths':pm,'avesloc':personmonth,'epm':pm/p.effortestimate,'esloc':totsloc/p.slocestimate,'removed':totaldefects,'removalrate':personhourrate,'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
         return render_to_response('man-report.html',c)
     else:
-        return HttpResponseRedirect('/')
+        c = Context()
+        # do something
+        return render_to_response('man-report.html',c)
 
 ##view defects
 @login_required
@@ -420,10 +426,10 @@ def manDefect(request, pid):
         project = Project.objects.get(id = int(request.session['pid']))
         defectlist = []
         for ph in Phase.objects.filter(project_id = project.id).all():
-        	for i in Iteration.objects.filter(phase_id = ph.id).all():
-        		for ses in DefectSession.objects.filter(iteration = i).all():
-        			for de in Defects.objects.filter(session = ses).all():
-        				defectlist.append(de)
+            for i in Iteration.objects.filter(phase_id = ph.id).all():
+                for ses in DefectSession.objects.filter(iteration = i).all():
+                    for de in Defects.objects.filter(session = ses).all():
+                        defectlist.append(de)
         c = Context({'user':request.user,'defect_list':defectlist})
         return render_to_response("man-defect.html", c)
     else:
@@ -433,20 +439,20 @@ def manDefect(request, pid):
 @login_required
 def manActivity(request, pid):
     if request.user.profile.role == 2:
-    	project = Project.objects.get(id = int(request.session['pid']))
-    	developsessions = []
-    	managesessions = []
-    	defectsessions = []
-    	defectlist = []
-    	for ph in Phase.objects.filter(project_id = project.id).all():
-        	for i in Iteration.objects.filter(phase_id = ph.id).all():
-        		for ses in SLOCSession.objects.filter(iteration = i).all():
-        			developsessions.append(ses)
-            	for ses in ManageSession.objects.filter(iteration = i).all():
-                	managesessions.append(ses)
-            	for ses in DefectSession.objects.filter(iteration = i).all():
-                	defectsessions.append(ses)
-    	c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
+        project = Project.objects.get(id = int(request.session['pid']))
+        developsessions = []
+        managesessions = []
+        defectsessions = []
+        defectlist = []
+        for ph in Phase.objects.filter(project_id = project.id).all():
+            for i in Iteration.objects.filter(phase_id = ph.id).all():
+                for ses in SLOCSession.objects.filter(iteration = i).all():
+                    developsessions.append(ses)
+                for ses in ManageSession.objects.filter(iteration = i).all():
+                    managesessions.append(ses)
+                for ses in DefectSession.objects.filter(iteration = i).all():
+                    defectsessions.append(ses)
+        c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
         return render_to_response("man-activity.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -480,6 +486,10 @@ def manProject(request,pid):
         pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
         personmonth = p.totalSLOC/pm
         convertdate = lambda d: str(d.month)+'/'+str(d.day)+'/'+str(d.year)
+        devsession_list = SLOCSession.objects.filter(iteration__phase__project=p)
+        remsession_list = DefectSession.objects.filter(iteration__phase__project=p)
+        graph_data = render_graph(devsession_list,remsession_list)
+
         c = Context({
             'prjname':p.name,
             'density':"",
@@ -502,7 +512,8 @@ def manProject(request,pid):
             'totitr':totit,
             'time':time,
             'totsloc':totsloc,
-            'user':request.user
+            'user':request.user,
+            'graph_data':json.dumps(graph_data),
             })
         return render_to_response('man-project.html',c)
     else:
@@ -535,7 +546,7 @@ def addproject(request):
             if not i.is_staff:
                 if i.profile.role == USER_DEVELOPER:
                     u.append(i)
-        c= Context({'developerlist':u})
+        c= Context({'developerlist':u, 'user': request.user})
         return render_to_response("man-newproject.html",c)
 
 
@@ -549,9 +560,8 @@ def manAllProjects(request):
         closed = []
         for item in p:
             if not item.status:
-        		closed.append(item)
-            if not item.status:
-        		continue
+                closed.append(item)
+                continue
             pid = item.id
             project.append(item)
             ph = Phase.objects.get(project_id = pid,status = True)
@@ -631,24 +641,24 @@ def setting(request,pid):
             cur = request.POST.getlist("developers")
             for par in Participate.objects.filter(project_id=  p.id).all():
                 par.delete()
-            print len(Participate.objects.all())
-            print cur
+            print (len(Participate.objects.all()))
+            print (cur)
             for c in cur:
                 developer  = User.objects.get(id  = int(c))
                 par = Participate(project_id = p.id,developer_id = developer.id)
                 par.save()
             parti = []
             for par in Participate.objects.filter(project_id = p.id).all():
-        		parti.append(par.developer)
+                parti.append(par.developer)
             unparti = []
             for u in User.objects.all():
-        	if not u.is_staff:
-        		if u.profile.role == USER_DEVELOPER and u not in parti:
-        			unparti.append(u)
+                if not u.is_staff:
+                    if u.profile.role == USER_DEVELOPER and u not in parti:
+                        unparti.append(u)
         elif request.POST['action'] == "edit_description":
-        	desc = request.POST["description"]
-        	p.desc = desc
-        	p.save()
+            desc = request.POST["description"]
+            p.desc = desc
+            p.save()
         elif request.POST['action']  == "change_esloc":
             esloc = request.POST["esloc"]
             p.slocestimate = esloc
@@ -684,3 +694,6 @@ def setting(request,pid):
 
 def editprofile(req):
     return render_to_response("profile.html")
+
+
+

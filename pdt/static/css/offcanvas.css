@@ -99,3 +99,8 @@ footer {
   font-size: 21px;
   margin: 1pc;
 }
+
+/* session timer */
+.timer {
+  text-align: center;
+}

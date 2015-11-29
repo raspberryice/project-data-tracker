@@ -124,7 +124,7 @@
                   <div class="form-group">
                     <label class="control-label col-sm-4" for="time">Time:</label>
                     <div class="col-sm-6">
-                      <input type="text" class="form-control" id="time" name="time" value="00:00:00" required>
+                      <input type="text" class="form-control" id="time" name="time" value="00:00:00" required readonly>
                     </div>
                   </div>
                 </div>
@@ -220,21 +220,21 @@
     <div class="col-md-9">
         <div class="panel panel-default">
         <div class="panel-heading" role="tab" id="devListHeading">
-        <h4 class="panel-title">
-          <a class="" role="button" data-toggle="collapse" href="#devSessionList" aria-expanded="true" aria-controls="devSessionList">
-           Development Sessions
-          </a>
-        </h4>
-      </div>
+          <h4 class="panel-title">
+            <a class="" role="button" data-toggle="collapse" href="#devSessionList" aria-expanded="true" aria-controls="devSessionList">
+             Development Sessions
+            </a>
+          </h4>
+        </div>
         <div class="panel-collapse collapse in" id= "devSessionList" role="tabpanel" aria-labelledby="devListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in developsessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time" >{{session.sessionlast}}</span>
                  <span class="hidden sloc"> {{session.SLOC}}</span>
                  <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default devSessionBtn">Edit</button>
+                 <span class="pull-right"><button class="btn btn-default devSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
@@ -252,12 +252,12 @@
         <div class="panel-collapse collapse in" id= "remSessionList" role="tabpanel" aria-labelledby="remListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in defectsessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden defectno">{{session.defectno}}</span>
                    <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default remSessionBtn">Edit</button>
+                 <span class="pull-right"><button class="btn btn-default remSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
@@ -275,11 +275,11 @@
         <div class="panel-collapse collapse in" id="mngSessionList" role="tabpanel" aria-labelledby="mngListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in managesessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default mngSessionBtn">Edit</button>
+                 <span class="pull-right"><button class="btn btn-default mngSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
@@ -298,14 +298,14 @@
         <div id="recentDefectList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="recentDefectListHeading" aria-expanded="true">
         <ul class="list-group" >
             {% for defect in defect_list %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
                 <span class="name">{{defect.name}}</span>
                  <span class="hidden id">{{defect.id}}</span>
                  <span class="hidden inject">{{defect.iterationInjected}}</span>
                  <span class="hidden remove">{{defect.iterationRemoved}}</span>
                  <span class="hidden desc">{{defect.desc}}</span>
                  <span class="hidden type">{{defect.typed}}</span>
-              <button class="btn btn-default viewDefectBtn">Edit</button>
+              <span class="pull-right"><button class="btn btn-default viewDefectBtn">Edit</button></span>
           </li>
             {% endfor %}
         </ul>

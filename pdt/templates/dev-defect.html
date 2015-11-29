@@ -1,6 +1,10 @@
 {% extends 'base-session.html' %}
 {% load staticfiles %}
 
+{% block css %}
+ <link href="{% static 'css/offcanvas.css' %}" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+{% endblock css %}
 {%block title%}
 <title> Defect Removal Session - PDT</title>
 {% endblock %}
@@ -169,7 +173,7 @@
           <a class="" role="button" data-toggle="collapse" href="#ongoingList" aria-expanded="true" aria-controls="ongoingList">
            Ongoing Defects
           </a>
-            <div style="text-align:right; margin-top: -1.2pc;"><a id="createDefectBtn">+</a></div>
+            <div style="text-align:right; margin-top: -1.2pc;"><i id='createDefectBtn' class="fa fa-plus-circle fa-lg"></i></div>
         </h4>
       </div>
       <div id="ongoingList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="ongoingListHeading" aria-expanded="true">
@@ -177,6 +181,7 @@
         </ul>
       </div>
     </div>
+        </div>
 
     <br>
         <div class="panel-group" role="tablist">
