@@ -20,8 +20,8 @@
               <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
             </a>
             {%endfor%}
-            {% for c in closed%}
-            <a type="button" class="btn btn-success btn-lg gradient" href="/manager/project/{{ prj.phase.project.id }}/">
+            {% for c in closed %}
+            <a type="button" class="btn btn-success btn-lg gradient" href="/manager/project/{{ c.id }}/">
               <h3>{{ c.name }}</h3>
               <h4 style="margin-top: 27px">Closed</h4>
             </a>
