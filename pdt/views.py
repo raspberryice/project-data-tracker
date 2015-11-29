@@ -34,7 +34,9 @@ def verify(request):
         if user is not None:
             auth.login(request,user)
             #return HttpResponse("uid %d" % request.user.id)
-            if request.user.profile.role == USER_DEVELOPER:
+            if request.user.is_staff:
+                return HttpResponseRedirect("/admin/")
+            elif request.user.profile.role == USER_DEVELOPER:
                 return HttpResponseRedirect("/developer/dashboard/")
             elif request.user.profile.role == USER_MANAGER:
                 return HttpResponseRedirect("/manager/dashboard/")
@@ -403,7 +405,7 @@ def manReport(request,pid):
                 time +=iternow.totalTime
                 totaldefects = len(Defects.objects.filter(iterationRemoved_id = iternow.id).all())
                 personhourrate = '%.2f' % (totaldefects/(len(Participate.objects.filter(project_id = p.id))*iternow.totalTime/3600.0)) if iternow.totalTime > 0 else 'No Record'
-                day = (timezone.now() - p.start_date).days
+                day = (timezone.now() - p.start_date).days + 1
                 pm  = len(Participate.objects.filter(project_id = p.id))*day/30
                 personmonth = totsloc/(len(Participate.objects.filter(project_id = p.id))*day/30)
         c = Context({'projectclosed': False, 'phaseclosed': phaseclosed, 'prhname':p.name,'personmonths':pm,'avesloc':personmonth,'epm':pm/p.effortestimate,'esloc':totsloc/p.slocestimate,'removed':totaldefects,'removalrate':personhourrate,'totphase':totph ,'curphase':qphase,'curitr':qiter,'totitr':totit,'time':time,'totsloc':totsloc,'user':request.user})
@@ -649,10 +651,10 @@ def setting(request,pid):
                 if not u.is_staff:
                     if u.profile.role == USER_DEVELOPER and u not in parti:
                         unparti.append(u)
-                    elif request.POST['action'] == "edit_description":
-                        desc = request.POST["description"]
-                        p.desc = desc
-                        p.save()
+        elif request.POST['action'] == "edit_description":
+            desc = request.POST["description"]
+            p.desc = desc
+            p.save()
         elif request.POST['action']  == "change_esloc":
             esloc = request.POST["esloc"]
             p.slocestimate = esloc
