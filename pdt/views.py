@@ -336,14 +336,14 @@ def manReport(request,pid):
         p = Project.objects.get(id = int(pid))
     if p.status:
         qphase = request.GET.get('phase','Overall')
-        totph = len(Phase.objects.filter(project_id = p.id).all())
+        totph = len(Phase.objects.filter(project_id = p.id,status = False).all())
         qiter = request.GET.get('iteration','Overall')
         totit = 0
         #lastphase = Phase.objects.get(project_id = p.id,status = True)
         #lastiteration = Iteration.objects.get(phase_id = lastphase.id,status = True)
         phaseclosed = False
         if qphase == 'Overall':
-            phases = Phase.objects.filter(project_id = p.id).all()
+            phases = Phase.objects.filter(project_id = p.id,status = False).all()
             totsloc = p.totalSLOC
             time = p.totalTime
             totaldefects = 0
@@ -384,7 +384,7 @@ def manReport(request,pid):
             #for ses in DefectSession.objects.filter(iteration_id = lastiteration.id).all():
             #   lastiterationdefect+=ses.defe
             personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id))*nowphase.totalTime/3600.0)) if p.totalTime > 0 else "No Record"
-            totit = len(Iteration.objects.filter(phase_id = nowphase.id))
+            totit = len(Iteration.objects.filter(phase_id = nowphase.id,status = False))
             if qiter== 'Overall':
                 totsloc += nowphase.totalSLOC
                 time += nowphase.totalTime
