@@ -127,12 +127,12 @@ col-sm-9
         <div class="panel-collapse collapse in" id= "devSessionList" role="tabpanel" aria-labelledby="devListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in developsessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time" >{{session.sessionlast}}</span>
                  <span class="hidden sloc"> {{session.SLOC}}</span>
                  <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default devSessionBtn">Edit</button>
+                 <span class="pull-right"><button class="btn btn-default devSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
@@ -150,12 +150,12 @@ col-sm-9
         <div class="panel-collapse collapse in" id= "remSessionList" role="tabpanel" aria-labelledby="remListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in defectsessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden defectno">{{session.defectno}}</span>
                    <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default remSessionBtn">Edit</button>
+                 <span class="pull-right"> <button class="btn btn-default remSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
@@ -173,11 +173,11 @@ col-sm-9
         <div class="panel-collapse collapse in" id="mngSessionList" role="tabpanel" aria-labelledby="mngListHeading" aria-expanded="true">
         <ul class="list-group">
             {% for session in managesessions %}
-             <li class="list-group-item">
+             <li class="list-group-item clearfix">
               <span>{{session.start_date}}</span>
                  <span class="hidden time">{{session.sessionlast}}</span>
                  <span class="hidden id">{{session.id}}</span>
-                 <button class="btn btn-default mngSessionBtn">Edit</button>
+                 <span class="pull-right"><button class="btn btn-default mngSessionBtn">Edit</button></span>
           </li>
             {% endfor %}
 
