@@ -1,11 +1,7 @@
-{% extends 'base-session.html' %}
+{% extends 'base-dashboard.html'%}
 {% load staticfiles %}
 
-{% block title %}
-<title> Management Session - PDT</title>
-{% endblock title %}
-
-{%block modal %}
+{%block modal%}
 <div id="submitDev" class="modal fade" role="dialog">
           <div class="modal-dialog">
 
@@ -108,117 +104,19 @@
 
           </div>
         </div>
+{% endblock modal %}
 
-<div id="submitmodal" class="modal fade" role="dialog">
-          <div class="modal-dialog">
+{%block sidebar %}
+ <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li class="active"><a href="#">Activities</a></li>
+  <li><a href="../defect/">Defects</a></li>
+  <li><a href="../setting/">Settings</a></li>
+{% endblock sidebar %}
 
-            <!-- Modal content-->
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Development Summary</h4>
-              </div>
-
-              <form class="form-horizontal" role="form" method="post" action="/developer/endmng/">
-                <div class="modal-body">
-                  <div class="form-group">
-                    <label class="control-label col-sm-4" for="time">Time:</label>
-                    <div class="col-sm-6">
-                      <input type="text" class="form-control" id="time" name="time" value="00:00:00" required>
-                    </div>
-                  </div>
-                </div>
-                <div class="modal-footer">
-                  <input type="hidden" id="sid" name="sid" value="{{ sid }}">
-                  <button type="submit" class="btn btn-success">Submit</button>
-                </div>
-              </form>
-
-
-            </div>
-
-          </div>
-        </div>
-
-<div class="modal fade" id="editReport" tabindex="-1" role="dialog" aria-labelledby="editDefectLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-        <form class="form-horizontal" id="editDefectForm">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="viewDefectLabel">Defect Report</h4>
-      </div>
-      <div class="modal-body">
-
-            <div class="form-group">
-            <label for="viewDefectName" class="col-sm-4 control-label">Defect Name</label>
-            <div class="col-sm-8">
-              <input type="text" class="form-control" id="viewDefectName" placeholder="Defect">
-            </div>
-            </div>
-           <div class="form-group">
-               <label for="viewIterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
-                <div class="col-sm-8">
-                <select class="form-control" id="viewIterationInjected">
-                  {% for i in iters%}
-                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
-                  {%endfor%}
-                </select>
-                </div>
-            </div>
-          <div class="form-group">
-               <label for="viewIterationRemoved" class="col-sm-4 control-label">Iteration Removed</label>
-                <div class="col-sm-8">
-                <select class="form-control" id="viewIterationRemoved">
-                   {% for i in iters%}
-                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
-                  {%endfor%}
-                </select>
-                </div>
-            </div>
-          <div class="form-group">
-               <label for="viewDefectType" class="col-sm-4 control-label">Type</label>
-                <div class="col-sm-8">
-                <select class="form-control" id="viewDefectType">
-                  <option value="1">Requirements</option>
-                  <option value="2">Design</option>
-                  <option value="3">Implementation</option>
-                    <option value="4">Deployment</option>
-                    <option value="5">Bad fix</option>
-                </select>
-                </div>
-            </div>
-          <div class="form-group">
-            <label for="viewDefectDesc" class="col-sm-4 control-label">Description</label>
-            <div class="col-sm-8">
-             <textarea class="form-control" id="viewDefectDesc" rows="3"></textarea>
-            </div>
-            </div>
-          <input class="hidden" id="defectId">
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <input type="submit" class="btn btn-primary" id='save-btn' value="Save Report">
-      </div>
-         </form>
-    </div>
-  </div>
-</div>
-{%endblock modal %}
-
+col-sm-9
 {%block main %}
-<div class="row">
-    <div class="col-md-3">
-        <div class="well timer">
-        <p class="lead">Time Elapsed</p>
-          <h1 id="timerdisplay">00:00:00</h1>
-          <p class="control">
-            <button class="btn btn-md btn-info" onclick="pausetimer()" id="pausebutton" role="button">Pause</button>
-            <button class="btn btn-md btn-danger" onclick="stoptimer()" data-toggle="modal" data-target="#submitmodal" id="stopbutton" role="button">Stop</button> <!-- Modal -->
-          </p></div>
-    </div>
-    <div class="col-md-9">
-        <div class="panel panel-default">
+<div class="panel panel-default">
         <div class="panel-heading" role="tab" id="devListHeading">
         <h4 class="panel-title">
           <a class="" role="button" data-toggle="collapse" href="#devSessionList" aria-expanded="true" aria-controls="devSessionList">
@@ -241,7 +139,7 @@
         </ul>
       </div>
     </div>
-        <div class="panel panel-default">
+<div class="panel panel-default">
         <div class="panel-heading" role="tab" id="remListHeading">
         <h4 class="panel-title">
           <a class="" role="button" data-toggle="collapse" href="#remSessionList" aria-expanded="true" aria-controls="remSessionList">
@@ -264,7 +162,7 @@
         </ul>
       </div>
     </div>
-         <div class="panel panel-default">
+<div class="panel panel-default">
         <div class="panel-heading" role="tab" id="mngListHeading">
         <h4 class="panel-title">
           <a class="" role="button" data-toggle="collapse" href="#mngSessionList" aria-expanded="true" aria-controls="mngSessionList">
@@ -287,35 +185,9 @@
       </div>
     </div>
 
-        <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="recentDefects">
-        <h4 class="panel-title">
-          <a class="" role="button" data-toggle="collapse" href="#recentDefectList" aria-expanded="true" aria-controls="recentDefectList">
-           Recent Defects
-          </a>
-        </h4>
-      </div>
-        <div id="recentDefectList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="recentDefectListHeading" aria-expanded="true">
-        <ul class="list-group" >
-            {% for defect in defect_list %}
-             <li class="list-group-item">
-                <span class="name">{{defect.name}}</span>
-                 <span class="hidden id">{{defect.id}}</span>
-                 <span class="hidden inject">{{defect.iterationInjected}}</span>
-                 <span class="hidden remove">{{defect.iterationRemoved}}</span>
-                 <span class="hidden desc">{{defect.desc}}</span>
-                 <span class="hidden type">{{defect.typed}}</span>
-              <button class="btn btn-default viewDefectBtn">Edit</button>
-          </li>
-            {% endfor %}
-        </ul>
-      </div>
-    </div>
-    </div>
-</div>
-{% endblock main %}
+{%endblock main %}
+
 
 {%block js %}
-    <script src="{% static 'js/timer.js' %}"></script>
-    <script src="{% static 'js/manage-session.js' %}"></script>
-{% endblock js %}
+<script src="{% static 'js/manage-session.js'%}"></script>
+{%endblock js %}

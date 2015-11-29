@@ -1,0 +1,108 @@
+{% extends 'base-dashboard.html'%}
+{% load staticfiles %}
+
+{%block modal%}
+<div class="modal fade" id="editReport" tabindex="-1" role="dialog" aria-labelledby="editDefectLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <form class="form-horizontal" id="editDefectForm">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="viewDefectLabel">Defect Report</h4>
+      </div>
+      <div class="modal-body">
+
+            <div class="form-group">
+            <label for="viewDefectName" class="col-sm-4 control-label">Defect Name</label>
+            <div class="col-sm-8">
+              <input type="text" class="form-control" id="viewDefectName" placeholder="Defect">
+            </div>
+            </div>
+           <div class="form-group">
+               <label for="viewIterationInjected" class="col-sm-4 control-label">Iteration Injected</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="viewIterationInjected">
+                  {% for i in iters%}
+                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
+                  {%endfor%}
+                </select>
+                </div>
+            </div>
+          <div class="form-group">
+               <label for="viewIterationRemoved" class="col-sm-4 control-label">Iteration Removed</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="viewIterationRemoved">
+                   {% for i in iters%}
+                  <option value = "{{forloop.counter}}">Phase : {{i.phase.no}} Iteration : {{i.no}} </option>
+                  {%endfor%}
+                </select>
+                </div>
+            </div>
+          <div class="form-group">
+               <label for="viewDefectType" class="col-sm-4 control-label">Type</label>
+                <div class="col-sm-8">
+                <select class="form-control" id="viewDefectType">
+                  <option value="1">Requirements</option>
+                  <option value="2">Design</option>
+                  <option value="3">Implementation</option>
+                    <option value="4">Deployment</option>
+                    <option value="5">Bad fix</option>
+                </select>
+                </div>
+            </div>
+          <div class="form-group">
+            <label for="viewDefectDesc" class="col-sm-4 control-label">Description</label>
+            <div class="col-sm-8">
+             <textarea class="form-control" id="viewDefectDesc" rows="3"></textarea>
+            </div>
+            </div>
+          <input class="hidden" id="defectId">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <input type="submit" class="btn btn-primary" id='save-btn' value="Save Report">
+      </div>
+         </form>
+    </div>
+  </div>
+</div>
+{% endblock modal %}
+
+{%block sidebar %}
+   <li><a href="../">Overview</a></li>
+  <li><a href="../report/">Reports</a></li>
+  <li><a href="../activity/">Activities</a></li>
+  <li class="active"><a href="#">Defects</a></li>
+  <li><a href="../setting/">Settings</a></li>
+{% endblock sidebar %}
+
+{%block main %}
+<div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="recentDefects">
+        <h4 class="panel-title">
+          <a class="" role="button" data-toggle="collapse" href="#recentDefectList" aria-expanded="true" aria-controls="recentDefectList">Defect Reports
+          </a>
+        </h4>
+      </div>
+        <div id="recentDefectList" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="recentDefectListHeading" aria-expanded="true">
+        <ul class="list-group" >
+            {% for defect in defect_list %}
+             <li class="list-group-item">
+                <span class="name">{{defect.name}}</span>
+                 <span class="hidden id">{{defect.id}}</span>
+                 <span class="hidden inject">{{defect.iterationInjected}}</span>
+                 <span class="hidden remove">{{defect.iterationRemoved}}</span>
+                 <span class="hidden desc">{{defect.desc}}</span>
+                 <span class="hidden type">{{defect.typed}}</span>
+              <button class="btn btn-default viewDefectBtn">Edit</button>
+          </li>
+            {% endfor %}
+        </ul>
+      </div>
+    </div>
+{%endblock main %}
+
+
+{%block js %}
+<script src="{% static 'js/view-activities.js'%}"></script>
+{%endblock js %}

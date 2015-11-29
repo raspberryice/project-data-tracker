@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User,AbstractBaseUser
+
 class Project(models.Model):
     name = models.CharField(max_length=30)
     desc = models.CharField(max_length=200)
@@ -45,7 +46,7 @@ class Phase(models.Model):
 
 class Iteration(models.Model):
     phase = models.ForeignKey(Phase)
-    no= models.IntegerField()
+    no = models.IntegerField()
     status = models.BooleanField()
     totalTime = models.IntegerField()
     start_date = models.DateTimeField(auto_now_add=True)
@@ -54,6 +55,7 @@ class Iteration(models.Model):
     totalDefects = models.IntegerField()
     def __str__(self):
         return self.phase.project.name+"-"+str(self.phase.no)+"-"+str(self.no)
+
 class SLOCSession(models.Model):
     iteration = models.ForeignKey(Iteration)
     developer = models.ForeignKey(User)
@@ -86,4 +88,3 @@ class Defects(models.Model):
 class Participate(models.Model):
     developer = models.ForeignKey(User)
     project = models.ForeignKey(Project)
-

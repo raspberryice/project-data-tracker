@@ -7,7 +7,7 @@
 
 {% block sidebar %}
             <li class="active"><a href="#">Ongoing Projects<span class="sr-only">(current)</span></a></li>
-            <li><a href="#">All Projects</a></li>
+            <li><a href="/manager/allprojects/">All Projects</a></li>
             <li><a href="/manager/newproject/">New Project</a></li>
 {% endblock sidebar %}
 
@@ -20,7 +20,7 @@
               <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
             </a>
             {% endfor %}
-            <a type="button" class="btn btn-info btn-lg gradient" href="/manager/newproject/">
+            <a type="button" class="btn btn-primary btn-lg gradient" href="/manager/newproject/">
               <h1>+</h1>
               <p>New Project</p>
             </a>

@@ -8,20 +8,15 @@
 {% block sidebar %}
   <li><a href="../">Overview</a></li>
   <li class="active"><a href="#">Reports</a></li>
-  <li><a href="../activity/">Activities</a></li>
-  <li><a href="../defect/">Defects</a></li>
-  <li><a href="../setting/">Settings</a></li>
 {% endblock sidebar %}
 
 {% block main %}
-  <!-- An Ugly Implementation To Be Improved In Next Iteration -->
-          {% if totphase > 0 %}
           <div class="row">
             <div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Phase: {{ curphase }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                {% if projectclosed %}<li><a href="./?phase=Overall">Overall</a></li>{% endif %}
+                <li><a href="./?phase=Overall">Overall</a></li>
                 {% with ''|center:totphase as range %}
                 {% for _ in range %}
                     <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
@@ -33,10 +28,10 @@
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Iteration: {{ curitr }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                {% if projectclosed or phaseclosed %}<li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>{% endif %}
+                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
                 {% with ''|center:totitr as range %}
                 {% for _ in range %}
-                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Iteration {{ forloop.counter }}</a></li>
+                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
                 {% endfor %}
                 {% endwith %}
 
@@ -86,33 +81,30 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>{{injected}}</td>
+                  <td>33</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
-                  <td>{{removed}}</td>
+                  <td>22</td>
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>{{injectionrate}}</td>
+                  <td>3.4</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
-                  <td>{{removalrate}}</td>
+                  <td>2.5</td>
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>{{density}}</td>
+                  <td>10</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>{{yield}}</td>
+                  <td>60%</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          {% else %}
-            No reports yet.
-          {% endif %}
           <!--table-->
 {% endblock main %}

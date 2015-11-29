@@ -1,0 +1,127 @@
+{% extends 'base-dashboard.html' %}
+{% load staticfiles %}
+
+{% block title %}
+<title>Overview - {{ prjname }} - Project Data Tracker</title>
+{% endblock title %}
+
+{% block css %}
+ <!-- Custom styles for this template -->
+    <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
+    <link href="{% static 'css/morris.css' %}" rel="stylesheet">
+{% endblock css %}
+
+{%block sidebar %}
+   <li class="active"><a href="#">Overview</a></li>
+   <li><a href="report/">Reports</a></li>
+{% endblock sidebar %}
+
+{% block main %}
+  <h1 class="page-header">{{ prjname }}
+    <span class="text-small">
+      {% if not closed %} Currently at Phase {{ curphase }}, Iteration {{ curitr }} {% else %} Closed {% endif %}
+    </span>
+  </h1>
+
+          <div class="row placeholders">
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/time-sm.png' %}" class="img-responsive" alt="time">
+              <h4>{{ startdate }} ~ {{ enddate }}</h4>
+              <span class="text-muted">Total time spent</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src="{% static 'img/code-sm.png'%}" class="img-responsive" alt="code">
+              <h4>{{ totsloc }} lines</h4>
+              <span class="text-muted">Total SLOC</span>
+            </div>
+            <div class="col-xs-6 col-sm-3 placeholder">
+              <img src= "{% static 'img/bug-sm.png'%}" class="img-responsive" alt="defect">
+              <h4>{{ totdefects }}</h4>
+              <span class="text-muted">Total number of defects </span>
+            </div>
+            <a class="col-xs-6 col-sm-3 placeholder hoverlight" href="/">
+              <img src= "{% static 'img/back.png'%}" class="img-responsive" alt="defect">
+              <h4>Return</h4>
+              <span class="text-muted">Go back to dashboard</span>
+            </a>
+          </div>
+
+          <div id="latestActivity"></div>
+
+          <h2 class="sub-header">Size and Progress</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                  <th>Estimate</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Delivered SLOC</td>
+                  <td>{{ totsloc }}</td>
+                  <td>{{ totslocesti }}</td>
+                </tr>
+                <tr>
+                  <td>Effort(person-months)</td>
+                  <td>{{ personmonths }}</td>
+                  <td>{{ pmesti }}</td>
+                </tr>
+                <tr>
+                  <td>Delivered SLOC per person-month</td>
+                  <td>{{ avesloc }}</td>
+                  <td>Not Applicable</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+          <h2 class="sub-header">Defect and Quality</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Defects Injected</td>
+                  <td>{% if injected == "" %}Not Closed Yet{%else%}{{injected}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Defects Removed</td>
+                  <td>{{removed}}</td>
+                </tr>
+                <tr>
+                  <td>Injection rate per person-hour of development</td>
+                  <td>{% if injectionrate == "" %}Not Closed Yet{%else%}{{injectionrate}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Removal rate per person-hour of defect removal</td>
+                  <td>{{removalrate}}</td>
+                </tr>
+                <tr>
+                  <td>Defect density per KSLOC</td>
+                  <td>{% if density == "" %}Not Closed Yet{%else%}{{density}}{%endif%}</td>
+                </tr>
+                <tr>
+                  <td>Yield</td>
+                  <td>{% if yield == "" %}Not Closed Yet{%else%}{{yield}}{%endif%}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <!--table-->
+{% endblock main %}
+
+{%block js %}
+ <!-- Morris Chart js -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    <script src="http://cdn.oesmith.co.uk/morris-0.4.1.min.js"></script>
+    <script src="{% static 'js/morris-data.js' %}"></script>
+
+{%endblock js %}
