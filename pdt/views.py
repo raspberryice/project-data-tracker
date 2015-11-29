@@ -6,6 +6,8 @@ from django.contrib import auth
 from django.contrib.auth import logout as log_out
 from django.contrib.auth.decorators import login_required
 from pdt.models import *
+from pdt.utility import *
+import json
 # Create your views here.
 USER_DEVELOPER = 1
 USER_MANAGER = 2
@@ -509,6 +511,10 @@ def manProject(request,pid):
         pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
         personmonth = p.totalSLOC/pm
         convertdate = lambda d: str(d.month)+'/'+str(d.day)+'/'+str(d.year)
+        devsession_list = SLOCSession.objects.filter(iteration__phase__project=p)
+        remsession_list = DefectSession.objects.filter(iteration__phase__project=p)
+        graph_data = render_graph(devsession_list,remsession_list)
+
         c = Context({
             'prjname':p.name,
             'density':"",
@@ -531,7 +537,8 @@ def manProject(request,pid):
             'totitr':totit,
             'time':time,
             'totsloc':totsloc,
-            'user':request.user
+            'user':request.user,
+            'graph_data':json.dumps(graph_data),
             })
         return render_to_response('man-project.html',c)
     else:
@@ -727,3 +734,6 @@ def setting(request,pid):
 
 def editprofile(req):
     return render_to_response("profile.html")
+
+
+
