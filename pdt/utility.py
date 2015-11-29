@@ -26,6 +26,9 @@ def render_graph(devsession_list,remsession_list):
             defect += rem[j][1]
             j+=1
         entry = [cur_date.strftime('%Y-%m-%d'),sloc,defect]
+        if len(ret) != 0:
+            entry[1] += ret[-1][1]
+            entry[2] += ret[-1][2]
         ret.append(entry)
         if i == len(dev):
             if j == len(rem):
