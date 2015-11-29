@@ -64,11 +64,14 @@ def devdashboard(request):
             itera.append(i)
             phase.append(ph)
         #return HttpResponse("uid %d" % request.user.id)
+        print request.GET.get('prev','')=='/developer/enddev/'
         c = Context({
             'user':request.user,
             'prjlist':itera,
             'totprjcnt':len(p),
-            'justcompleted':(request.GET.get('prev','')=='/developer/enddev')
+            'justcompleteddev':(request.GET.get('prev','')=='/developer/enddev/'),
+            'justcompleteddef':(request.GET.get('prev','')=='/developer/enddef/'),
+            'justcompletedman':(request.GET.get('prev','')=='/developer/endman/'),
             })
         return render_to_response("dev-dashboard.html",c)
     else:
@@ -231,7 +234,7 @@ def endDefectSession(request):
     i.save()
     p.save()
     pj.save()
-    return HttpResponseRedirect("/developer/dashboard")
+    return HttpResponseRedirect("/developer/dashboard/?prev=/developer/enddef/")
 
 
 @login_required
@@ -327,7 +330,7 @@ def endManageSession(request):
     i.save()
     p.save()
     pj.save()
-    return HttpResponseRedirect("/developer/dashboard")
+    return HttpResponseRedirect("/developer/dashboard/?prev=/developer/endman/")
 
 
 @login_required
@@ -663,8 +666,8 @@ def setting(request,pid):
         		for itera in Iteration.objects.filter(phase_id = ph.id).all():
         			itera.delete()
         		ph.delete()
-            p.delete()
-            return HttpResponseRedirect("/manager/dashboard/")
+        	p.delete()
+        	return HttpResponseRedirect("/manager/dashboard/")
         elif request.POST['action']  == "close_project":
             p.status=False
             ph = Phase.objects.get(project_id = p.id,status = True)
