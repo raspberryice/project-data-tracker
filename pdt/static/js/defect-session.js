@@ -36,13 +36,15 @@ function create_local_defect(){
         };
      sessionStorage.setItem (defect,JSON.stringify(report));
      console.log('defect no ' + sessionStorage.defect_no+ ' has been stored locally.');
-      var new_item = '<li class="list-group-item" id="'
+      var new_item = '<li class="list-group-item clearfix" id="'
         +defect
-        +'"><span>'
+        +'"><span class="name">'
         + $('#defectName').val()
         +'</span>'
-        +'<button class="btn btn-default edit-btn">Edit</button>'
-        +'<button class="btn btn-success remove-btn" >Removed</button></li>';
+        +'<span class="pull-right">'
+        +'<button class="btn btn-default edit-btn" >Edit</button>'
+        +'<button class="btn btn-success remove-btn"  style="margin-left: 10px;">Removed</button></li>'
+        +'</span>';
         $('#ongoingList').children('ul').append(new_item);
 }
 $('#createDefectBtn').on('click',function(e){
@@ -102,7 +104,7 @@ function update_local_defect(){
      sessionStorage.setItem (defect,JSON.stringify(report));
      //update name
      var id = '#'+ defect;
-     $(id).children('span').text($('#viewDefectName').val());
+     $(id).find('.name').text($('#viewDefectName').val());
      console.log(report);
      console.log('defect no ' + sessionStorage.defect_no+ ' has been updated locally.');
 
@@ -111,7 +113,7 @@ function update_local_defect(){
 var ongoingList = $("#ongoingList").children('ul');
 var removedList = $("#removedList").children('ul');
 $('#ongoingList').on('click','.edit-btn',function(){
-    var defect_id = $(this).parent().attr('id');
+    var defect_id = $(this).parent().parent().attr('id');
     console.log(defect_id);
      var report = JSON.parse(sessionStorage.getItem(defect_id));
     render_report(report);
@@ -120,19 +122,19 @@ $('#ongoingList').on('click','.edit-btn',function(){
 })
 
 $("#ongoingList").on('click','.remove-btn',function(){
-    var li = $(this).parent();
+    var li = $(this).parent().parent();
     var defect_id = li.attr('id');
     var report = JSON.parse(sessionStorage.getItem(defect_id))
     create_defect(report);
     //creating db object
     li.detach();
     removedList.append(li);
-    li.children('.edit-btn').text("View");
+    li.find('.edit-btn').text("View");
     $(this).remove();
 });
 
 $('#removedList').on('click','.edit-btn',function(){
-    var defect_id = $(this).parent().attr('id');
+    var defect_id = $(this).parent().parent().attr('id');
     console.log(defect_id);
     var report = JSON.parse(sessionStorage.getItem(defect_id));
     render_report(report);
