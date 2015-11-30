@@ -3,6 +3,9 @@
 {% block title %}
     <title>Defects - Project Data Tracker</title>
 {% endblock %}
+
+{% block sb_defect %}<li class="active"><a href="{% url 'mandefect' pid %}">Defects</a></li>{% endblock sb_defect %}
+
 {%block modal%}
 <div class="modal fade" id="editReport" tabindex="-1" role="dialog" aria-labelledby="editDefectLabel">
   <div class="modal-dialog" role="document">
