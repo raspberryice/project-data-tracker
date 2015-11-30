@@ -158,6 +158,7 @@
       </div>
     </div>
   </div>
+  {%if not closed%}
   <h3 class="page-header">Status Control</h3>
   <div class="row col-sm-12">
     <div class="panel panel-danger">
@@ -172,7 +173,7 @@
       
     </div>
   </div>
-
+  {% endif %}
 {% endblock main %}
 
 {%block js %}

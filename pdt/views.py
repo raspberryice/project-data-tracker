@@ -1039,6 +1039,7 @@ def setting(request,pid):
             return HttpResponseRedirect("/manager/project/"+str(p.id)+"/")
     c = Context({
         'pid':pid,
+        'closed': not p.status,
         'user':request.user,
         'curname':name,
         'curesloc':esloc,
