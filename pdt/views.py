@@ -323,8 +323,8 @@ def devProject(request, pid):
             'enddate': convertdate(timezone.now()) if p.status==True else convertdate(p.end_date),
             'avesloc':('%.2f' % personmonth) if personmonth!= "error" else "error",
             'removalrate': personhourrate,
-            'personmonths': ('%.2f' % pm) if pm!="error" else "error",
-            'epm': '%.2f' % (pm/p.effortestimate),
+            'personmonths': ('%.2f' % float(pm)) if pm!="error" else "error",
+            'epm': '%.2f' % (float(pm)/p.effortestimate) if pm!="error" else "error",
             'esloc':totsloc*1.0/p.slocestimate,
             'injected':injected,
             'injectionrate':injectionrate,
@@ -482,7 +482,7 @@ def devReport(request, pid):
         personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id).all())*p.totalTime/3600.0)) if len(Participate.objects.filter(project_id = p.id).all())!= 0 and p.totalTime > 0 else "error"
         day = (timezone.now() - p.start_date).days
         pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
-        personmonth = ('%.2f' % (currentsloc/float(pm))) if pm !=0 else  "error"
+        personmonth = ('%.2f' % (currentsloc/float(pm))) if float(pm)!= 0 else  "error"
         c = Context({
                 'pid':pid,
                 'projectclosed': projectclosed,
@@ -703,7 +703,7 @@ def manReport(request,pid):
         personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id).all())*p.totalTime/3600.0)) if len(Participate.objects.filter(project_id = p.id).all())!= 0 and p.totalTime > 0 else "error"
         day = (timezone.now() - p.start_date).days
         pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
-        personmonth = '%.2f' % (currentsloc/float(pm)) if pm !=0 else  "error"
+        personmonth = '%.2f' % (currentsloc/float(pm)) if float(pm) !=0 else  "error"
         c = Context({
                 'pid':pid,
                 'projectclosed': projectclosed,
