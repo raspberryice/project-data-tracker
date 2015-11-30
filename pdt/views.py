@@ -486,14 +486,14 @@ def manReport(request,pid):
                 for d in Defects.objects.all():
                     if d.iterationRemoved in before:
                         alldefectremovebefore+=1
-            injected = totaldefects+lastnowremove*1.0/p.yieldrate*(1-p.yieldrate)
-            injectionrate = injected /(len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600) if (len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600) != 0 else  "error"
-            yieldrate = totaldefects*1.0/(1.0*(alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore)) if (alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore)!= 0 else "error"
+            injected = round(totaldefects+lastnowremove*1.0/p.yieldrate*(1-p.yieldrate))
+            injectionrate = '%.2f' % (injected /(len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600)) if (len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600) != 0 else  "error"
+            yieldrate = '%.2f' % (totaldefects*1.0/(1.0*(alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore))) if (alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore)!= 0 else "error"
             density = injected/(1.0*currentsloc/1000) if (1.0*currentsloc/1000) != 0 else "error"
         personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id).all())*p.totalTime/3600.0)) if len(Participate.objects.filter(project_id = p.id).all())!= 0 and p.totalTime > 0 else "error"
         day = (timezone.now() - p.start_date).days
-        pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
-        personmonth = currentsloc/pm if pm !=0 else  "error"
+        pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
+        personmonth = '%.2f' % (currentsloc/pm) if pm !=0 else  "error"
         c = Context({
                 'pid':pid,
                 'projectclosed': projectclosed,
@@ -501,8 +501,8 @@ def manReport(request,pid):
                 'prhname':p.name,
                 'personmonths':pm,
                 'avesloc':personmonth,
-                'epm':pm/p.effortestimate,
-                'esloc':totsloc/p.slocestimate,
+                'epm': '%.2f '% (pm/p.effortestimate) if p.effortestimate != 0 else "error",
+                'esloc':'%.2f' % (totsloc/p.slocestimate) if p.slocestimate !=0 else "error",
                 'removed':totaldefects,
                 'removalrate':personhourrate,
                 'totphase':totph ,
@@ -617,9 +617,9 @@ def manProject(request,pid):
             lastremove = 0
             for session in DefectSession.objects.filter(iteration_id = lastiter.id).all():
                 lastremove+=session.defectno
-            injected = totaldefects+lastremove/p.yieldrate*(1-p.yieldrate)
+            injected = round(totaldefects+lastremove/p.yieldrate*(1-p.yieldrate))
             if injected!= 0:
-                yieldrate = '%.2f' %(totaldefects*1.0/injected)
+                yieldrate = '%.2f' % (totaldefects*1.0/injected)
             else:
                 yieldrate = "error"
             if p.totalSLOC!= 0:
@@ -642,7 +642,7 @@ def manProject(request,pid):
             'enddate': convertdate(timezone.now()) if p.status==True else convertdate(p.end_date),
             'avesloc':('%.2f' % personmonth) if personmonth!= "error" else "error",
             'removalrate': personhourrate,
-            'personmonths': '%.2f' % pm,
+            'personmonths': ('%.2f' % pm) if pm!="error" else "error",
             'epm': '%.2f' % (pm/p.effortestimate),
             'esloc':totsloc*1.0/p.slocestimate,
             'injected':injected,
