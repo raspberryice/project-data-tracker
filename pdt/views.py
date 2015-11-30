@@ -1051,11 +1051,6 @@ def setting(request,pid):
     })
     return render_to_response("man-setting.html",c)
 
-
-
-def editprofile(req):
-    return render_to_response("profile.html")
-
 def updateSession(request):
     type = request.POST['type']
     id = int(request.POST['id'])

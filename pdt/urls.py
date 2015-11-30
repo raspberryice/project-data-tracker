@@ -7,7 +7,6 @@ urlpatterns = [
 	url(r'verify$',views.verify,name='verify'),
 	url(r'auth/login/', views.login, name = 'login'),
 	url(r'auth/logout/', views.logout, name = 'logout'),
-	url(r'auth/profile/$', views.editprofile, name='editprofile'),
 	#developer-dashboard
 	url(r'developer/dashboard/', views.devdashboard, name = 'devdashboard'),
 	url(r'developer/allprojects/$', views.devAllProjects, name = 'devallprojects'),
