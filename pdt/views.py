@@ -252,49 +252,259 @@ def endDefectSession(request):
 
 
 @login_required
-def devProject(req, pid):
-    if req.user.profile.role == 1:
+def devProject(request, pid):
+    if request.user.profile.role == USER_DEVELOPER:
         # get data of project(id = pid)
-
+        p = Project.objects.get(id = int(pid))
+        request.session['pid'] = p.id
+        totaldefects = 0
+        if p.status:
+            curphase = Phase.objects.get(project_id  =p.id,status = True)
+            curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
+        phase_list = Phase.objects.filter(project_id = p.id).all()
+        for ph in phase_list:
+            for itera in Iteration.objects.filter(phase_id = ph.id).all():
+                for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+                    totaldefects += ses.defectno
+        totph = len(phase_list)
+        totit = 0
+        yieldrate = ""
+        density = ""
+        injectionrate = ""
+        injected = ""
+        personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id))*p.totalTime/3600.0)) if p.totalTime > 0 and len(Participate.objects.filter(project_id = p.id).all())!=0 else "error"
+        for ph in phase_list:
+            totit = totit + len(Iteration.objects.filter(phase_id = ph.id).all())
+        time = p.totalTime
+        totsloc  = p.totalSLOC
+        slocestimate = totsloc/p.slocestimate
+        day = (timezone.now() - p.start_date).days
+        pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0 if day!=0 else "error"
+        if pm == "error":
+            personmonth = "error"
+        else:
+            personmonth = p.totalSLOC/pm
+        convertdate = lambda d: str(d.month)+'/'+str(d.day)+'/'+str(d.year)
+        devsession_list = SLOCSession.objects.filter(iteration__phase__project=p)
+        remsession_list = DefectSession.objects.filter(iteration__phase__project=p)
+        graph_data = render_graph(devsession_list,remsession_list)
+        if not p.status:
+            phases = Phase.objects.filter(project_id = p.id).all()
+            lastphase = Phase.objects.get(project_id = p.id,no = len(phases))
+            iters = Iteration.objects.filter(phase_id = lastphase.id).all()
+            lastiter = Iteration.objects.get(phase_id = lastphase.id,no = len(iters))
+            curphase = lastphase
+            curitr = lastiter
+            lastremove = 0
+            for session in DefectSession.objects.filter(iteration_id = lastiter.id).all():
+                lastremove+=session.defectno
+            injected = round(totaldefects+lastremove/p.yieldrate*(1-p.yieldrate))
+            if injected!= 0:
+                yieldrate = '%.2f' % (totaldefects*1.0/injected)
+            else:
+                yieldrate = "error"
+            if p.totalSLOC!= 0:
+                density = '%.2f' %(injected*1.0/(p.totalSLOC*1.0/1000))
+            else:
+                density = "error"
+            if p.totalTime!=0 and len(Participate.objects.filter(project_id = p.id).all())!=0:
+                injectionrate = '%.2f' % (injected*1.0/(len(Participate.objects.filter(project_id = p.id).all())*1.0*p.totalTime/3600))
+            else:
+                injectionrate = "error"
+        else:
+            curphase = Phase.objects.get(project_id  =p.id,status = True)
+            curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-            'curphase': 2,
-            'curphasename': 'Elaboration',
-            'nextphasename': 'Construction',
-            'curitr': 3,
-            'startdate': "9/20/2015",
-            'enddate': "today",
-            'totsloc': 2345,
-            'totslocesti': 35,  # stands for 35%
-            'personmonths': 20,
-            'pmesti': 30,
-            'avesloc': 117,
-            'closed': False, # whether the project has been closed
-        })
+            'pid':pid,
+            'prjname':p.name,
+            'density':density,
+            'yield':yieldrate,
+            'startdate': convertdate(p.start_date),
+            'enddate': convertdate(timezone.now()) if p.status==True else convertdate(p.end_date),
+            'avesloc':('%.2f' % personmonth) if personmonth!= "error" else "error",
+            'removalrate': personhourrate,
+            'personmonths': ('%.2f' % pm) if pm!="error" else "error",
+            'epm': '%.2f' % (pm/p.effortestimate),
+            'esloc':totsloc*1.0/p.slocestimate,
+            'injected':injected,
+            'injectionrate':injectionrate,
+            'removed':totaldefects, 
+            'totph':totph ,
+            'slocestimate':slocestimate,
+            'curphase':curphase.no,
+            'next':curphase.no+1,
+            'curitr':curitr.no,
+            'totitr':totit,
+            'time':time,
+            'totsloc':totsloc,
+            'user':request.user,
+            'graph_data':json.dumps(graph_data),
+            })
         return render_to_response("dev-project.html", c)
     else:
         return HttpResponseRedirect("/")
 
 @login_required
-def devReport(req, pid):
-    if req.user.profile.role == 1:
-        # projectid == pid
-        queryphase = req.GET.get('phase', 'Overall')
-        queryitr = req.GET.get('iteration', 'Overall')
+def devReport(request, pid):
+    if request.user.profile.role == 1:
+        p = Project.objects.get(id = int(pid))
+        qphase = request.GET.get('phase','Overall')
+        qiter = request.GET.get('iteration','Overall')
+        phases = Phase.objects.filter(project_id = p.id,status = False).all()
+        totph = len(phases)
+        if p.status:
+            curphas = Phase.objects.get(project_id = p.id,status = True)
+            if not Iteration.objects.get(phase_id = curphas.id,no=1).status:
+                totph +=1
+        curphaseno = 0
+        time = 0
+        totsloc = 0
+        currentsloc = 0
+        totaldefects = 0
+        phaseclosed = False
+        yieldrate = ""
+        density = ""
+        injectionrate = ""
+        injected = ""
+        projectclosed = False
+        if qphase == 'Overall':
+            totit = 0
+            for ph in phases:
+                totsloc += ph.totalSLOC
+                currentsloc+=ph.totalSLOC
+                time += ph.totalTime
+                for itera in Iteration.objects.filter(phase_id = ph.id).all():
+                    for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+                        totaldefects +=ses.defectno
+            if totph > len(phases):
+                for itera in Iteration.objects.filter(phase_id = curphas.id,status = False).all():
+                    totsloc += itera.totalSLOC
+                    currentsloc += itera.totalSLOC
+                    time += itera.totalTime
+                    for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+                        totaldefects += ses.defectno
+        else:
+            curphaseno = int(qphase)
+            ph = Phase.objects.get(project_id = p.id,no = curphaseno)
+            phaseclosed = not ph.status
+            iters = Iteration.objects.filter(phase_id = ph.id,status = False)
+            totit = len(iters)
+
+            if qiter == 'Overall':
+                oldphases = Phase.objects.filter(project_id = p.id,no__lt = ph.no).all()
+                for pha in oldphases:
+                    totsloc+=pha.totalSLOC
+                for itera in iters:
+                    totsloc += itera.totalSLOC
+                    currentsloc += itera.totalSLOC
+                    time += itera.totalTime
+                    for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
+                        totaldefects+=ses.defectno
+            else:
+                oldphases = Phase.objects.filter(project_id = p.id,no__lt = ph.no).all()
+                queryiter = Iteration.objects.get(phase_id = ph.id,no = int(qiter))
+                time = queryiter.totalTime
+                currentsloc += queryiter.totalSLOC
+                totsloc+=queryiter.totalSLOC
+                for pha in oldphases:
+                    totsloc+=pha.totalSLOC
+                olditers = Iteration.objects.filter(phase_id = ph.id,no__lt = int(qiter)).all()
+                for ite in olditers:
+                    totsloc+=ite.totalSLOC
+                for ses in DefectSession.objects.filter(iteration_id = queryiter.id).all():
+                    totaldefects += ses.defectno
+        if not p.status:
+            projectclosed = True
+            phases = Phase.objects.filter(project_id = p.id).all()
+            lastphase = Phase.objects.get(project_id = p.id,no = len(phases))
+            iters = Iteration.objects.filter(phase_id = lastphase.id).all()
+            lastiter = Iteration.objects.get(phase_id = lastphase.id,no = len(iters))
+            lastremove = 0
+            lastnowremove = 0
+            evolve = []
+            if qphase == "Overall":
+                for ph in phases:
+                    for ite in Iteration.objects.filter(phase_id=ph.id).all():
+                        evolve.append(ite)
+            else:
+                if qiter =="Overall":
+                    phs = Phase.objects.filter(project_id = p.id,no__lte = int(qphase)).all()
+                    for ph in phs:
+                        for ite in Iteration.objects.filter(phase_id = ph.id).all():
+                            evolve.append(ite)
+                else:
+                    phs = Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all()
+                    for ph in phs:
+                        for ite in Iteration.objects.filter(phase_id = ph.id).all():
+                            evolve.append(ite)
+                    nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
+                    for iters in Iteration.objects.filter(phase_id = nowphas.id,no__lte = int(qiter)):
+                        evolve.append(iters)
+            now =[]
+            if qphase != "Overall":
+                if qiter == "Overall":
+                    nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
+                    for iters in Iteration.objects.filter(phase_id = nowphas.id).all():
+                        now.append(iters)
+                else:
+                    nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
+                    nowite = Iteration.objects.get(phase_id = nowphas.id,no = int(qiter))
+                    now.append(nowite)
+            for d in Defects.objects.filter(iterationRemoved = lastiter).all():
+                if d.iterationInjected in evolve:
+                    lastremove+=1
+                if qphase == "Overall":
+                    lastnowremove+=1
+                elif d.iterationInjected in now:
+                    lastnowremove+=1
+
+            alldefectnow = 0
+            for d in Defects.objects.all():
+                if d.iterationInjected in evolve:
+                    alldefectnow+=1
+            alldefectremovebefore = 0
+            if qphase!="Overall":
+                before = []
+                for ph in Phase.objects.filter(project_id = p.id,no__lt = int(qphase)).all():
+                    for iters in Iteration.objects.filter(phase_id = ph.id).all():
+                        before.append(iters)
+                if qiter!="Overall":
+                    nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
+                    for its in Iteration.objects.filter(phase_id = nowphas.id,no__lt=int(qiter)):
+                        before.append(its)
+                for d in Defects.objects.all():
+                    if d.iterationRemoved in before:
+                        alldefectremovebefore+=1
+            injected = round(totaldefects+lastnowremove*1.0/p.yieldrate*(1-p.yieldrate))
+            injectionrate = '%.2f' % (injected /(len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600)) if (len(Participate.objects.filter(project_id = p.id).all())*1.0*time/3600) != 0 else  "error"
+            yieldrate = '%.2f' % (totaldefects*1.0/(1.0*(alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore))) if (alldefectnow+lastremove/p.yieldrate*(1-p.yieldrate)-alldefectremovebefore)!= 0 else "error"
+            density = injected/(1.0*currentsloc/1000) if (1.0*currentsloc/1000) != 0 else "error"
+        personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id).all())*p.totalTime/3600.0)) if len(Participate.objects.filter(project_id = p.id).all())!= 0 and p.totalTime > 0 else "error"
+        day = (timezone.now() - p.start_date).days
+        pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
+        personmonth = ('%.2f' % (currentsloc/float(pm))) if pm !=0 else  "error"
         c = Context({
-            'user': req.user,
-            'prjname': "Project 3",
-            'curphase': queryphase,
-            'curitr': queryitr,
-            'totphase': 2,
-            'totitr': 0 if queryphase == 'Overall' else (1 if queryphase == '1' else 2),
-            'totsloc': 2345,
-            'totslocesti': 35,  # stands for 35%
-            'personmonths': 20,
-            'pmesti': 30,
-            'avesloc': 117,
-        })
+                'pid':pid,
+                'projectclosed': projectclosed,
+                'phaseclosed': phaseclosed,
+                'prjname':p.name,
+                'personmonths':pm,
+                'avesloc':personmonth,
+                'epm': '%.2f '% (float(pm)/p.effortestimate) if p.effortestimate != 0 else "error",
+                'esloc':'%.2f' % (totsloc/p.slocestimate) if p.slocestimate !=0 else "error",
+                'removed':totaldefects,
+                'removalrate':personhourrate,
+                'totphase':totph ,
+                'curphase':qphase,
+                'curitr':qiter,
+                'totitr':totit,
+                'time':time,
+                'injected' :injected,
+                'injectionrate':injectionrate,
+                'density':density,
+                'totsloc':totsloc,
+                'yield':yieldrate,
+                'user':request.user})
         return render_to_response("dev-report.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -493,7 +703,7 @@ def manReport(request,pid):
         personhourrate = '%.2f' % (totaldefects*1.0/(len(Participate.objects.filter(project_id = p.id).all())*p.totalTime/3600.0)) if len(Participate.objects.filter(project_id = p.id).all())!= 0 and p.totalTime > 0 else "error"
         day = (timezone.now() - p.start_date).days
         pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
-        personmonth = '%.2f' % (currentsloc/pm) if pm !=0 else  "error"
+        personmonth = '%.2f' % (currentsloc/float(pm)) if pm !=0 else  "error"
         c = Context({
                 'pid':pid,
                 'projectclosed': projectclosed,
@@ -501,7 +711,7 @@ def manReport(request,pid):
                 'prhname':p.name,
                 'personmonths':pm,
                 'avesloc':personmonth,
-                'epm': '%.2f '% (pm/p.effortestimate) if p.effortestimate != 0 else "error",
+                'epm': '%.2f '% (float(pm)/p.effortestimate) if p.effortestimate != 0 else "error",
                 'esloc':'%.2f' % (totsloc/p.slocestimate) if p.slocestimate !=0 else "error",
                 'removed':totaldefects,
                 'removalrate':personhourrate,
@@ -643,7 +853,7 @@ def manProject(request,pid):
             'avesloc':('%.2f' % personmonth) if personmonth!= "error" else "error",
             'removalrate': personhourrate,
             'personmonths': ('%.2f' % pm) if pm!="error" else "error",
-            'epm': '%.2f' % (pm/p.effortestimate),
+            'epm': '%.2f' % (pm/p.effortestimate) if pm!="error" else "error",
             'esloc':totsloc*1.0/p.slocestimate,
             'injected':injected,
             'injectionrate':injectionrate,
