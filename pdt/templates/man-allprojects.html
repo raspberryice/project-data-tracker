@@ -6,9 +6,9 @@
 {% endblock title %}
 
 {% block sidebar %}
-            <li><a href="/manager/dashboard/">Ongoing Projects<span class="sr-only">(current)</span></a></li>
+            <li><a href="{% url 'mandashboard'%}">Ongoing Projects<span class="sr-only">(current)</span></a></li>
             <li class="active"><a href="#">All Projects</a></li>
-            <li><a href="/manager/newproject/">New Project</a></li>
+            <li><a href="{% url 'addproject'%}">New Project</a></li>
 {% endblock sidebar %}
 
 {% block main %}

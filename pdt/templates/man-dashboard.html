@@ -7,20 +7,20 @@
 
 {% block sidebar %}
             <li class="active"><a href="#">Ongoing Projects<span class="sr-only">(current)</span></a></li>
-            <li><a href="/manager/allprojects/">All Projects</a></li>
-            <li><a href="/manager/newproject/">New Project</a></li>
+            <li><a href="{% url 'manallprojects' %}">All Projects</a></li>
+            <li><a href="{% url 'addproject'%} ">New Project</a></li>
 {% endblock sidebar %}
 
 {% block main %}
         <h1 class="page-header">Ongoing Projects</h1>
           <div class="row">
             {% for prj in prjlist %}
-            <a type="button" class="btn btn-info btn-lg gradient" href="/manager/project/{{ prj.phase.project.id }}/">
+            <a type="button" class="btn btn-info btn-lg gradient" href="{% url 'manproject'  prj.phase.project.id %}">
               <h3>{{ prj.phase.project.name }}</h3>
               <p>Phase {{ prj.phase.no }}<br>Iteration {{ prj.no }} </p>
             </a>
             {% endfor %}
-            <a type="button" class="btn btn-primary btn-lg gradient" href="/manager/newproject/">
+            <a type="button" class="btn btn-primary btn-lg gradient" href="{% url 'addproject'%}">
               <h1>+</h1>
               <p>New Project</p>
             </a>
