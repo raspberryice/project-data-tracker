@@ -387,7 +387,7 @@ def manReport(request,pid):
                     for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
                         totaldefects +=ses.defectno
             if totph > len(phases):
-                for itera in Interation.objects.filter(phase_id = curphas.id,status = False).all():
+                for itera in Iteration.objects.filter(phase_id = curphas.id,status = False).all():
                     totsloc += itera.totalSLOC
                     currentsloc += itera.totalSLOC
                     time += itera.totalTime
@@ -411,6 +411,7 @@ def manReport(request,pid):
                     for ses in DefectSession.objects.filter(iteration_id = itera.id).all():
                         totaldefects+=ses.defectno
             else:
+                oldphases = Phase.objects.filter(project_id = p.id,no__lt = ph.no).all()
                 queryiter = Iteration.objects.get(phase_id = ph.id,no = int(qiter))
                 time = queryiter.totalTime
                 currentsloc += queryiter.totalSLOC
@@ -419,7 +420,7 @@ def manReport(request,pid):
                     totsloc+=pha.totalSLOC
                 olditers = Iteration.objects.filter(phase_id = ph.id,no__lt = int(qiter)).all()
                 for ite in olditers:
-                    totsloc+=totalSLOC
+                    totsloc+=ite.totalSLOC
                 for ses in DefectSession.objects.filter(iteration_id = queryiter.id).all():
                     totaldefects += ses.defectno
         if not p.status:
@@ -821,57 +822,10 @@ def setting(request,pid):
 
 def editprofile(req):
     return render_to_response("profile.html")
-def updatedefect(request):
-    if request.user.profile.role == USER_DEVELOPER:
-        d = Defects.objects.get(id = int(request.POST['id']))
-        d.name = request.POST['name']
-        print d.name
-        d.iterationInjected_id = int(request.POST['interationInjected'])
-        d.typed = request.POST['type']
-        d.desc = request.POST['desc']
-        d.save()
-        print d.name
-        return HttpResponse("")
-    else:
-        return HttpResponseRedirect("/")
-def updatemng(request):
-    if request.user.profile.role == USER_DEVELOPER:
-        s = ManageSession.objects.get(id = int(request.POST['id']))
-        s.time = int(request.POST['time'])
-        s.save()
-        return HttpResponse("")
-    else:
-        return HttpResponseRedirect("/")
-def updaterem(request):
-    if request.user.profile.role == USER_DEVELOPER:
-        s = ManageSession.objects.get(id = int(request.POST['id']))
-        s.time = int(request.POST['time'])
-        s.save()
-        return HttpResponse("")
-    else:
-        return HttpResponseRedirect("/")
-def updatemng(request):
-    if request.user.profile.role == USER_DEVELOPER:
-        s = DefectSession.objects.get(id = int(request.POST['id']))
-        s.time = int(request.POST['time'])
-        s.save()
-        return HttpResponse("")
-    else:
-        return HttpResponseRedirect("/")
-def updatedev(request):
-    if request.user.profile.role == USER_DEVELOPER:
-        s = ManageSession.objects.get(id = int(request.POST['id']))
-        s.time = int(request.POST['time'])
-        s.SLOC = int(request.POST['sloc'])
-        s.save()
-        return HttpResponse("")
-    else:
-        return HttpResponseRedirect("/")
-
 
 def updateSession(request):
     type = request.POST['type']
-    id = request.POST['id']
+    id = int(request.POST['id'])
     if type == 'mng' :#Management session
         s = ManageSession.objects.get(pk=id)
         t = str(request.POST['time'])

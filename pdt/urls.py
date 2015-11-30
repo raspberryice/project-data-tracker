@@ -12,10 +12,6 @@ urlpatterns = [
 	url(r'developer/dashboard/', views.devdashboard, name = 'devdashboard'),
 	url(r'developer/allprojects/$', views.devAllProjects, name = 'devallprojects'),
 	#developer-sessions
-	url(r'developer/update_defect/', views.updatedefect, name = 'updefect'),
-	url(r'developer/update_mng/', views.updatemng, name = 'upmng'),
-	url(r'developer/update_dev/', views.updatedev, name = 'updev'),
-	url(r'developer/update_rem/', views.updaterem, name = 'uprem'),
 	url(r'developer/createdev/', views.beginDevelopeSession, name = 'createdev'),
 	url(r'developer/enddev/', views.endDevelopeSession, name = 'enddev'),
 	url(r'developer/createrem/$',views.beginDefectSession,name="createrem"),
