@@ -21,7 +21,7 @@
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Phase: {{ curphase }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                {% if projectclosed %}<li><a href="./?phase=Overall">Overall</a></li>{% endif %}
+                <li><a href="./?phase=Overall">Overall</a></li>
                 {% with ''|center:totphase as range %}
                 {% for _ in range %}
                     <li><a href="./?phase={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
@@ -33,7 +33,7 @@
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
               Iteration: {{ curitr }} <span class="caret"></span></button>
               <ul class="dropdown-menu" role="menu">
-                {% if projectclosed or phaseclosed %}<li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>{% endif %}
+                <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
                 {% with ''|center:totitr as range %}
                 {% for _ in range %}
                     <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Iteration {{ forloop.counter }}</a></li>
@@ -86,7 +86,7 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>{{injected}}</td>
+                  <td>{% if injected == "" %}Not Closed Yet{% else %}{{injected}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
@@ -94,7 +94,7 @@
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>{{injectionrate}}</td>
+                  <td>{% if injectionrate == "" %}Not Closed Yet{% else %}{{injectionrate}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
@@ -102,11 +102,11 @@
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>{{density}}</td>
+                  <td>{% if density == "" %}Not Closed Yet{% else %}{{density}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>{{yield}}</td>
+                  <td>{% if yield == "" %}Not Closed Yet{% else %}{{yield}}{% endif %}</td>
                 </tr>
               </tbody>
             </table>

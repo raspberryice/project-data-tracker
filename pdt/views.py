@@ -106,6 +106,7 @@ def devAllProjects(request):
             'prjlist': itera,
             'closed': closed,
             'totopenprj': len(itera),
+            'totprj': len(itera) + len(closed),
         })
         return render_to_response("dev-allprojects.html", c)
     else:
@@ -449,7 +450,7 @@ def manReport(request,pid):
                             evolve.append(ite)
                     nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
                     for iters in Iteration.objects.filter(phase_id = nowphas.id,no__lte = int(qiter)):
-                        evolve.append(ite)
+                        evolve.append(iters)
             now =[]
             if qphase != "Overall":
                 if qiter == "Overall":
@@ -481,7 +482,7 @@ def manReport(request,pid):
                 if qiter!="Overall":
                     nowphas = Phase.objects.get(project_id = p.id,no = int(qphase))
                     for its in Iteration.objects.filter(phase_id = nowphas.id,no__lt=int(qiter)):
-                        before.append(iters)
+                        before.append(its)
                 for d in Defects.objects.all():
                     if d.iterationRemoved in before:
                         alldefectremovebefore+=1
@@ -586,7 +587,10 @@ def manProject(request,pid):
         slocestimate = totsloc/p.slocestimate
         day = (timezone.now() - p.start_date).days
         pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0 if day!=0 else "error"
-        personmonth = p.totalSLOC/pm
+        if pm == "error":
+            personmonth = "error"
+        else:
+            personmonth = p.totalSLOC/pm
         convertdate = lambda d: str(d.month)+'/'+str(d.day)+'/'+str(d.year)
         devsession_list = SLOCSession.objects.filter(iteration__phase__project=p)
         remsession_list = DefectSession.objects.filter(iteration__phase__project=p)
