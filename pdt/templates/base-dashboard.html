@@ -46,7 +46,13 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
               {% block sidebar %}
-              {# list the contents of the sidebar here #}
+                <li><a href="{% url 'mandashboard' %} ">Dashboard</a></li>
+                <li><a href="{% url 'manproject' pid %}">Overview</a></li>
+                <li><a href=" {% url 'manreport' pid %}">Reports</a></li>
+                <li><a href="{% url 'manactivity' pid %}" >Activities</a></li>
+                <li><a href="{% url 'mandefect' pid %}">Defects</a></li>
+                <li><a href="{% url 'setting' pid %}">Settings</a></li>
+              {# this is the sidebar after choosing a project #}
               {% endblock sidebar %}
           </ul>
         </div>

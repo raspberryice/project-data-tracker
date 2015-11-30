@@ -494,7 +494,9 @@ def manReport(request,pid):
         day = (timezone.now() - p.start_date).days
         pm  = len(Participate.objects.filter(project_id = p.id))*day/30.0
         personmonth = currentsloc/pm if pm !=0 else  "error"
-        c = Context({'projectclosed': projectclosed, 
+        c = Context({
+                'pid':pid,
+                'projectclosed': projectclosed,
                 'phaseclosed': phaseclosed,
                 'prhname':p.name,
                 'personmonths':pm,
@@ -530,7 +532,11 @@ def manDefect(request, pid):
                 for ses in DefectSession.objects.filter(iteration = i).all():
                     for de in Defects.objects.filter(session = ses).all():
                         defectlist.append(de)
-        c = Context({'user':request.user,'defect_list':defectlist})
+        c = Context({
+            'pid':pid,
+            'user':request.user,
+            'defect_list':defectlist
+        })
         return render_to_response("man-defect.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -552,7 +558,13 @@ def manActivity(request, pid):
                     managesessions.append(ses)
                 for ses in DefectSession.objects.filter(iteration = i).all():
                     defectsessions.append(ses)
-        c = Context({'user':request.user,'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions})
+        c = Context({
+            'pid':pid,
+            'user':request.user,
+            'developsessions':developsessions,
+            'managesessions':managesessions,
+            'defectsessions':defectsessions
+        })
         return render_to_response("man-activity.html", c)
     else:
         return HttpResponseRedirect("/")
@@ -622,6 +634,7 @@ def manProject(request,pid):
             curphase = Phase.objects.get(project_id  =p.id,status = True)
             curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
+            'pid':pid,
             'prjname':p.name,
             'density':density,
             'yield':yieldrate,
@@ -819,7 +832,17 @@ def setting(request,pid):
             ph.save()
             p.save()
             return HttpResponseRedirect("/manager/dashboard/")
-    c = Context({'user':request.user,'curname':name,'curesloc':esloc,'curepm':epm,'curyield':yieldrate,'curdescription':desc,'developerlist':unparti,'curdeveloperlist':parti})
+    c = Context({
+        'pid':pid,
+        'user':request.user,
+        'curname':name,
+        'curesloc':esloc,
+        'curepm':epm,
+        'curyield':yieldrate,
+        'curdescription':desc,
+        'developerlist':unparti,
+        'curdeveloperlist':parti
+    })
     return render_to_response("man-setting.html",c)
 
 
