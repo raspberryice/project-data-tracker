@@ -68,7 +68,7 @@ def devdashboard(request):
             itera.append(i)
             phase.append(ph)
         #return HttpResponse("uid %d" % request.user.id)
-        print request.GET.get('prev','')=='/developer/enddev/'
+        print (request.GET.get('prev','')=='/developer/enddev/')
         c = Context({
             'user':request.user,
             'prjlist':itera,
@@ -197,7 +197,16 @@ def beginDefectSession(request):
     request.session['sid'] = s.id
     print (len(iterations))
     iterno = iters[0]+iters[1]+iters[2]+iters[3]
-    c = Context({'user': request.user, 'sid':s.id,'iters':iterations,'phaseno':phase.no,'phase1':iters[0],'phase2':iters[1],'phase3':iters[2],'phase4':iters[3]})
+    c = Context({
+        'user': request.user,
+        'sid':s.id,
+        'iters':iterations,
+        'phaseno':phase.no,
+        'phase1':iters[0],
+        'phase2':iters[1],
+        'phase3':iters[2],
+        'phase4':iters[3]
+    })
     return render_to_response("dev-defect.html",c)
 
 def addDefect(request):
@@ -298,6 +307,7 @@ def beginManageSession(request):
     phase = Phase.objects.get(project_id = project.id,status = True)
     iteration = Iteration.objects.get(phase_id = phase.id,status = True)
     s.iteration = iteration
+    iters = Iteration.objects.filter(phase__project=project)
     developsessions = []
     managesessions = []
     defectsessions = []
@@ -314,7 +324,14 @@ def beginManageSession(request):
                 for de in Defects.objects.filter(session = ses).all():
                     defectlist.append(de)
     print (len(developsessions),len(managesessions),len(defectlist),len(defectsessions))
-    c = Context({'user': request.user, 'developsessions':developsessions,'managesessions':managesessions,'defectsessions':defectsessions,'defect_list':defectlist})
+    c = Context({
+        'user': request.user,
+        'developsessions':developsessions,
+        'managesessions':managesessions,
+        'defectsessions':defectsessions,
+        'defect_list':defectlist,
+        'iters':iters,
+    })
     s.save()
     request.session['sid'] = s.id
     return render_to_response("dev-manage.html",c)
@@ -801,6 +818,7 @@ def setting(request,pid):
     return render_to_response("man-setting.html",c)
 
 
+
 def editprofile(req):
     return render_to_response("profile.html")
 def updatedefect(request):
@@ -850,5 +868,56 @@ def updatedev(request):
     else:
         return HttpResponseRedirect("/")
 
+
+def updateSession(request):
+    type = request.POST['type']
+    id = request.POST['id']
+    if type == 'mng' :#Management session
+        s = ManageSession.objects.get(pk=id)
+        t = str(request.POST['time'])
+        ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+        s.sessionlast = ts
+        s.save()
+        response = {
+            'time' : s.sessionlast,
+        }
+    elif type == 'dev': #development session
+        s=SLOCSession.objects.get(pk=id)
+        s.SLOC = int(request.POST['sloc'])
+        t = str(request.POST['time'])
+        ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+        s.sessionlast = ts
+        s.save()
+        response = {
+            'time' : s.sessionlast,
+            'sloc':s.SLOC
+        }
+    elif type =='rem':
+        s=DefectSession.objects.get(pk=id)
+        s.defectno = int(request.POST['defectno'])
+        t = str(request.POST['time'])
+        ts = int(t[0:2])*3600 + int(t[3:5])*60 + int(t[6:8])
+        s.sessionlast = ts
+        s.save()
+        response = {
+            'time': s.sessionlast,
+            'defectno':s.defectno,
+        }
+    return HttpResponse(json.dumps(response))
+
+def updateDefect(request):
+    id = request.POST['id']
+    d = Defects.objects.get(pk=id)
+    d.name = request.POST['name']
+    d.typed = request.POST ['type']
+    d.iterationInjected = Iteration.objects.get(pk = request.POST['iterationInjected'])
+    d.iterationRemoved = Iteration.objects.get(pk= request.POST ['iterationRemoved'])
+    d.desc = request.POST['desc']
+    d.save()
+    response = {
+        'name':d.name,
+        'type':d.typed,
+    }
+    return HttpResponse(json.dumps(response))
 
 

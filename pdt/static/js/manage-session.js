@@ -106,14 +106,16 @@ $('#updateDev').on('submit',function(e){
     e.preventDefault();
     $('#submitDev').modal('hide');
     $.ajax({
-    url: "developer/update_dev",
+    url: "developer/updatesession/",
     type :"POST",
     data :{
-     'time': $('#devTime').val(),
-     'sloc':$('#devSLOC').val(),
-     'id': $('#devId').val(),
+    'type' : 'dev',
+     'time': $('#devTime').val(),//time is in HH:mm:ss format
+     'sloc':parseInt($('#devSLOC').val()),
+     'id': parseInt($('#devId').val()),
     },
     success: function(json){
+        console.log(json);
         console.log("success");
     },
     error :function(xhr,errmsg,err){
@@ -134,11 +136,13 @@ $('#updateRem').on('submit',function(e){
     e.preventDefault();
     $('#submitRem').modal('hide');
     $.ajax({
-    url: "developer/update_rem",
+    url: "developer/updatesession/",
     type :"POST",
     data :{
+    'type':'rem',
+    'defectno':parseInt($('#defectNo').val()),
     'time':$('#remTime').val(),
-    'id':$('#remId').val(),
+    'id':parseInt($('#remId').val()),
     },
     success: function(json){
         console.log("success");
@@ -150,7 +154,7 @@ $('#updateRem').on('submit',function(e){
 
     var li =$('#remSessionList').find('.current');
     li.children('.time').text($('#remTime').val());
-    li.children('.sloc').text($('#defectNo').val());
+    li.children('.defectno').text($('#defectNo').val());
 
     li.removeClass('current');
 
@@ -160,11 +164,12 @@ $('#updateMng').on('submit',function(e){
     e.preventDefault();
     $('#submitMng').modal('hide');
     $.ajax({
-    url: "developer/update_mng",
+    url: "developer/updatesession/",
     type :"POST",
     data :{
+    'type':'mng',
      'time':$('#mngTime').val(time),
-     'id':  $('#mngId').val(id),
+     'id':  parseInt($('#mngId').val(id)),
     },
     success: function(json){
         console.log("success");
@@ -186,12 +191,12 @@ $('#editDefectForm').on('submit',function(e){
     e.preventDefault();
     $('#editReport').modal('hide');
     var report = {
-          id:$('#defectId').val(),
-          name: $('#viewDefectName').val(),
-          iterationInjected: $('#viewIterationInjected').val(),
-          iterationRemoved: $('#viewIterationRemoved').val(),
-          type: $('#viewDefectType').val(),
-          desc: $('#viewDefectDesc').val(),
+          'id':parseInt($('#defectId').val()),
+          'name': $('#viewDefectName').val(),
+          'iterationInjected': $('#viewIterationInjected').val(),
+          'iterationRemoved': $('#viewIterationRemoved').val(),
+          'type': $('#viewDefectType').val(),
+          'desc': $('#viewDefectDesc').val(),
         };
     var li = $('#recentDefectList').find('.current');
     li.children('.name').text($('#viewDefectName').val());
@@ -208,7 +213,7 @@ $('#editDefectForm').on('submit',function(e){
 
 function update_defect(report){
     $.ajax({
-    url: "developer/update_defect/",
+    url: "developer/updatedefect/",
     type :"POST",
     data :report,
     success: function(json){

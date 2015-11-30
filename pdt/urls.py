@@ -23,6 +23,8 @@ urlpatterns = [
 	url(r'developer/createrem/adddefect/$',views.addDefect,name='add'),
 	url(r'developer/createmng/$',views.beginManageSession,name='beginmanage'),
 	url(r'developer/endmng/$',views.endManageSession,name='endmanage'),
+	url(r'developer/updatesession/$',views.updateSession,name='updatesession'),
+	url(r'developer/updatedefect/$',views.updateDefect,name='updatedefect'),
 	#developer-report
 	url(r'developer/project/(?P<pid>\d+)/$',views.devProject,name='devproject'),
 	url(r'developer/project/(?P<pid>\d+)/report/$',views.devReport,name='devreport'),
