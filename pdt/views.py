@@ -640,7 +640,7 @@ def manProject(request,pid):
             'yield':yieldrate,
             'startdate': convertdate(p.start_date),
             'enddate': convertdate(timezone.now()) if p.status==True else convertdate(p.end_date),
-            'avesloc':'%.2f' % personmonth,
+            'avesloc':('%.2f' % personmonth) if personmonth!= "error" else "error",
             'removalrate': personhourrate,
             'personmonths': '%.2f' % pm,
             'epm': '%.2f' % (pm/p.effortestimate),
