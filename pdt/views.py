@@ -67,8 +67,6 @@ def devdashboard(request):
             i = Iteration.objects.get(phase = ph,status = True)
             itera.append(i)
             phase.append(ph)
-        #return HttpResponse("uid %d" % request.user.id)
-        print (request.GET.get('prev','')=='/developer/enddev/')
         c = Context({
             'user':request.user,
             'prjlist':itera,
@@ -196,7 +194,7 @@ def beginDefectSession(request):
             iters[x] = len(Iteration.objects.filter(phase = (Phase.objects.get(project_id = project.id,no = x+1))).all())
     s.save()
     request.session['sid'] = s.id
-    print (len(iterations))
+    
     iterno = iters[0]+iters[1]+iters[2]+iters[3]
     c = Context({
         'user': request.user,
@@ -316,6 +314,7 @@ def devProject(request, pid):
             curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
             'pid':pid,
+            'closed':not p.status,
             'prjname':p.name,
             'density':density,
             'yield':yieldrate,
@@ -534,7 +533,7 @@ def beginManageSession(request):
                 defectsessions.append(ses)
                 for de in Defects.objects.filter(session = ses).all():
                     defectlist.append(de)
-    print (len(developsessions),len(managesessions),len(defectlist),len(defectsessions))
+    
     c = Context({
         'user': request.user,
         'developsessions':developsessions,
@@ -847,6 +846,7 @@ def manProject(request,pid):
             curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
             'pid':pid,
+            'closed' : not p.status,
             'prjname':p.name,
             'density':density,
             'yield':yieldrate,
@@ -987,7 +987,7 @@ def setting(request,pid):
                 unparti.append(u)
     desc = p.desc
     #if request.POST.get('action',"") == "":
-    print (len(parti),len(unparti))
+    
     if request.method == 'POST':
         if request.POST['action'] == "rename":
             name = request.POST['newname']
@@ -997,8 +997,8 @@ def setting(request,pid):
             cur = request.POST.getlist("developers")
             for par in Participate.objects.filter(project_id=  p.id).all():
                 par.delete()
-            print (len(Participate.objects.all()))
-            print (cur)
+            
+            
             for c in cur:
                 developer  = User.objects.get(id  = int(c))
                 par = Participate(project_id = p.id,developer_id = developer.id)
@@ -1043,7 +1043,7 @@ def setting(request,pid):
             it.save()
             ph.save()
             p.save()
-            return HttpResponseRedirect("/manager/dashboard/")
+            return HttpResponseRedirect("/manager/project/"+str(p.id)+"/")
     c = Context({
         'pid':pid,
         'user':request.user,

@@ -3,6 +3,9 @@
 {% block title %}
     <title>Activities - Project Data Tracker</title>
 {% endblock %}
+
+{% block sb_activity %}<li class="active"><a href="{% url 'manactivity' pid %}" >Activities</a></li>{% endblock sb_activity %}
+
 {%block modal%}
 <div id="submitDev" class="modal fade" role="dialog">
           <div class="modal-dialog">

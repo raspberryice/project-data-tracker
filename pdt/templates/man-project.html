@@ -5,6 +5,8 @@
 <title>Overview - {{ prjname }} - Project Data Tracker</title>
 {% endblock title %}
 
+{% block sb_overview %}<li class="active"><a href="{% url 'manproject' pid %}">Overview</a></li>{% endblock sb_overview %}
+
 {% block css %}
  <!-- Custom styles for this template -->
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
@@ -82,11 +84,19 @@
               <h4>{{removed}}</h4>
               <span class="text-muted">Total number of defects </span>
             </div>
+            {% if closed %}
+            <a class="col-xs-6 col-sm-3 placeholder hoverlight" href="/">
+              <img src= "{% static 'img/back.png'%}" class="img-responsive" alt="defect">
+              <h4>Return</h4>
+              <span class="text-muted">Go back to dashboard</span>
+            </a>
+            {% else %}
             <div class="col-xs-6 col-sm-3 placeholder hoverlight" data-toggle="modal" data-target="#newiteration">
               <img src= "{% static 'img/new-sm.png'%}" class="img-responsive" alt="defect">
               <h4>New Iteration</h4>
               <!-- <span class="text-muted"></span> -->
             </div>
+            {% endif %}
           </div>
 
           <div id="latestActivity"></div>

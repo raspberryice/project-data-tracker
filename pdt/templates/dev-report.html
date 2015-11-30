@@ -11,6 +11,8 @@
 {% endblock sidebar %}
 
 {% block main %}
+  <!-- An Ugly Implementation To Be Improved In Next Iteration -->
+          {% if totphase > 0 %}
           <div class="row">
             <div class="btn-group">
               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -31,7 +33,7 @@
                 <li><a href="./?phase={{curphase}}&iteration=Overall">Overall</a></li>
                 {% with ''|center:totitr as range %}
                 {% for _ in range %}
-                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Phase {{ forloop.counter }}</a></li>
+                    <li><a href="./?phase={{curphase}}&iteration={{ forloop.counter }}">Iteration {{ forloop.counter }}</a></li>
                 {% endfor %}
                 {% endwith %}
 
@@ -106,5 +108,8 @@
               </tbody>
             </table>
           </div>
+          {% else %}
+            No reports yet.
+          {% endif %}
           <!--table-->
 {% endblock main %}
