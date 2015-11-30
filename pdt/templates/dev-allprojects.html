@@ -108,11 +108,7 @@
             {%endfor%}
           {% for c in closed%}
             <!-- Card -->
-<<<<<<< HEAD
-            <a type="button" class="btn btn-success btn-lg gradient" href="/developer/project/{{ c.id }}/">
-=======
             <a type="button" class="btn btn-success btn-lg gradient" href="{% url 'devproject' c.id %}">
->>>>>>> f0cce0e33158377f7970bb162a56a7354410cc1d
               <h3>{{ c.name }}</h3>
               <h4 style="margin-top: 27px">Closed</h4>
             </a>
