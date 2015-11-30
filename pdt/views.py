@@ -1025,13 +1025,6 @@ def setting(request,pid):
             yieldrate = request.POST["yield"]
             p.yieldrate = yieldrate
             p.save()
-        elif request.POST['action']  == "delete_project":
-        	for ph in Phase.objects.filter(project_id = p.id).all():
-        		for itera in Iteration.objects.filter(phase_id = ph.id).all():
-        			itera.delete()
-        		ph.delete()
-        	p.delete()
-        	return HttpResponseRedirect("/manager/dashboard/")
         elif request.POST['action']  == "close_project":
             p.status=False
             ph = Phase.objects.get(project_id = p.id,status = True)

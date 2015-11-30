@@ -35,32 +35,6 @@
   </div>
 </div>
 
-<div id="deletethisproject" class="modal fade" role="dialog">
-      <div class="modal-dialog">
-
-        <!-- Modal content-->
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal">&times;</button>
-            <h4 class="modal-title">Delete this project</h4>
-          </div>
-
-          <form class="form-horizontal" role="form" method="post">
-            <input type="hidden" name="action" value="delete_project">
-            <div class="modal-body">
-              Are you sure to delete this project? This cannot be recovered and all related data will be deleted.
-            </div>
-            <div class="modal-footer" style="text-align: center">
-              <button type="submit" class="btn btn-danger">Yes, I'm sure</button>
-              <button class="btn btn-success" data-dismiss="modal">No, take me back</button>
-            </div>
-          </form>
-
-
-    </div>
-
-  </div>
-</div>
 {% endblock modal %}
 
 {% block main %}
@@ -187,7 +161,7 @@
   <h3 class="page-header">Status Control</h3>
   <div class="row col-sm-12">
     <div class="panel panel-danger">
-      <div class="panel-heading">Close/Delete Project</div>
+      <div class="panel-heading">Close Project</div>
       <div class="panel-body" style="padding-bottom: 0px">
         <strong>Close This Project</strong>
         <p class="text-muted" style="margin-top: 10px">
@@ -195,14 +169,7 @@
           <button type="button" class="btn btn-danger col-sm-2" style="float: right; margin-left: 10px; margin-top: -10px" data-toggle="modal" data-target="#closethisproject">Close this project</button>
         </p>
       </div>
-      <hr style="margin: 0px">
-      <div class="panel-body" style="padding-bottom: 0px">
-        <strong>Delete This Project</strong>
-        <p class="text-muted" style="margin-top: 10px">
-          Once you delete the project, it cannot be recovered. Please be cautious.
-          <button type="button" class="btn btn-danger col-sm-2" style="float: right; margin-left: 10px; margin-top: -10px" data-toggle="modal" data-target="#deletethisproject">Delete this project</button>
-        </p>
-      </div>
+      
     </div>
   </div>
 
