@@ -256,6 +256,7 @@ def devProject(request, pid):
     if request.user.profile.role == USER_DEVELOPER:
         # get data of project(id = pid)
         p = Project.objects.get(id = int(pid))
+        print p.status
         request.session['pid'] = p.id
         totaldefects = 0
         if p.status:
@@ -316,6 +317,7 @@ def devProject(request, pid):
             curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
             'pid':pid,
+            'closed':not p.status,
             'prjname':p.name,
             'density':density,
             'yield':yieldrate,
@@ -483,6 +485,7 @@ def devReport(request, pid):
         day = (timezone.now() - p.start_date).days
         pm  = '%.2f' % (len(Participate.objects.filter(project_id = p.id))*day/30.0)
         personmonth = ('%.2f' % (currentsloc/float(pm))) if float(pm)!= 0 else  "error"
+        print totph
         c = Context({
                 'pid':pid,
                 'projectclosed': projectclosed,
@@ -845,6 +848,7 @@ def manProject(request,pid):
             curitr = Iteration.objects.get(phase_id = curphase.id,status = True)
         c = Context({
             'pid':pid,
+            'closed' : not p.status,
             'prjname':p.name,
             'density':density,
             'yield':yieldrate,
