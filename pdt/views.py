@@ -741,10 +741,12 @@ def manDefect(request, pid):
                 for ses in DefectSession.objects.filter(iteration = i).all():
                     for de in Defects.objects.filter(session = ses).all():
                         defectlist.append(de)
+        iters = Iteration.objects.filter(phase__project=project)
         c = Context({
             'pid':pid,
             'user':request.user,
-            'defect_list':defectlist
+            'defect_list':defectlist,
+            'iters':iters,
         })
         return render_to_response("man-defect.html", c)
     else:
