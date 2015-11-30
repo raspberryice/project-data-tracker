@@ -1041,7 +1041,7 @@ def setting(request,pid):
             it.save()
             ph.save()
             p.save()
-            return HttpResponseRedirect("/manager/dashboard/")
+            return HttpResponseRedirect("/manager/project/"+str(p.id)+"/")
     c = Context({
         'pid':pid,
         'user':request.user,
