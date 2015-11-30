@@ -7,7 +7,7 @@
     <link href="{% static 'css/dashboard.css' %}" rel="stylesheet">
 {% endblock css %}
 {% block content %}
-{%block nav %}
+{% block nav %}
 <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container-fluid">
         <div class="navbar-header">
@@ -46,12 +46,12 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
               {% block sidebar %}
-                <li><a href="{% url 'mandashboard' %} ">Dashboard</a></li>
-                <li><a href="{% url 'manproject' pid %}">Overview</a></li>
-                <li><a href="{% url 'manreport' pid %}">Reports</a></li>
-                <li><a href="{% url 'manactivity' pid %}" >Activities</a></li>
-                <li><a href="{% url 'mandefect' pid %}">Defects</a></li>
-                <li><a href="{% url 'setting' pid %}">Settings</a></li>
+                {% block sb_dashboard %}<li><a href="{% url 'mandashboard' %} ">Dashboard</a></li>{% endblock sb_dashboard %}
+                {% block sb_overview %}<li><a href="{% url 'manproject' pid %}">Overview</a></li>{% endblock sb_overview %}
+                {% block sb_report %}<li><a href="{% url 'manreport' pid %}">Reports</a></li>{% endblock sb_report %}
+                {% block sb_activity %}<li><a href="{% url 'manactivity' pid %}" >Activities</a></li>{% endblock sb_activity %}
+                {% block sb_defect %}<li><a href="{% url 'mandefect' pid %}">Defects</a></li>{% endblock sb_defect %}
+                {% block sb_setting %}<li><a href="{% url 'setting' pid %}">Settings</a></li>{% endblock sb_setting %}
               {# this is the sidebar after choosing a project #}
               {% endblock sidebar %}
           </ul>
