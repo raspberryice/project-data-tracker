@@ -48,7 +48,7 @@
               {% block sidebar %}
                 <li><a href="{% url 'mandashboard' %} ">Dashboard</a></li>
                 <li><a href="{% url 'manproject' pid %}">Overview</a></li>
-                <li><a href=" {% url 'manreport' pid %}">Reports</a></li>
+                <li><a href="{% url 'manreport' pid %}">Reports</a></li>
                 <li><a href="{% url 'manactivity' pid %}" >Activities</a></li>
                 <li><a href="{% url 'mandefect' pid %}">Defects</a></li>
                 <li><a href="{% url 'setting' pid %}">Settings</a></li>

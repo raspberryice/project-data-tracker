@@ -81,27 +81,27 @@
               <tbody>
                 <tr>
                   <td>Defects Injected</td>
-                  <td>33</td>
+                  <td>{% if injected == "" %}Not Closed Yet{% else %}{{injected}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Defects Removed</td>
-                  <td>22</td>
+                  <td>{{removed}}</td>
                 </tr>
                 <tr>
                   <td>Injection rate per person-hour of development</td>
-                  <td>3.4</td>
+                  <td>{% if injectionrate == "" %}Not Closed Yet{% else %}{{injectionrate}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Removal rate per person-hour of defect removal</td>
-                  <td>2.5</td>
+                  <td>{{removalrate}}</td>
                 </tr>
                 <tr>
                   <td>Defect density per KSLOC</td>
-                  <td>10</td>
+                  <td>{% if density == "" %}Not Closed Yet{% else %}{{density}}{% endif %}</td>
                 </tr>
                 <tr>
                   <td>Yield</td>
-                  <td>60%</td>
+                  <td>{% if yield == "" %}Not Closed Yet{% else %}{{yield}}{% endif %}</td>
                 </tr>
               </tbody>
             </table>
